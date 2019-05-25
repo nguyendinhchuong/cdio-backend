@@ -2,7 +2,7 @@
   "development": {
     "username": "namtv",
     "password": "Aa123456",
-    "database": "cdio",
+    "database": "cdio_db",
     "host": "172.29.64.132",
     "dialect": "mysql"
   },

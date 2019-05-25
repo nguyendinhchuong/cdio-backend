@@ -21,8 +21,8 @@ exports.getOSInfoById = (request) => {
     db.sequelize.authenticate()
       .then(() => {
         let sql = `SELECT os.Id, os.NameOutcomeStandard, os.SchoolYear, os.DateCreated, os.DateEdited, fa.NameFaculty, pg.NameProgram
-      FROM cdio.outcomestandard AS os, cdio.faculty AS fa, cdio.program AS pg, cdio.user
-      WHERE os.Id = `+ request.Id + ` and os.IdFaculty = fa.Id and os.IdProgram = pg.Id and os.IdUser = cdio.user.Id;`;
+      FROM cdio_db.outcomestandard AS os, cdio_db.faculty AS fa, cdio_db.program AS pg, cdio_db.user
+      WHERE os.Id = `+ request.Id + ` and os.IdFaculty = fa.Id and os.IdProgram = pg.Id and os.IdUser = cdio_db.user.Id;`;
         console.log(request.Id);
         db.sequelize.query(sql, { type: db.Sequelize.QueryTypes.SELECT })
           .then(data => {
@@ -56,8 +56,8 @@ exports.getOSInfo = () => {
         //     reject(err);
         //   })
         db.sequelize.query(`SELECT os.Id, os.NameOutcomeStandard, os.SchoolYear, os.DateCreated, os.DateEdited, fa.NameFaculty, pg.NameProgram 
-        FROM cdio.outcomestandard as os, cdio.faculty as fa, cdio.program as pg, cdio.user
-        WHERE os.IdFaculty = fa.Id AND os.IdProgram = pg.Id AND os.IdUser = cdio.user.Id `, { type: db.Sequelize.QueryTypes.SELECT })
+        FROM cdio_db.outcomestandard as os, cdio_db.faculty as fa, cdio_db.program as pg, cdio_db.user
+        WHERE os.IdFaculty = fa.Id AND os.IdProgram = pg.Id AND os.IdUser = cdio_db.user.Id `, { type: db.Sequelize.QueryTypes.SELECT })
           .then(info => {
             resolve(info);
           })

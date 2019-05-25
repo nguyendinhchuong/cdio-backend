@@ -5,7 +5,7 @@ exports.getEduProgram = () => {
         db.sequelize.authenticate()
             .then(() => {
                 let sql = `SELECT edu.Id, edu.EduName, edu.EduEngName, edu.SchoolYear, edu.DateCreated, edu.DateEdited, edu.IdLevel, edu.IdMajor, edu.IdProgram, level.LevelName, major.MajorCode, major.MajorName, major.MajorEngName, prog.NameProgram
-                FROM cdio.eduprogram AS edu, cdio.level AS level, cdio.major AS major, cdio.program AS prog
+                FROM cdio_db.eduprogram AS edu, cdio_db.level AS level, cdio_db.major AS major, cdio_db.program AS prog
                 WHERE edu.IdLevel = level.Id AND edu.IdMajor = major.Id AND edu.IdProgram = prog.Id;
                 `
                 db.sequelize.query(sql, { type: db.Sequelize.QueryTypes.SELECT })
@@ -27,7 +27,7 @@ exports.getEduProgramById = (request) => {
         db.sequelize.authenticate()
             .then(() => {
                 let sql = `SELECT edu.Id, edu.EduName, edu.EduEngName, edu.SchoolYear, edu.DateCreated, edu.DateEdited, edu.IdLevel, edu.IdMajor, edu.IdProgram, level.LevelName, major.MajorCode, major.MajorName, major.MajorEngName, prog.NameProgram
-                FROM cdio.eduprogram AS edu, cdio.level AS level, cdio.major AS major, cdio.program AS prog
+                FROM cdio_db.eduprogram AS edu, cdio_db.level AS level, cdio_db.major AS major, cdio_db.program AS prog
                 WHERE edu.IdLevel = level.Id AND edu.IdMajor = major.Id AND edu.IdProgram = prog.Id AND edu.Id = `+ request.Id + `;`;
                 db.sequelize.query(sql, { type: db.Sequelize.QueryTypes.SELECT })
                     .then(data => {
