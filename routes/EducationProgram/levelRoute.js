@@ -1,4 +1,4 @@
-const Level = require('../../controllers/EducationProgram/LevelController');
+const Level = require('../../controllers/EducationProgram/levelController');
 
 module.exports = (app) => {
     app.route('/level/getlist').get(Level.getLevelList);
