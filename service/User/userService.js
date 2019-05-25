@@ -117,7 +117,7 @@ exports.getUserByUsername = (request) => {
             .then(() => {
                 db.user.findOne({
                     where: {
-                        Username: request
+                        username: request
                     }
                 })
                     .then(data => {

@@ -36,14 +36,12 @@ exports.addEduProgContent = (req, res) => {
     const response = {};
     try {
         const params = req.query;
-        const body = JSON.parse(req.body.data);
-        request.IdEduProg = +params.ideduprog;
-        request.data = body;
-
-        // for test postman
+        //const body = JSON.parse(req.body.data);
         //request.IdEduProg = +params.ideduprog;
-        //request.data = req.body.xx;
-
+        //request.data = body;
+        // for test postman
+        request.IdEduProg = +params.ideduprog;
+        request.data = req.body;
 
         eduprogcontent.addEduContent(request)
             .then(data => {

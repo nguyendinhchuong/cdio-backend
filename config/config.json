@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "root",
-    "password": "",
+    "username": "namtv",
+    "password": "Aa123456",
     "database": "cdio",
-    "host": "127.0.0.1",
+    "host": "172.29.64.132",
     "dialect": "mysql"
   },
   "test": {

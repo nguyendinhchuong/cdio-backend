@@ -2,20 +2,26 @@ var db = require('../../../models/index');
 
 module.exports = (sequelize, Sequelize) => {
     const user = sequelize.define('user', {
-        Id: {
+        id: {
             type: Sequelize.INTEGER,
             allowNull: false,
             primaryKey: true,
             autoIncrement: true
         },
-        Username: {
+        username: {
             type: Sequelize.STRING,
             allowNull: false
         },
-        Password: {
+        password: {
             type: Sequelize.STRING,
             allowNull: false
         },
+        email:{
+            type: Sequelize.STRING
+        },
+        name:{
+            type: Sequelize.STRING
+        }
         // Name: {
         //     type: Sequelize.STRING,
         //     allowNull: true
@@ -28,18 +34,7 @@ module.exports = (sequelize, Sequelize) => {
         //     type: Sequelize.INTEGER,
         //     allowNull:true
         // },
-        Role:{
-            type: Sequelize.STRING,
-            allowNull:true
-        },
-        DateCreated:{
-            type: Sequelize.DATE,
-            allowNull: false
-        },
-        DateEdited:{
-            type: Sequelize.DATE,
-            allowNull: false
-        }
+        
     },{
         freezeTableName: true,
         timestamps: false

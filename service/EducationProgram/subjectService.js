@@ -61,6 +61,7 @@ exports.addSubject = (request) => {
                 }
                 subject.DateCreated = request.DateCreated;
                 subject.DateEdited = request.DateEdited;
+                subject.DelFlat = request.DelFlat;
 
                 db.subject.create(subject)
                     .then(() => {
