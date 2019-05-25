@@ -1,5 +1,5 @@
 
-module.exports = (sequelize, Sequelize) => {
+export default (sequelize, Sequelize) => {
     const teachersubject = sequelize.define('teachersubject', {
         Id: {
             type: Sequelize.INTEGER,

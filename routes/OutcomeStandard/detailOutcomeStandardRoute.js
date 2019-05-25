@@ -1,4 +1,4 @@
-const detailOutcomeStandard = require('../../controllers/OutcomeStandard/detailOutcomeStandardController');
+const detailOutcomeStandard = require('../../controllers/OutcomeStandard/detailoutcomestandardController');
 
 module.exports = (app) => {
     // load detail của chuẩn đầu ra với id
