@@ -42,7 +42,7 @@ exports.addEduProgContent = (req, res) => {
 
         // for test postman
         //request.IdEduProg = +params.ideduprog;
-        //request.data = req.body.xx;
+        //request.data = req.body;
 
 
         eduprogcontent.addEduContent(request)
