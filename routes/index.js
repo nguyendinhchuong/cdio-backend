@@ -285,8 +285,8 @@ router.post('/save-data-3', function(req, res) {
     if (err) {
       console.log(err);
     }
+    res.end("1")
   }) 
-  res.end("done")
 })
 
 // 4

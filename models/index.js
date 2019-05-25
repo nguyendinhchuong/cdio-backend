@@ -55,7 +55,8 @@ db.edupurpose = require('../db/model/EducationProgram/edupurpose')(sequelize, Se
 db.subjectblock = require('../db/model/EducationProgram/subjectblock')(sequelize, Sequelize);
 db.detailblock = require('../db/model/EducationProgram/detailblock')(sequelize, Sequelize);
 db.eduprogcontent = require('../db/model/EducationProgram/eduprogcontent')(sequelize, Sequelize);
-db.teachersubject = require('../db/model/EducationProgram/teachersubject')(sequelize, Sequelize);
+// namtv
+//db.teachersubject = require('../db/model/EducationProgram/teachersubject')(sequelize, Sequelize);
 db.teachplanblock = require('../db/model/EducationProgram/teachplanblock')(sequelize, Sequelize);
 db.detailteachplanblock = require('../db/model/EducationProgram/detailteachplanblock')(sequelize, Sequelize);
 

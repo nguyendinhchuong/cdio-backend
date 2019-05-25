@@ -20,6 +20,12 @@ module.exports = (sequelize, Sequelize) => {
         },
         DateCreated: {
             type: Sequelize.DATE
+        },
+        Optional:{
+            type: Sequelize.BOOLEAN
+        },
+        IdTeacher:{
+            type: Sequelize.INTEGER
         }
     }, {
             timestamps: false,

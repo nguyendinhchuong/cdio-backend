@@ -5,9 +5,9 @@ exports.register = (req, res) => {
     let body = JSON.parse(req.body.data);
     let request = {};
     request.Username = body.username;
+    request.Name = body.name;
+    request.Email = body.Email;
     request.Role = body.role;
-    request.DateCreated = body.datecreated;
-    request.DateEdited = body.dateedited;
     request.Password = generator.generate({
         length: 8,
         numbers: true

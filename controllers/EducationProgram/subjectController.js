@@ -51,7 +51,7 @@ exports.addSubject = (req, res) => {
     request.Description = body.description;
     request.DateCreated = body.datecreated;
     request.DateEdited = body.dateedited;
-    
+    request.DelFlat = 0;
     subject.addSubject(request)
         .then(data => {
             let response = {};
@@ -88,6 +88,7 @@ exports.addSubjectBulk = (req, res) => {
         obj.Description = subject.description;
         obj.DateCreated = subject.datecreated;
         obj.DateEdited = subject.dateedited;
+        obj.DelFlat = 0;
         new_array.push(obj);
     })
     request.data = new_array;

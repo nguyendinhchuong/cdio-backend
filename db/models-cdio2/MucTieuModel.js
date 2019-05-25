@@ -7,9 +7,11 @@ var MucTieuModel = (muc_tieu, mo_ta, cdr) => {
 }
 
 MucTieuModel.save = (data, result) => {
-  sql.query(`update muc_tieu_mon_hoc set del_flag = 1 where thong_tin_chung_id = ${data.id}`);
+  // sql.query(`update muc_tieu_mon_hoc set del_flag = 1 where thong_tin_chung_id = ${data.id}`);
   data.body.forEach(element => {
-    sql.query(`insert into muc_tieu_mon_hoc(muc_tieu, mo_ta, thong_tin_chung_id) values ('${element.objectName}', '${element.description}', ${data.id})`,
+    console.log(element.id)
+    if (element.id === -1) {
+      sql.query(`insert into muc_tieu_mon_hoc(muc_tieu, mo_ta, thong_tin_chung_id) values ('${element.objectName}', '${element.description}', ${data.id})`,
       (err, res) => {
         if (err) {
           console.log("error:", err);
@@ -18,9 +20,9 @@ MucTieuModel.save = (data, result) => {
           let mtmhId = res.insertId;
 
           element.standActs.forEach(element2 => {
-            element2 = element2.replace(/\./g, "-")
-            element2 += '-'
-            sql.query(`select * from detailoutcomestandard where KeyRow = '${element2}' and IdOutcomeStandard = 5`,
+            // element2 = element2.replace(/\./g, "-")
+            element2 += '.'
+            sql.query(`select * from detailoutcomestandard where KeyRow = '${element2}' and IdOutcomeStandard = 23`,
               (err, res) => {
                 if (err) {
                   console.log("error:", err);
@@ -40,6 +42,39 @@ MucTieuModel.save = (data, result) => {
           result(res);
         }
       })
+    } else {
+      sql.query(`update muc_tieu_mon_hoc set muc_tieu='${element.objectName}', mo_ta='${element.description}', del_flag=${element.del_flag} where id=${element.id}`,
+      (err, res) => {
+        if (err) {
+          console.log("error:", err);
+          result(err)
+        } else {
+          element.standActs.forEach(element2 => {
+            // element2 = element2.replace(/\./g, "-")
+            element2 += '.'
+            sql.query(`select * from detailoutcomestandard where KeyRow = '${element2}' and IdOutcomeStandard = 23`,
+              (err, res) => {
+                if (err) {
+                  console.log("error:", err);
+                  result(err)
+                } else {
+                  let cdrId = res[0].Id 
+                  sql.query(`update mtmh_has_cdrcdio set chuan_dau_ra_cdio_id=${cdrId} where muc_tieu_mon_hoc_id=${element.id}`,
+                          (err, res) => {
+                            if (err) {
+                              console.log("error:", err);
+                              result(err)
+                            }
+                          })           
+                }
+              })
+          });
+          
+          result('1');
+        }
+      })
+    }
+    
   });
 
 }
@@ -66,7 +101,7 @@ MucTieuModel.getMTMH_HAS_CDR = (data, result) => {
 
 MucTieuModel.getCDR = (result) => {
   sql.query(`select do.Id,do.KeyRow from chuan_dau_ra_cdio cdr,detailoutcomestandard do
-  where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = 5 and length(KeyRow) = 6`,
+  where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = 23 and length(KeyRow) = 6`,
     (err, res3) => {
       if (err) {
         result(err);
@@ -76,20 +111,19 @@ MucTieuModel.getCDR = (result) => {
 }
 
 MucTieuModel.get = (data, result) => {
-  
-  sql.query(`SELECT mt.muc_tieu, mt.mo_ta, detailoutcomestandard.KeyRow FROM muc_tieu_mon_hoc as mt
+  console.log(data)
+  sql.query(`SELECT mt.muc_tieu, mt.mo_ta, detailoutcomestandard.KeyRow, mt.del_flag, mt.id FROM muc_tieu_mon_hoc as mt
   join mtmh_has_cdrcdio
   on mt.id = mtmh_has_cdrcdio.muc_tieu_mon_hoc_id
   join chuan_dau_ra_cdio
   on mtmh_has_cdrcdio.chuan_dau_ra_cdio_id = chuan_dau_ra_cdio.id
   join detailoutcomestandard
   on mtmh_has_cdrcdio.chuan_dau_ra_cdio_id = detailoutcomestandard.Id
-  where mt.thong_tin_chung_id = ${data.id} and mt.del_flag = 0 and chuan_dau_ra_cdio.del_flag = 0 and detailoutcomestandard.IdOutcomeStandard = 5`,
+  where mt.thong_tin_chung_id = ${data.id} and mt.del_flag = 0 and chuan_dau_ra_cdio.del_flag = 0 and detailoutcomestandard.IdOutcomeStandard = 23`,
     (err, res) => {
       if (err) {
         result(err)
       }
-      
       result(res)
     })
 }

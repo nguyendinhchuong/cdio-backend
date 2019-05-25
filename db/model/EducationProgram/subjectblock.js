@@ -13,7 +13,11 @@ module.exports = (sequelize, Sequelize) => {
         Credit:{
             type: Sequelize.INTEGER,
             allowNull: false
-        },        
+        },
+        isOptional:{
+            type: Sequelize.BOOLEAN,
+            allowNull: true
+        }, 
         isAccumulated:{
             type: Sequelize.BOOLEAN,
             allowNull: false

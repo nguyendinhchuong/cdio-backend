@@ -1,4 +1,4 @@
-const detailRevision = require('../../controllers/OutcomeStandard/detailRevisionController');
+const detailRevision = require('../../controllers/OutcomeStandard/detailrevisionController');
 
 module.exports = (app) => {
     app.route('/detailrevision/get').get(detailRevision.getDetailRevision);
