@@ -6,7 +6,7 @@ exports.register = (req, res) => {
     let request = {};
     request.Username = body.username;
     request.Name = body.name;
-    request.Email = body.Email;
+    request.Email = body.email;
     request.Role = body.role;
     request.Password = generator.generate({
         length: 8,

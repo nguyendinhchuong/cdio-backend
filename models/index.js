@@ -62,6 +62,7 @@ db.detailteachplanblock = require('../db/model/EducationProgram/detailteachplanb
 
 
 db.user = require('../db/model/User/user')(sequelize, Sequelize);
+db.user_has_role = require('../db/model/User/user_has_role')(sequelize, Sequelize);
 
 // // //Relations
 // db.outcomestandard.hasMany(db.detailoutcomestandard);

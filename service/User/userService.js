@@ -27,7 +27,7 @@ exports.register = (request) => {
             .then(() => {
                 db.user.findOne({
                     where: {
-                        Username: request.Username
+                        username: request.Username
                     }
                 })
                     .then(data => {
@@ -36,11 +36,29 @@ exports.register = (request) => {
                             response.code = -3;
                             resolve(response);
                         } else {
-                            db.user.create(request)
-                                .then(data => {
-                                    response.code = 1;
-                                    response.data = data;
-                                    resolve(response);
+                            let user = {};
+                            user.username = request.Username;
+                            user.password = request.Password;
+                            user.name = request.Name;
+                            user.email = request.Email;
+                            db.user.create(user)
+                                .then(async data => {
+                                    let idUser = data.dataValues.id;
+                                    let role_array = [];
+                                    await request.Role.map(role => {
+                                        let role_obj = {};
+                                        role_obj.idUser = idUser;
+                                        role_obj.idRole = role;
+                                        role_array.push(role_obj);
+                                    })
+                                    db.user_has_role.bulkCreate(role_array)
+                                        .then(() => {
+                                            let code = 1;
+                                            resolve(code);
+                                        })
+                                        .catch(err => {
+                                            reject(err);
+                                        })
                                 })
                                 .catch(err => {
                                     reject(err);
@@ -65,7 +83,7 @@ exports.login = (request) => {
             .then(() => {
                 db.user.findOne({
                     where: {
-                        Username: request.Username
+                        username: request.Username
                     }
                 })
                     .then(data => {
@@ -73,28 +91,38 @@ exports.login = (request) => {
                             let response = {};
                             response.code = -3;
                             resolve(response);
-                        } else if (data && request.Password.localeCompare(data.dataValues.Password) === 0) {
-                            //set basic info in payload
-                            let payload = {
-                                username: data.Username,
-                                role: data.Role
-                            };
-                            console.log(payload);
-                            let jwtToken = jwt.sign(payload, config.jwtSecret, { expiresIn: 1 * 300000 });
-                            let response = {};
+                        } else if (data && request.Password.localeCompare(data.dataValues.password) === 0) {
+                            let role_array = [];
+                            db.user_has_role.findAll({
+                                where: {
+                                    idUser: data.dataValues.id
+                                }
+                            })
+                                .then(data => {
+                                    console.log(data);
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
+                            // //set basic info in payload
+                            // let payload = {
+                            //     username: data.username,
+                            //     role: data.role
+                            // };
+                            // console.log(payload);
+                            // let jwtToken = jwt.sign(payload, config.jwtSecret, { expiresIn: 1 * 86400 });
+                            // let response = {};
 
-                            let dataValues = {};
-                            dataValues.Id = data.dataValues.Id;
-                            dataValues.Username = data.dataValues.Username;
-                            dataValues.Role = data.dataValues.Role;
-                            dataValues.DateCreated = data.dataValues.DateCreated;
-                            dataValues.DateEdited = data.dataValues.DateEdited;
+                            // let dataValues = {};
+                            // dataValues.Id = data.dataValues.id;
+                            // dataValues.Username = data.dataValues.username;
+                            // dataValues.Role = data.dataValues.role;
 
-                            response.access_token = jwtToken;
-                            response.code = 1;
-                            response.data = dataValues;
-                            
-                            resolve(response);
+                            // response.access_token = jwtToken;
+                            // response.code = 1;
+                            // response.data = dataValues;
+
+                            // resolve(response);
                         } else {
                             let response = {};
                             response.code = -1;
