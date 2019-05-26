@@ -44,8 +44,9 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.DATE,
             allowNull: false
         },
-        DelFlat:{
-            type: Sequelize.BOOLEAN
+        del_flat:{
+             type: Sequelize.BOOLEAN,
+             allowNull: true
         }
     },{
         freezeTableName: true,

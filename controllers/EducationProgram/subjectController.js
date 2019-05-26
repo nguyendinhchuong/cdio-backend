@@ -44,14 +44,16 @@ exports.addSubject = (req, res) => {
     request.SubjectCode = body.subjectcode;
     request.SubjectName = body.subjectname;
     request.SubjectEngName = body.subjectengname;
-    request.Credit = Number(body.credit);
-    request.TheoryPeriod = Number(body.theoryperiod);
-    request.PracticePeriod = Number(body.practiceperiod);
-    request.ExercisePeriod = Number(body.exerciseperiod);
+    request.Credit = +body.credit;
+    request.TheoryPeriod = +body.theoryperiod;
+    request.PracticePeriod = +body.practiceperiod;
+    request.ExercisePeriod = +body.exerciseperiod;
     request.Description = body.description;
     request.DateCreated = body.datecreated;
     request.DateEdited = body.dateedited;
-    request.DelFlat = 0;
+    request.del_flat = 0;
+    
+    
     subject.addSubject(request)
         .then(data => {
             let response = {};
@@ -68,29 +70,34 @@ exports.addSubject = (req, res) => {
         .catch(err => {
             throw err;
         })
-
 }
 
 exports.addSubjectBulk = (req, res) => {
-    let body = req.body;
-    let request = {};
-    let array = JSON.parse(body.data);
-    let new_array = [];
-    array.map(subject => {
-        let obj = {};
+    const body = req.body;
+    const request = {};
+    const array = JSON.parse(body.data);
+
+    const new_array = array.reduce((results, subject, index) =>{
+        const obj = {};
         obj.SubjectCode = subject.subjectcode;
         obj.SubjectName = subject.subjectname;
         obj.SubjectEngName = subject.subjectengname;
-        obj.Credit = Number(subject.credit);
-        obj.TheoryPeriod = Number(subject.theoryperiod);
-        obj.PracticePeriod = Number(subject.practiceperiod);
-        obj.ExercisePeriod = Number(subject.exerciseperiod);
+        obj.Credit = +subject.credit;
+        if(isNaN(subject.credit) || isNaN(subject.theoryperiod) || isNaN(subject.practiceperiod) || isNaN(subject.exerciseperiod)){
+            console.log('NAN of ...' + index +
+            isNaN(subject.credit) + isNaN(subject.theoryperiod) + isNaN(subject.practiceperiod) + isNaN(subject.exerciseperiod)
+            );
+        }
+        obj.TheoryPeriod = isNaN(subject.theoryperiod) ? 0 : +subject.theoryperiod;
+        obj.PracticePeriod = isNaN(subject.practiceperiod) ? 0 : +subject.practiceperiod;
+        obj.ExercisePeriod = isNaN(subject.exerciseperiod) ? 0 : +subject.exerciseperiod;
         obj.Description = subject.description;
         obj.DateCreated = subject.datecreated;
         obj.DateEdited = subject.dateedited;
-        obj.DelFlat = 0;
-        new_array.push(obj);
-    })
+        obj.del_flat = 0;
+        return results.concat(obj);
+    },[]);
+    
     request.data = new_array;
     subject.addSubjectBulk(request)
         .then(data => {
