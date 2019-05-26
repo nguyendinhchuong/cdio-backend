@@ -49,26 +49,29 @@ MucTieuModel.save = (data, result) => {
           console.log("error:", err);
           result(err)
         } else {
-          element.standActs.forEach(element2 => {
-            // element2 = element2.replace(/\./g, "-")
-            element2 += '.'
-            sql.query(`select * from detailoutcomestandard where KeyRow = '${element2}' and IdOutcomeStandard = 23`,
-              (err, res) => {
-                if (err) {
-                  console.log("error:", err);
-                  result(err)
-                } else {
-                  let cdrId = res[0].Id 
-                  sql.query(`update mtmh_has_cdrcdio set chuan_dau_ra_cdio_id=${cdrId} where muc_tieu_mon_hoc_id=${element.id}`,
-                          (err, res) => {
-                            if (err) {
-                              console.log("error:", err);
-                              result(err)
-                            }
-                          })           
-                }
-              })
-          });
+          sql.query(`delete FROM mtmh_has_cdrcdio where muc_tieu_mon_hoc_id=${element.id};`,(err, res) => {
+            element.standActs.forEach(element2 => {
+              // element2 = element2.replace(/\./g, "-")
+              element2 += '.'
+              sql.query(`select * from detailoutcomestandard where KeyRow = '${element2}' and IdOutcomeStandard = 23`,
+                (err, res) => {
+                  if (err) {
+                    console.log("error:", err);
+                    result(err)
+                  } else {
+                    let cdrId = res[0].Id
+                    sql.query(`insert into mtmh_has_cdrcdio values (${element.id}, ${cdrId})`,
+                            (err, res) => {
+                              if (err) {
+                                console.log("error:", err);
+                                result(err)
+                              }
+                            })                            
+                  }
+                })
+            });
+          })
+          
           
           result('1');
         }
