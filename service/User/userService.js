@@ -93,36 +93,40 @@ exports.login = (request) => {
                             resolve(response);
                         } else if (data && request.Password.localeCompare(data.dataValues.password) === 0) {
                             let role_array = [];
+                            let username = data.dataValues.username;
+                            //response data to client
+                            let dataValues = {};
+                            dataValues.Id = data.dataValues.id;
+                            dataValues.Username = data.dataValues.username;
+                            dataValues.Name = data.dataValues.name;
+                            dataValues.Email = data.dataValues.email;
                             db.user_has_role.findAll({
                                 where: {
                                     idUser: data.dataValues.id
                                 }
                             })
                                 .then(data => {
-                                    console.log(data);
+                                    data.map(row => {
+                                        role_array.push(row.dataValues.idRole);
+                                    })
+                                    //set basic info in payload
+                                    let payload = {
+                                        username: username,
+                                        role: role_array
+                                    };
+                                    let jwtToken = jwt.sign(payload, config.jwtSecret, { expiresIn: 1 * 86400 });
+                                    let response = {};
+
+                                    response.access_token = jwtToken;
+                                    response.code = 1;
+                                    response.data = dataValues;
+
+                                    resolve(response);
                                 })
                                 .catch(err => {
                                     reject(err);
                                 })
-                            // //set basic info in payload
-                            // let payload = {
-                            //     username: data.username,
-                            //     role: data.role
-                            // };
-                            // console.log(payload);
-                            // let jwtToken = jwt.sign(payload, config.jwtSecret, { expiresIn: 1 * 86400 });
-                            // let response = {};
 
-                            // let dataValues = {};
-                            // dataValues.Id = data.dataValues.id;
-                            // dataValues.Username = data.dataValues.username;
-                            // dataValues.Role = data.dataValues.role;
-
-                            // response.access_token = jwtToken;
-                            // response.code = 1;
-                            // response.data = dataValues;
-
-                            // resolve(response);
                         } else {
                             let response = {};
                             response.code = -1;

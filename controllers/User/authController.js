@@ -50,22 +50,34 @@ exports.isAuthenticated = (req, res, next) => {
                 //permission: just use api url base on role defined in Role.js
                 let regex = /^[^?]+/gm;
                 let baseUrl = regex.exec(req.originalUrl);
-                if (role[payload.role].find(url => {                    
-                    return url == baseUrl[0]
-                })) {
-                    user.getUserByUsername(payload.username)
-                        .then(data => {
-                            req.user = data;
-                            next();
-                        })
-                        .catch(err => {
-                            throw err;
-                        })
-                } else {
-                    response.code = -2;
-                    response.message = "Access Denied: You dont have correct privilege to perform this operation!";
-                    res.send(JSON.stringify(response));
-                }
+                payload.role.map(has_role => {
+                    if (role[has_role] !== undefined) {
+                        if (role[has_role].find(url => {
+                            console.log(url + (url == baseUrl[0]));
+                        })) {
+                            console.log(baseUrl[0]);
+                        }
+                    }
+                })
+                // payload.role.map(has_role => {
+                //     if (role[has_role].find(url => {
+                //         return url == baseUrl[0]
+                //     })) {
+                //         user.getUserByUsername(payload.username)
+                //             .then(data => {
+                //                 req.user = data;
+                //                 next();
+                //             })
+                //             .catch(err => {
+                //                 throw err;
+                //             })
+                //     } else {
+                //         response.code = -2;
+                //         response.message = "Access Denied: You dont have correct privilege to perform this operation!";
+                //         res.send(JSON.stringify(response));
+                //     }
+                // })
+
             }
         })
     } else {
