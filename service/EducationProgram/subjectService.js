@@ -64,9 +64,18 @@ exports.addSubject = (request) => {
                 subject.del_flat = request.DelFlat;
 
                 db.subject.create(subject)
-                    .then(() => {
-                        let code = 1;
-                        resolve(code);
+                    .then(data => {
+                        let obj = {};
+                        obj.del_flat = data.dataValues.del_flat;
+                        obj.id = data.dataValues.id;
+                        db.thong_tin_chung.create(obj)
+                            .then(() => {
+                                let code = 1;
+                                resolve(code);
+                            })
+                            .catch(err => {
+                                reject(err);
+                            })
                     })
                     .catch(err => {
                         reject(err);
