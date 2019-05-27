@@ -135,7 +135,7 @@ exports.addEduContent = async (request) => {
             })
         }
         // insert
-        //await insertContentsAndRelationship(request.data, request.IdEduProg);
+        await insertContentsAndRelationship(request.data, request.IdEduProg);
         return Promise.resolve("OK");
     } catch (err) {
         return Promise.reject(err);
@@ -204,6 +204,7 @@ const insertSubjectBlocks = (blocks, idContent) => {
         subjectBlock.DateCreated = block.DateCreated;
         subjectBlock.KeyRow = block.parentKey;
         subjectBlock.NameBlock = block.nameBlock;
+
         return db.subjectblock.create(subjectBlock);
     } catch (err) {
         return err;
@@ -264,8 +265,6 @@ const deleteDetailBlocks = (listIdBlock) => {
         attributes: ['Id']
     });
 }
-
-
 
 const groupBy = (array, f) => {
     let groups = {};

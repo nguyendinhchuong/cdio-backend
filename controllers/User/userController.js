@@ -46,7 +46,7 @@ exports.login = (req, res) => {
             console.log(data.data);
             let response = {};
             if (data.code === -3) {
-                response.code = data.code;                
+                response.code = data.code;
                 response.message = "user not exist";
                 res.send(JSON.stringify(response));
             } else if (data.code === -1) {
@@ -107,6 +107,30 @@ exports.getInfo = (req, res) => {
         .catch(err => {
             throw err;
         })
+}
+exports.getByRole = (req, res) => {
+    let params = req.query;
+    let request = {};
+    request.role = params.role;
+
+    user.getByRole(request)
+        .then(data => {
+            let response = {};
+            if (data) {
+                response.code = 1;
+                response.data = data;
+                response.message = "success";
+                res.send(JSON.stringify(response));
+            } else {
+                response.code = -1;
+                response.message = "fail";
+                res.send(JSON.stringify(response));
+            }
+        })
+        .catch(err => {
+            throw err;
+        })
+
 }
 exports.changePass = (req, res) => {
     let body = JSON.parse(req.body.data);

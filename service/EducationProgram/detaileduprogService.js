@@ -17,13 +17,13 @@ exports.getDetailEduProgram = (request) => {
                                 }
                             })
                                 .then(data => {
-                                    resolve(data);  
+                                    resolve(data);
                                 })
                                 .catch(err => {
                                     reject(err);
                                 })
                         }
-                        else{
+                        else {
                             resolve(data);
                         }
                     })
@@ -82,7 +82,8 @@ exports.updateDetailEduProg = (request) => {
                                 EnrollmentTarget: request.EnrollmentTarget,
                                 EduProcess: request.EduProcess,
                                 GraduatedCon: request.GraduatedCon,
-                                IdOutcome: request.IdOutcome
+                                IdOutcome: request.IdOutcome,
+                                OSUsedNode: request.OSUsedNode
                             }, {
                                     where: {
                                         IdEduProgram: request.IdEduProgram
@@ -117,12 +118,9 @@ exports.updateDetailEduProg = (request) => {
                             obj.DateCreated = request.DateCreated;
                             obj.EduProcess = request.EduProcess;
                             obj.GraduatedCon = request.GraduatedCon;
-                            obj.IdOutcome = request.IdOutcome
+                            obj.IdOutcome = request.IdOutcome;
+                            obj.OSUsedNode = request.OSUsedNode;
                             db.detaileduprog.create(obj)
-                                .then(() => {
-                                    let code = 2;
-                                    resolve(code);
-                                })
                                 //update DateEdited in EduProgram table
                                 .then(() => {
                                     db.eduprogram.update({
@@ -132,7 +130,7 @@ exports.updateDetailEduProg = (request) => {
                                         })
                                         .then(effectedRows => {
                                             console.log("Effected row of DetailEduProg: ", effectedRows);
-                                            let code = 1;
+                                            let code = 2;
                                             resolve(code);
                                         })
                                         .catch(err => {

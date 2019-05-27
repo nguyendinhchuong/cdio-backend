@@ -61,12 +61,23 @@ exports.addSubject = (request) => {
                 }
                 subject.DateCreated = request.DateCreated;
                 subject.DateEdited = request.DateEdited;
-                subject.DelFlat = request.DelFlat;
+                subject.del_flat = request.DelFlat;
 
                 db.subject.create(subject)
-                    .then(() => {
-                        let code = 1;
-                        resolve(code);
+                    .then(data => {
+                        let obj = {};
+                        console.log(data.dataValues);
+                        obj.del_flag = data.dataValues.del_flat ? 1 : 0;
+                        obj.id = data.dataValues.Id;
+                        console.log(obj);
+                        db.thong_tin_chung.create(obj)
+                            .then(() => {
+                                let code = 1;
+                                resolve(code);
+                            })
+                            .catch(err => {
+                                reject(err);
+                            })
                     })
                     .catch(err => {
                         reject(err);

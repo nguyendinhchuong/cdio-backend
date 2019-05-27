@@ -44,6 +44,8 @@ db.detailoutcomestandard = require('../db/model/OutcomeStandard/detailoutcomesta
 db.revision = require('../db/model/OutcomeStandard/revision')(sequelize, Sequelize);
 db.detailrevision = require('../db/model/OutcomeStandard/detailrevision')(sequelize, Sequelize);
 db.outcomeeduprogram = require('../db/model/OutcomeStandard/OutcomeEduProgram')(sequelize, Sequelize);
+db.chuan_dau_ra_cdio = require('../db/model/OutcomeStandard/chuan_dau_ra')(sequelize, Sequelize);
+
 
 db.subject = require('../db/model/EducationProgram/subject')(sequelize, Sequelize);
 db.eduprogram = require('../db/model/EducationProgram/EduProgram')(sequelize, Sequelize);
@@ -55,6 +57,8 @@ db.edupurpose = require('../db/model/EducationProgram/edupurpose')(sequelize, Se
 db.subjectblock = require('../db/model/EducationProgram/subjectblock')(sequelize, Sequelize);
 db.detailblock = require('../db/model/EducationProgram/detailblock')(sequelize, Sequelize);
 db.eduprogcontent = require('../db/model/EducationProgram/eduprogcontent')(sequelize, Sequelize);
+db.thong_tin_chung = require('../db/model/EducationProgram/thong_tin_chung')(sequelize, Sequelize);
+// db.thong_tin_chung.removeAttribute('id');
 // namtv
 //db.teachersubject = require('../db/model/EducationProgram/teachersubject')(sequelize, Sequelize);
 db.teachplanblock = require('../db/model/EducationProgram/teachplanblock')(sequelize, Sequelize);
@@ -63,6 +67,8 @@ db.detailteachplanblock = require('../db/model/EducationProgram/detailteachplanb
 
 db.user = require('../db/model/User/user')(sequelize, Sequelize);
 db.user_has_role = require('../db/model/User/user_has_role')(sequelize, Sequelize);
+db.user_has_role.removeAttribute('id');
+db.role = require('../db/model/User/role')(sequelize, Sequelize);
 
 // // //Relations
 // db.outcomestandard.hasMany(db.detailoutcomestandard);

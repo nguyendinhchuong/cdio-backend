@@ -1,16 +1,22 @@
-module.exports = {
-    TEACHER: [
+const TEACHER = 5;
+const EDITOR = 6;
+const ADMIN = 1;
+const role = {
+    5: [
         '/user/getlist',
         '/user/getinfo'
     ],
-    EDITOR: [
+    6: [
         '/user/getlist',
         '/user/getinfo'
     ],
-    ADMIN: [
+    1: [
         '/user/getlist',
         '/user/getinfo',
         '/user/delete',
-        '/user/register'
+        '/user/register',
+        '/user/getbyrole'
     ]
 }
+
+module.exports = role;
