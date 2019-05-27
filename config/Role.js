@@ -14,7 +14,8 @@ const role = {
         '/user/getlist',
         '/user/getinfo',
         '/user/delete',
-        '/user/register'
+        '/user/register',
+        '/user/getbyrole'
     ]
 }
 

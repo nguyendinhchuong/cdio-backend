@@ -44,14 +44,14 @@ exports.register = (request) => {
                             db.user.create(user)
                                 .then(async data => {
                                     let idUser = data.dataValues.id;
-                                    let role_array = [];
+                                    let idrole_array = [];
                                     await request.Role.map(role => {
                                         let role_obj = {};
                                         role_obj.idUser = idUser;
                                         role_obj.idRole = role;
-                                        role_array.push(role_obj);
+                                        idrole_array.push(role_obj);
                                     })
-                                    db.user_has_role.bulkCreate(role_array)
+                                    db.user_has_role.bulkCreate(idrole_array)
                                         .then(() => {
                                             let code = 1;
                                             resolve(code);
@@ -86,12 +86,13 @@ exports.login = (request) => {
                         username: request.Username
                     }
                 })
-                    .then(data => {
+                    .then(async data => {
                         if (!data) {
                             let response = {};
                             response.code = -3;
                             resolve(response);
                         } else if (data && request.Password.localeCompare(data.dataValues.password) === 0) {
+                            let id_role_array = [];
                             let role_array = [];
                             let username = data.dataValues.username;
                             //response data to client
@@ -100,23 +101,33 @@ exports.login = (request) => {
                             dataValues.Username = data.dataValues.username;
                             dataValues.Name = data.dataValues.name;
                             dataValues.Email = data.dataValues.email;
-                            db.user_has_role.findAll({
+                            dataValues.Role = [];
+                            await db.user_has_role.findAll({
                                 where: {
                                     idUser: data.dataValues.id
                                 }
                             })
-                                .then(data => {
-                                    data.map(row => {
-                                        role_array.push(row.dataValues.idRole);
+                                .then(async data => {
+                                    await data.map(async row => {
+                                        await id_role_array.push(row.dataValues.idRole);
+                                        await db.role.findByPk(row.dataValues.idRole)
+                                            .then(data => {
+                                                dataValues.Role.push(data.dataValues.role);
+                                                role_array.push(data.dataValues.role);
+                                                console.log("role: " + role_array);
+                                            })
+                                            .catch(err => {
+                                                reject(err);
+                                            })
                                     })
                                     //set basic info in payload
                                     let payload = {
                                         username: username,
-                                        role: role_array
+                                        role: id_role_array
                                     };
                                     let jwtToken = jwt.sign(payload, config.jwtSecret, { expiresIn: 1 * 86400 });
                                     let response = {};
-
+                                    //dataValues.role = role_array;
                                     response.access_token = jwtToken;
                                     response.code = 1;
                                     response.data = dataValues;
@@ -152,6 +163,27 @@ exports.getUserByUsername = (request) => {
                         username: request
                     }
                 })
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(err => {
+                        reject(err);
+                    })
+            })
+            .catch(err => {
+                reject(err);
+            })
+    })
+}
+
+exports.getByRole = (request) => {
+    return new Promise((resolve, reject) => {
+        db.sequelize.authenticate()
+            .then(() => {
+                let sql = `select user.id, user.username,user.email, user.name
+                from cdio_db.user as user, cdio_db.user_has_role as has_role, cdio_db.role as role
+                where user.id = has_role.idUser and has_role.idRole = role.id and role.role = '` + request.role + `';`
+                db.sequelize.query(sql, { type: db.Sequelize.QueryTypes.SELECT })
                     .then(data => {
                         resolve(data);
                     })
