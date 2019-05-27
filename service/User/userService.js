@@ -108,35 +108,37 @@ exports.login = (request) => {
                                 }
                             })
                                 .then(async data => {
-                                    await data.map(async row => {
+                                    const promises = data.map(async row => {
                                         await id_role_array.push(row.dataValues.idRole);
                                         await db.role.findByPk(row.dataValues.idRole)
-                                            .then(data => {
-                                                dataValues.Role.push(data.dataValues.role);
-                                                role_array.push(data.dataValues.role);
-                                                console.log("role: " + role_array);
+                                            .then(async data => {
+                                                await dataValues.Role.push(data.dataValues.role);
+                                                return role_array;
                                             })
                                             .catch(err => {
                                                 reject(err);
                                             })
                                     })
-                                    //set basic info in payload
-                                    let payload = {
-                                        username: username,
-                                        role: id_role_array
-                                    };
-                                    let jwtToken = jwt.sign(payload, config.jwtSecret, { expiresIn: 1 * 86400 });
-                                    let response = {};
-                                    //dataValues.role = role_array;
-                                    response.access_token = jwtToken;
-                                    response.code = 1;
-                                    response.data = dataValues;
-
-                                    resolve(response);
+                                    const results = await Promise.all(promises);
+                                    console.log(results)
                                 })
                                 .catch(err => {
                                     reject(err);
                                 })
+                            //set basic info in payload
+
+                            let payload = {
+                                username: username,
+                                role: id_role_array
+                            };
+                            console.log("role_array: " + role_array);
+                            let jwtToken = jwt.sign(payload, config.jwtSecret, { expiresIn: 1 * 86400 });
+                            let response = {};
+                            //dataValues.role = role_array;
+                            response.access_token = jwtToken;
+                            response.code = 1;
+                            response.data = dataValues;
+                            resolve(response);
 
                         } else {
                             let response = {};
@@ -148,6 +150,7 @@ exports.login = (request) => {
                         reject(err);
                     })
             })
+
             .catch(err => {
                 reject(err);
             })
