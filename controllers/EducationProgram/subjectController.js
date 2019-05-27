@@ -51,7 +51,7 @@ exports.addSubject = (req, res) => {
     request.Description = body.description;
     request.DateCreated = body.datecreated;
     request.DateEdited = body.dateedited;
-    request.del_flat = 0;
+    request.DelFlat = 0;
     
     
     subject.addSubject(request)

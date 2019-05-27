@@ -4,8 +4,9 @@ module.exports = (sequelize, Sequelize) => {
         id: {
             type: Sequelize.INTEGER,
             allowNull: false,
+            primaryKey: true
         },
-        del_flat: {
+        del_flag: {
             type: Sequelize.INTEGER,
             allowNull: false
         }

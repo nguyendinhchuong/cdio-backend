@@ -66,8 +66,10 @@ exports.addSubject = (request) => {
                 db.subject.create(subject)
                     .then(data => {
                         let obj = {};
-                        obj.del_flat = data.dataValues.del_flat;
-                        obj.id = data.dataValues.id;
+                        console.log(data.dataValues);
+                        obj.del_flag = data.dataValues.del_flat ? 1 : 0;
+                        obj.id = data.dataValues.Id;
+                        console.log(obj);
                         db.thong_tin_chung.create(obj)
                             .then(() => {
                                 let code = 1;
