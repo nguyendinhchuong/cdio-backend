@@ -63,3 +63,35 @@ exports.addEduProgContent = (req, res) => {
         res.send(JSON.stringify(response));
     }
 }
+
+
+exports.getBlockSubjects = (req, res) => {
+    const request = {};
+    const response = {};
+    try {
+        const params = req.query;
+        request.IdEduProg = +params.id;
+
+        if (isNaN(+params.id)) {
+            response.code = -1;
+            response.message = "param isn't string";
+            res.send(JSON.stringify(response));
+        }
+
+        eduprogcontent.getBlocksSubjects(request)
+            .then(data => {
+                response.code = 1;
+                response.message = "success";
+                response.data = data;
+                res.send(JSON.stringify(response));
+            }).catch(err => {
+                response.code = -1;
+                response.message = "fail";
+                res.send(JSON.stringify(response));
+            })
+    } catch (err) {
+        response.code = -1;
+        response.message = "fail";
+        res.send(JSON.stringify(response));
+    }
+}
