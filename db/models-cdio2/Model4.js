@@ -291,8 +291,55 @@ Model4.deletecdrmdhd = (data, result) => {
         })
 }
 
-Model4.getTeacherList = (result) => {
-    sql.query(`select id, name from user`,
+Model4.getTeacherList = (data, result) => {
+    sql.query(`select user.id , user.name from cdio_db.user
+    where user.id not in (select  teacher_review_subject.idTeacher from cdio_db.teacher_review_subject where teacher_review_subject.idTTC = ${data.thong_tin_chung_id})
+     && user.id not in (select  teachersubject.IdUser from cdio_db.teachersubject where teachersubject.IdSubject = ${data.thong_tin_chung_id})`,
+        (err, res) => {
+            if (err) {
+                console.log("error:", err);
+                result(null, err)
+            } else {
+                result(null, res);
+            }
+        })
+}
+
+Model4.getTeacherListReview = (data, result) => {
+    sql.query(`select user.id , user.name from cdio_db.user
+    where user.id in (select  teacher_review_subject.idTeacher from cdio_db.teacher_review_subject where teacher_review_subject.idTTC = ${data.thong_tin_chung_id})`,
+        (err, res) => {
+            if (err) {
+                console.log("error:", err);
+                result(null, err)
+            } else {
+                result(null, res);
+            }
+        })
+}
+
+Model4.deleteTeacherReview = (data, result) => {
+    let idString = "(" + data.toString() + ")";
+        sql.query(`delete from teacher_review_subject where (idTeacher) IN ${idString}`,
+        (err, res) => {
+            if (err) {
+                console.log("error:", err);
+                result(null, err)
+            } else {
+                result(null, res);
+            }
+        })
+}
+
+Model4.addTeacherReview = (data, result) => {
+    let valuesString = "";
+    for(let i = 0;i < data.idTeacher.length;i++) {
+        valuesString += `(${data.idTeacher[i]},${data.idTTC})`;
+        if(i !== data.idTeacher.length - 1) {
+            valuesString += ",";
+        }
+    }
+        sql.query(`insert into teacher_review_subject values ${valuesString}`,
         (err, res) => {
             if (err) {
                 console.log("error:", err);

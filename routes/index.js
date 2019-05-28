@@ -540,14 +540,50 @@ router.post('/delete-cdrmdhd', function (req, res) {
 })
 
 
-router.get('/get-teacher-list', function(req, res) {
-  Model4.getTeacherList(function(err, data) {
+router.post('/get-teacher-list', function(req, res) {
+  let data = req.body
+  Model4.getTeacherList(data, function(err, data) {
     if (err) {
       console.log(err);
     } else{
       res.send(data)
     }   
   })   
+})
+
+router.post('/get-teacher-list-review', function(req, res) {
+  let data = req.body
+  Model4.getTeacherListReview(data, function(err, data) {
+    if (err) {
+      console.log(err);
+    } else{
+      res.send(data)
+    }   
+  })   
+})
+
+router.post('/delete-teacher-review', function (req, res) {
+  let data = req.body
+
+  Model4.deleteTeacherReview(data, function (err, data) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(data);
+    }
+  })
+})
+
+router.post('/add-teacher-review', function (req, res) {
+  let data = req.body
+
+  Model4.addTeacherReview(data, function (err, data) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(data);
+    }
+  })
 })
 
 //
