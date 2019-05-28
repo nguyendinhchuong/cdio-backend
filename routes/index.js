@@ -457,6 +457,17 @@ router.post('/delete-cdrmdhd', function(req, res) {
   })   
 })
 
+router.get('/get-teacher-list', function(req, res) {
+  Model4.getTeacherList(function(err, data) {
+    if (err) {
+      console.log(err);
+    } else{
+      res.send(data)
+    }   
+  })   
+})
+
+//
 router.post('/add-data-5', function(req, res) {
   let data = req.body.data
   Model5.add(data, function(err) {

@@ -291,4 +291,16 @@ Model4.deletecdrmdhd = (data, result) => {
         })
 }
 
+Model4.getTeacherList = (result) => {
+    sql.query(`select id, name from user`,
+        (err, res) => {
+            if (err) {
+                console.log("error:", err);
+                result(null, err)
+            } else {
+                result(null, res);
+            }
+        })
+}
+
 module.exports = Model4;
