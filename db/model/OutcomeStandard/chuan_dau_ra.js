@@ -5,7 +5,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
             primaryKey: true
         },
-        del_flat: {
+        del_flag: {
             type: Sequelize.BOOLEAN
         }
     },{

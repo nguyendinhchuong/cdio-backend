@@ -86,6 +86,7 @@ exports.deleteDetailOutcomeStandard = (request) => {
                             let code = -1;
                             resolve(code);
                         } else {
+                            console.log(data.dataValues.Id);
                             let updated_detail_array = [];
                             db.detailoutcomestandard.findAll({
                                 where: {
@@ -122,6 +123,9 @@ exports.deleteDetailOutcomeStandard = (request) => {
                                         .catch(err => {
                                             reject(err);
                                         })
+                                })
+                                .catch(err => {
+                                    reject(err);
                                 })
                         }
                     })
