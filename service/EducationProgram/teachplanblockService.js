@@ -117,30 +117,31 @@ exports.updateTeachPlanBlock = (request) => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
             .then(() => {
-                db.teachplanblock.findOne({
+                db.teachplanblock.findAndCountAll({
                     where: {
                         IdDetailEdu: request.IdDetailEdu
                     }
                 })
-                    .then(data => {
-                        if (!data) {
+                    .then(async data => {
+                        if (data.count === 0) {
+                            console.log(data.count);
                             request.data.map(semester => {
                                 let block_obj = {};
                                 block_obj.IdDetailEdu = request.IdDetailEdu;
                                 block_obj.Semester = semester.semester;
                                 db.teachplanblock.create(block_obj)
-                                    .then(data => {
+                                    .then(async data => {
                                         let bulkDetail = [];
-                                        semester.subjects.map(subject => {
+                                        let promises = semester.subjects.map(subject => {
                                             let detail_obj = {};
                                             detail_obj.IdTeachPlan = data.dataValues.Id;
                                             detail_obj.IdSubject = subject.Id;
                                             detail_obj.Note = subject.Note;
                                             detail_obj.Optional = subject.Optional;
                                             bulkDetail.push(detail_obj);
-
                                         });
-                                        db.detailteachplanblock.bulkCreate(bulkDetail)
+                                        await Promise.all(promises);
+                                        db.detailteachplanblock.bulkCreate(bulkDetail, { returning: true })
                                             .then(data => {
                                                 console.log(data.dataValues.Id);
                                             })
@@ -152,7 +153,8 @@ exports.updateTeachPlanBlock = (request) => {
                                         reject(err);
                                     })
                             })
-                        } else {
+                        } else if (request.data.length >= data.count) {
+                            console.log("length >= count: " + data.count);
                             request.data.map(semester => {
                                 db.teachplanblock.findOne({
                                     where: {
@@ -167,24 +169,28 @@ exports.updateTeachPlanBlock = (request) => {
                                             block_obj.IdDetailEdu = request.IdDetailEdu;
                                             block_obj.Semester = semester.semester;
                                             db.teachplanblock.create(block_obj)
-                                                .then(data => {
+                                                .then(async data => {
                                                     let bulkDetail = [];
-                                                    semester.subjects.map(subject => {
+                                                    let promises = semester.subjects.map(subject => {
                                                         let detail_obj = {};
                                                         detail_obj.IdTeachPlan = data.dataValues.Id;
                                                         detail_obj.IdSubject = subject.Id;
                                                         detail_obj.Note = subject.Note;
                                                         detail_obj.Optional = subject.Optional;
                                                         bulkDetail.push(detail_obj);
-
                                                     });
-                                                    db.detailteachplanblock.bulkCreate(bulkDetail)
+                                                    await Promise.all(promises);
+                                                    await db.detailteachplanblock.bulkCreate(bulkDetail, { returning: true })
                                                         .then(data => {
                                                             console.log(data.dataValues.Id);
                                                         })
                                                         .catch(err => {
                                                             reject(err);
                                                         })
+                                                })
+
+                                                .catch(err => {
+                                                    reject(err);
                                                 })
                                         } else {//if exist, delete detail teach plan block records and create new
                                             db.detailteachplanblock.destroy({
@@ -195,16 +201,17 @@ exports.updateTeachPlanBlock = (request) => {
                                                 .then(async  effectedRows => {
                                                     console.log("Effected rows of Detail TeachPlanBlock: ", effectedRows);
                                                     let bulkDetail = [];
-                                                    await  semester.subjects.map(subject => {
+                                                    let promises = semester.subjects.map(subject => {
                                                         let detail_obj = {};
                                                         detail_obj.IdTeachPlan = data.dataValues.Id;
                                                         detail_obj.IdSubject = subject.Id;
                                                         detail_obj.Note = subject.Note;
                                                         detail_obj.Optional = subject.Optional;
                                                         bulkDetail.push(detail_obj);
-
                                                     });
-                                                    await db.detailteachplanblock.bulkCreate(bulkDetail)
+                                                    await Promise.all(promises);
+                                                    console.log(bulkDetail);
+                                                    await db.detailteachplanblock.bulkCreate(bulkDetail, { returning: true })
                                                         .then(data => {
                                                             console.log(data.dataValues.Id);
                                                         })
@@ -212,8 +219,73 @@ exports.updateTeachPlanBlock = (request) => {
                                                             reject(err);
                                                         })
                                                 })
+                                                .catch(err => {
+                                                    reject(err);
+                                                })
                                         }
 
+                                    })
+                            })
+                        } else if (request.data.length < data.count) {
+                            await db.teachplanblock.findAll({
+                                where: {
+                                    IdDetailEdu: request.IdDetailEdu
+                                }
+                            })
+                                .then(data => {
+                                    data.map(row => {
+                                        let Id_Teach_Plan_Block = row.dataValues.Id;
+                                        db.detailteachplanblock.destroy({
+                                            where: {
+                                                IdTeachPlan: Id_Teach_Plan_Block
+                                            }
+                                        })
+                                            .then(effectedRows => {
+                                                console.log("Effected rows of Detail TeachPlan: " + effectedRows);
+                                            })
+                                            .catch(err => {
+                                                reject(err);
+                                            })
+
+                                    })
+                                })
+                            await db.teachplanblock.destroy({
+                                where: {
+                                    IdDetailEdu: request.IdDetailEdu
+                                }
+                            })
+                                .then(effectedRows => {
+                                    console.log("Effected rows of TeachPlanBlock: " + effectedRows);
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
+                            await request.data.map(semester => {
+                                let block_obj = {};
+                                block_obj.IdDetailEdu = request.IdDetailEdu;
+                                block_obj.Semester = semester.semester;
+                                db.teachplanblock.create(block_obj)
+                                    .then(async data => {
+                                        let bulkDetail = [];
+                                        let promises = semester.subjects.map(subject => {
+                                            let detail_obj = {};
+                                            detail_obj.IdTeachPlan = data.dataValues.Id;
+                                            detail_obj.IdSubject = subject.Id;
+                                            detail_obj.Note = subject.Note;
+                                            detail_obj.Optional = subject.Optional;
+                                            bulkDetail.push(detail_obj);
+                                        });
+                                        await Promise.all(promises);
+                                        db.detailteachplanblock.bulkCreate(bulkDetail, { returning: true })
+                                            .then(data => {
+                                                console.log(data.dataValues.Id);
+                                            })
+                                            .catch(err => {
+                                                reject(err);
+                                            })
+                                    })
+                                    .catch(err => {
+                                        reject(err);
                                     })
                             })
                         }
