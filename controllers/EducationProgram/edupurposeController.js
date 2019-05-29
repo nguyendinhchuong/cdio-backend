@@ -33,6 +33,7 @@ exports.addEduPurpose = (req, res) => {
         obj.KeyRow = row.KeyRow;
         obj.NameRow = row.NameRow;
         obj.DateCreated = params.datecreated;
+        obj.OSUsed = Number(body.osused);
         array.push(obj);
     })
     request.data = array;
@@ -67,6 +68,7 @@ exports.updateEduPurpose = (req, res) => {
         obj.KeyRow = row.KeyRow;
         obj.NameRow = row.NameRow;
         obj.DateCreated = params.datecreated;
+        obj.OSUsed = Number(body.osused);
         array.push(obj);
     })
     request.data = array;
@@ -77,7 +79,11 @@ exports.updateEduPurpose = (req, res) => {
             let response = {};
             if (data === 1) {
                 response.code = 1;
-                response.message = "success";
+                response.message = "update success";
+                res.send(JSON.stringify(response));
+            } else if (data === 2) {
+                response.code = 2;
+                response.message = "add success";
                 res.send(JSON.stringify(response));
             } else {
                 response.code = -1;
