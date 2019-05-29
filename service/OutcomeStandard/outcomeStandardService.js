@@ -126,17 +126,7 @@ exports.deleteOutcomeStandard = (request) => {
         db.outcomestandard.findById(request.Id)
           .then(data => {
             //if outcomestandard exists, find the detail in detailoutcome
-            if (data) {
-              db.chuan_dau_ra_cdio.update({
-                del_flag: 1
-              }, {
-                  where: {
-                    id: data.dataValues.Id
-                  }
-                })
-                .then(() => {
-
-                })
+            if (data) {              
               db.detailoutcomestandard.findAll({
                 where: {
                   IdOutcomeStandard: request.Id

@@ -39,9 +39,28 @@ exports.addDetailOutcomeStandard = (request) => {
         db.sequelize.authenticate()
             .then(() => {
                 db.detailoutcomestandard.bulkCreate(request.data, { returning: true })
+                    .then(async data => {
+                        let general_info_array = [];
+                        let promises = data.map(row => {
+                            let obj = {};
+                            obj.id = row.dataValues.Id;
+                            obj.del_flag = 0;
+                            general_info_array.push(obj);
+                        });
+                        await Promise.all(promises);
+                    })
                     .then(() => {
-                        let code = 1;
-                        resolve(code);
+                        db.chuan_dau_ra_cdio.bulkCreate(general_info_array, { returning: true })
+                            .then(() => {
+                                let code = 1;
+                                let response = {};
+                                response.code = code;
+                                response.data = general_info_array;
+                                resolve(response);
+                            })
+                            .catch(err => {
+                                reject(err);
+                            })
                     })
                     .catch(err => {
                         reject(err);
@@ -57,18 +76,59 @@ exports.deleteDetailOutcomeStandard = (request) => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
             .then(() => {
-                db.detailoutcomestandard.destroy({
-                    where:{
-                        IdOutcomeStandard:request.IdOutcomeStandard
+                db.outcomestandard.findOne({
+                    where: {
+                        Id: request.IdOutcomeStandard
                     }
                 })
-                    .then(() => {
-                        let code = 1;
-                        resolve(code);
+                    .then(data => {
+                        if (!data) {
+                            let code = -1;
+                            resolve(code);
+                        } else {
+                            let updated_detail_array = [];
+                            db.detailoutcomestandard.findAll({
+                                where: {
+                                    IdOutcomeStandard: data.dataValues.Id
+                                }
+                            })
+                                .then(async data => {
+                                    const promises = data.map(row => {
+                                        updated_detail_array.push(row.dataValues.Id);
+                                    });
+                                    await Promise.all(promises);
+                                    db.chuan_dau_ra_cdio.update({
+                                        del_flag: 1
+                                    }, {
+                                            where: {
+                                                id: updated_detail_array
+                                            }
+                                        })
+                                        .then(effectedRows => {
+                                            console.log("Effected rows of chuan_dau_ra_cdio: ", effectedRows);
+                                            db.detailoutcomestandard.destroy({
+                                                where: {
+                                                    IdOutcomeStandard: request.IdOutcomeStandard
+                                                }
+                                            })
+                                                .then(() => {
+                                                    let code = 1;
+                                                    resolve(code);
+                                                })
+                                                .catch(err => {
+                                                    reject(err);
+                                                })
+                                        })
+                                        .catch(err => {
+                                            reject(err);
+                                        })
+                                })
+                        }
                     })
                     .catch(err => {
                         reject(err);
                     })
+
             })
             .catch(err => {
                 reject(err);
