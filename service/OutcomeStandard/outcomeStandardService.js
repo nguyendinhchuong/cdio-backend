@@ -81,21 +81,31 @@ exports.addOS = (data) => {
           DateEdited: data.DateEdited
         });
         os.save()
-          .then((data) => {
-            let revision = {};
-            revision.IdOutcomeStandard = data.Id;
-            revision.IdUser = data.IdUser;
-            revision.NameRevision = data.NameOutcomeStandard;
-            revision.DateUpdated = data.DateCreated;
-
-            db.revision.create(revision)
+          .then(async data => {
+            let general_info = {};
+            general_info.id = data.Id;
+            general_info.del_flag = 0;
+            await db.chuan_dau_ra_cdio.create(general_info)
               .then(() => {
-                let code = 1;
-                resolve(code);
+                let revision = {};
+                revision.IdOutcomeStandard = data.Id;
+                revision.IdUser = data.IdUser;
+                revision.NameRevision = data.NameOutcomeStandard;
+                revision.DateUpdated = data.DateCreated;
+
+                db.revision.create(revision)
+                  .then(() => {
+                    let code = 1;
+                    resolve(code);
+                  })
+                  .catch(err => {
+                    reject(err);
+                  });
               })
               .catch(err => {
                 reject(err);
               });
+
           })
           .catch(err => {
             reject(err);
@@ -117,6 +127,16 @@ exports.deleteOutcomeStandard = (request) => {
           .then(data => {
             //if outcomestandard exists, find the detail in detailoutcome
             if (data) {
+              db.chuan_dau_ra_cdio.update({
+                del_flag: 1
+              }, {
+                  where: {
+                    id: data.dataValues.Id
+                  }
+                })
+                .then(() => {
+
+                })
               db.detailoutcomestandard.findAll({
                 where: {
                   IdOutcomeStandard: request.Id
@@ -190,6 +210,7 @@ exports.deleteOutcomeStandard = (request) => {
                           reject(err);
                         })
                     })
+
                     .catch(err => {
                       reject(err);
                     })
