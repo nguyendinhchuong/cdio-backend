@@ -93,10 +93,25 @@ exports.addSubjectBulk = (request) => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
             .then(() => {
+                let general_info_array = [];
                 db.subject.bulkCreate(request.data, { returning: true })
+                    .then(async data => {
+                        const promises = data.map(async subject => {
+                            let obj = {};
+                            obj.del_flag = 0;
+                            obj.id = subject.dataValues.Id;
+                            general_info_array.push(obj);
+                        });
+                        await Promise.all(promises);
+                    })
                     .then(() => {
-                        let code = 1;
-                        resolve(code);
+                        db.thong_tin_chung.bulkCreate(general_info_array, { returning: true })
+                            .then(() => {
+                                let response = {};
+                                response.code = 1;
+                                response.data = general_info_array;
+                                resolve(response);
+                            })
                     })
                     .catch(err => {
                         reject(err);
