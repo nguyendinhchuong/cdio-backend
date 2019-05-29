@@ -230,48 +230,48 @@ function verifyToken(req, res, next) {
 }
 
 router.get('/collect-data/:id', function (req, res) {
-  // let id = req.params
-  // ThongTinChungModel.collect(id, (resData) => {
-  //   res.send(resData);
-  // })
-  jwt.verify(req.headers.token, 'secretkey', (err, authData) => {
-    if (err) {
-      res.sendStatus(403);
-    } else {
-      let id = req.params
-      ThongTinChungModel.collect(id, (resData) => {
-        res.send(resData);
-      })
-    }
+  let id = req.params
+  ThongTinChungModel.collect(id, (resData) => {
+    res.send(resData);
   })
+  // jwt.verify(req.headers.token, 'secretkey', (err, authData) => {
+  //   if (err) {
+  //     res.sendStatus(403);
+  //   } else {
+  //     let id = req.params
+  //     ThongTinChungModel.collect(id, (resData) => {
+  //       res.send(resData);
+  //     })
+  //   }
+  // })
 })
 
 router.post('/update-data/:id', function (req, res) {
-  // let id = req.params
-  // let description = req.body;
-  // ThongTinChungModel.add(id, description, function (err, description) {
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     res.send("SUCCESS");
-  //   }
-  // })
-
-  jwt.verify(req.headers.token, 'secretkey', (err, authData) => {
+  let id = req.params
+  let description = req.body;
+  ThongTinChungModel.add(id, description, function (err, description) {
     if (err) {
-      res.sendStatus(403);
+      console.log(err);
     } else {
-      let id = req.params
-      let description = req.body;
-      ThongTinChungModel.add(id, description, function (err, description) {
-        if (err) {
-          console.log(err);
-        } else {
-          res.send("SUCCESS");
-        }
-      })
+      res.send("SUCCESS");
     }
   })
+
+  // jwt.verify(req.headers.token, 'secretkey', (err, authData) => {
+  //   if (err) {
+  //     res.sendStatus(403);
+  //   } else {
+  //     let id = req.params
+  //     let description = req.body;
+  //     ThongTinChungModel.add(id, description, function (err, description) {
+  //       if (err) {
+  //         console.log(err);
+  //       } else {
+  //         res.send("SUCCESS");
+  //       }
+  //     })
+  //   }
+  // })
 })
 
 router.get('/get-data-2/:id', (req, res) => {
