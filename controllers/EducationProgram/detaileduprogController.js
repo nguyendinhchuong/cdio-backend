@@ -27,9 +27,10 @@ exports.getDetailEduProg = (req, res) => {
 }
 
 exports.addDetailEduProg = (req, res) => {
+    let params = req.query;
     let body = JSON.parse(req.body.data);
     let request = {};
-    request.IdEduProgram = Number(body.ideduprogram);
+    request.IdEduProgram = Number(params.ideduprogram);
     request.EnrollmentTarget = body.enrollmenttarget;
     request.DateCreated = body.datecreated;
     request.EduProcess = body.eduprocess;
@@ -65,17 +66,20 @@ exports.updateDetailEduProg = (req, res) => {
     request.GraduatedCon = body.graduatedcon;
     request.DateEdited = body.dateedited;
     request.IdOutcome = Number(body.idoutcome);
+    request.OSUsedNode = body.osusednode;
 
     detaileduprogram.updateDetailEduProg(request)
         .then(data => {
             let response = {};
-            if (data === 1) {
+            if (data.code === 1) {
                 response.code = 1;
                 response.message = "update success";
+                response.data = data.data;
                 res.send(JSON.stringify(response));
-            } else if (data === 2) {
+            } else if (data.code === 2) {
                 response.code = 2;
                 response.message = "create success";
+                response.data = data.data;
                 res.send(JSON.stringify(response));
             } else {
                 response.code = -1;

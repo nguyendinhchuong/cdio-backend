@@ -77,6 +77,7 @@ exports.updateDetailEduProg = (request) => {
                     }
                 })
                     .then(data => {
+                        let response = {};
                         if (data) {
                             db.detaileduprog.update({
                                 EnrollmentTarget: request.EnrollmentTarget,
@@ -102,7 +103,8 @@ exports.updateDetailEduProg = (request) => {
                                         .then(effectedRows => {
                                             console.log("Effected row of DetailEduProg: ", effectedRows);
                                             let code = 1;
-                                            resolve(code);
+                                            response.code = code;
+                                            resolve(response);
                                         })
                                         .catch(err => {
                                             reject(err);
@@ -112,6 +114,7 @@ exports.updateDetailEduProg = (request) => {
                                     reject(err);
                                 })
                         } else {
+
                             let obj = {};
                             obj.IdEduProgram = request.IdEduProgram;
                             obj.EnrollmentTarget = request.EnrollmentTarget;
@@ -122,6 +125,9 @@ exports.updateDetailEduProg = (request) => {
                             obj.OSUsedNode = request.OSUsedNode;
                             db.detaileduprog.create(obj)
                                 //update DateEdited in EduProgram table
+                                .then(data => {
+                                    response.data = data.dataValues.Id;
+                                })
                                 .then(() => {
                                     db.eduprogram.update({
                                         DateEdited: request.DateEdited
@@ -131,7 +137,8 @@ exports.updateDetailEduProg = (request) => {
                                         .then(effectedRows => {
                                             console.log("Effected row of DetailEduProg: ", effectedRows);
                                             let code = 2;
-                                            resolve(code);
+                                            response.code = code;
+                                            resolve(response);
                                         })
                                         .catch(err => {
                                             reject(err);
