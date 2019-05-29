@@ -50,10 +50,9 @@ ModelSurvey.addData = (data, id_qa, idMon, result) => {
                 resultValue += value + ',';
             });
 
-            query(`INSERT INTO survey VALUES 
-            ('${id_ctdt}','${idMon}','${id_giaovien}', '${element.key}', '${resultValue}',
-                '${element.description}','${id_qa}')
-            `).then (res => {
+            query(`INSERT INTO survey  (id_ctdt, id_mon, id_giaovien, id, value, mo_ta, id_qa)  VALUES
+            ('${id_ctdt}','${idMon}','${id_giaovien}', '${element.key}', '${resultValue}','${element.description}','${id_qa}')`)
+            .then (res => {
                 console.log(res);
             })
         });
