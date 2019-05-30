@@ -341,14 +341,16 @@ getSubjectId = (data) => {
 }
 
 MatrixModel.addMatrix = (body,result)=>{
+  console.log(body)
   return new Promise((resolve,reject)=>{
-    body.forEach((item,_)=>{
+    body.data.forEach((item,_)=>{
       getSubjectId(item.mon).then(res1 => {        
         checkExistTTCId(res1[0].Id).then(res => {
           if (res === true) {            
             item.itu.forEach(el => {
-              el.id = el.id.replace(/\./g, "-")
-              el.id += '-'
+              console.log('in');
+              // el.id = el.id.replace(/\./g, "-")
+              el.id += '.'
               sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do
               where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = 23 and length(KeyRow) = 6 and KeyRow = '${el.id}'`, (err, res) =>{
                 let muc_do = "-";
@@ -391,8 +393,8 @@ MatrixModel.addMatrix = (body,result)=>{
               }
               for(let i=0;i<res.length;i++){
                 item.ITU.forEach(el => {
-                  el.id = el.id.replace(/\./g, "-")
-                  el.id += '-'
+                  // el.id = el.id.replace(/\./g, "-")
+                  el.id += '.'
                   sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do
                   where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = 23 and length(KeyRow) = 6 and KeyRow = '${el.id}'`, (err, res) =>{
                     let muc_do = "-";

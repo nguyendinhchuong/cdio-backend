@@ -163,6 +163,9 @@ router.post('/exportfile', function (req, res, next) {
       // content += await compile('footer',renderContenByNameTab('Thông tin chung',JSON.parse(JSON.parse(body.data)['Thông tin chung'])));
       // }
       await page.setContent(content);
+      // page.content().then(data => {
+      //   console.log(data);
+      // })
       await page.emulateMedia('screen');
       await page.pdf({
         path: '../mypdf.pdf', // edit path

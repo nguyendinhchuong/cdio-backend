@@ -58,7 +58,7 @@ exports.updateEduPurpose = (request) => {
         db.sequelize.authenticate()
             .then(() => {
                 db.edupurpose.findOne({
-                    where:{
+                    where: {
                         IdDetail: request.IdDetail
                     }
                 })
@@ -72,16 +72,22 @@ exports.updateEduPurpose = (request) => {
                                     where: { IdDetail: request.IdDetail }
                                 })
                                 .then(effectRows => {
-                                    console.log("Effected rows of EduPurpose: "+ effectRows);
-                                    let code = 1;
+                                    console.log("Effected rows of EduPurpose: " + effectRows);
+                                    let code = 2;
                                     resolve(code);
                                 })
                                 .catch(err => {
                                     reject(err);
                                 })
                         } else {
-                            let code = -1;
-                            resolve(code);
+                            db.edupurpose.bulkCreate(request.data)
+                                .then(() => {
+                                    let code = 1;
+                                    resolve(code);
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
                         }
                     })
                     .catch(err => {
