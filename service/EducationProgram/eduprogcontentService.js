@@ -168,6 +168,30 @@ exports.getBlocksSubjects = request => {
     })
 }
 
+exports.getRowsContainTable = request => {
+    return new Promise(async (res, rej) => {
+        let listSubject = [];
+        await subjectService.getSubjectList().then(subjects => {
+            listSubject = subjects.reduce((arr, subject) => {
+                return arr.concat(subject.dataValues);
+            }, []);
+        }).catch(err => {
+            return Promise.reject(err);
+        })
+        await this.getEduContentByEduId(request).then(data => {
+            const results = {
+                eduContents: data.eduContents.map(item => item.dataValues),
+                subjectBlocks: data.subjectBlocks.map(item => item.dataValues),
+                detailBlocks: data.detailBlocks.map(item => item.dataValues)
+            };
+            const convert = convertDbToRowContainTable(results, listSubject);
+            res(convert);
+        }).catch(err => {
+            return Promise.reject(err);
+        })
+    })
+}
+
 const insertContentsAndRelationship = (data, IdEduProgram) => {
     try {
         data.map((row, index) => {
@@ -316,8 +340,32 @@ const convertDbToBlocksSubjects = (dataDb, subjects) => {
     
     const contentsBlocks = contentPro.reduce((arr, content)=>{
         if(content.Type){
-            const contents = addBlocksIntoRowName(content, blocksSubjects);
+            const contents = addBlocksIntoTableName(content, blocksSubjects);
             return arr.concat(contents);
+        }
+        return arr;
+    },[]);
+    // block into rowName
+    return contentsBlocks;
+};
+
+const convertDbToRowContainTable = (dataDb, subjects) => {
+    const contentPro = [...dataDb.eduContents];
+    const blocks = [...dataDb.subjectBlocks];
+    const detailBlocks = [...dataDb.detailBlocks];
+    const listSubjectFull = mapSubjectWithDetailBlock(detailBlocks, subjects);
+    //subjects into block
+    const blocksSubjects = blocks.reduce((arr, block) => {
+        const blocksSubjects = addSubjectsIntoBlock(block, listSubjectFull);
+        return arr.concat(blocksSubjects);
+    }, []);
+    
+    const contentsBlocks = contentPro.reduce((arr, content)=>{
+        if(content.Type){
+            const contents = addBlocksIntoTableName(content, blocksSubjects);
+            let row = findRowParentOfTable(contentPro, content);
+            row.children.concat(contents);
+            return arr.concat(row);
         }
         return arr;
     },[]);
@@ -345,7 +393,7 @@ const addSubjectsIntoBlock = (block, subjectsFull) => {
     return blockSubjects;
 };
 
-const addBlocksIntoRowName = (content, blocks) =>{
+const addBlocksIntoTableName = (content, blocks) =>{
     const contentResults = {...content};
     contentResults.block = blocks.reduce((arr, block)=>{
         if(block.KeyRow === content.KeyRow){
@@ -355,3 +403,12 @@ const addBlocksIntoRowName = (content, blocks) =>{
     },[]);
     return contentResults;
 }
+
+const findRowParentOfTable = (rows, rowChild) =>{
+    return rows.find(row => {
+        if(row.KeyRow.includes(rowChild.KeyRow)){
+                return row;
+            }
+    })
+}
+
