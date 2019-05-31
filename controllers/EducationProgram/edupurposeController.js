@@ -3,7 +3,9 @@ const edupurpose = require('../../service/EducationProgram/edupurposeService');
 exports.getEduPurpose = (req, res) => {
     let params = req.query;
     let request = {};
-    request.IdDetailEduProg = Number(params.iddetaileduprogram);
+    request.IdDetailEduProg = +params.iddetaileduprogram;
+    console.log("Hahaa");
+    
     edupurpose.getEduPurpose(request)
         .then(data => {
             let response = {};
@@ -22,25 +24,27 @@ exports.getEduPurpose = (req, res) => {
 }
 
 exports.addEduPurpose = (req, res) => {
-    let body = JSON.parse(req.body.data);
-    let params = req.query;
-    let request = {};
-
-    let array = [];
+    const body = JSON.parse(req.body.data);
+    const params = req.query;
+    const request = {};
+    const response = {};
+    console.log("+++Insert edupurpose");
+    
+    const array = [];
     body.map(row => {
         let obj = {};
-        obj.IdDetail = Number(params.iddetail);
+        obj.IdDetail =  +params.iddetail;
         obj.KeyRow = row.KeyRow;
         obj.NameRow = row.NameRow;
-        obj.DateCreated = params.datecreated;
-        obj.OSUsed = Number(body.osused);
+        obj.DateCreated = null;
+        obj.OSUsed = row.OSUsed;
         array.push(obj);
     })
     request.data = array;
+    request.IdDetailEduProg = +params.iddetail;
 
     edupurpose.addEduPurpose(request)
         .then(data => {
-            let response = {};
             if (data === 1) {
                 response.code = 1;
                 response.message = "success";

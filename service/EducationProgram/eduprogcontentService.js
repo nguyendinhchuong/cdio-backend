@@ -70,7 +70,6 @@ exports.addEduContent = async (request) => {
         const idEduContents = [];
         const listIdBlock = [];
         const detailBlocks = [];
-        console.log("--1");
         
         await getContents(request.IdEduProg).then(contents => {
             contents.map(content => {
@@ -99,13 +98,6 @@ exports.addEduContent = async (request) => {
             console.log('ERR Detail Block');
             return Promise.reject(err);
         })
-        console.log("----2");
-        console.log(idEduContents);
-        console.log(listIdBlock);
-        console.log(detailBlocks);
-        
-        
-        
         await deleteContentsAndRelationship(idEduContents, listIdBlock, detailBlocks);
         // insert
         await insertContentsAndRelationship(request.data, request.IdEduProg);
