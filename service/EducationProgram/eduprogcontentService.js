@@ -70,7 +70,7 @@ exports.addEduContent = async (request) => {
         const idEduContents = [];
         const listIdBlock = [];
         const detailBlocks = [];
-        
+
         await getContents(request.IdEduProg).then(contents => {
             contents.map(content => {
                 idEduContents.push({
@@ -107,35 +107,7 @@ exports.addEduContent = async (request) => {
     }
 }
 
-const deleteContentsAndRelationship = async (idEduContents, listIdBlock, detailBlocks) => {
-    console.log("delete detail Block");
 
-    await db.detailblock.destroy({
-        where: {
-            Id: {
-                $in: detailBlocks
-            }
-        }
-    })
-    console.log("delete subjectBlock");
-    await db.subjectblock.destroy({
-        where: {
-            Id: {
-                $in: listIdBlock
-            }
-        }
-    });
-    console.log("delete content");
-    await db.eduprogcontent.destroy({
-        where: {
-            Id: {
-                $in: idEduContents.map(item => {
-                    return item.Id
-                })
-            }
-        }
-    })
-}
 
 exports.getBlocksSubjects = request => {
     return new Promise(async (res, rej) => {
@@ -161,28 +133,28 @@ exports.getBlocksSubjects = request => {
     })
 }
 
-exports.getRowsContainTable = request => {
-    return new Promise(async (res, rej) => {
-        let listSubject = [];
-        await subjectService.getSubjectList().then(subjects => {
-            listSubject = subjects.reduce((arr, subject) => {
-                return arr.concat(subject.dataValues);
-            }, []);
-        }).catch(err => {
-            return Promise.reject(err);
-        })
-        await this.getEduContentByEduId(request).then(data => {
-            const results = {
-                eduContents: data.eduContents.map(item => item.dataValues),
-                subjectBlocks: data.subjectBlocks.map(item => item.dataValues),
-                detailBlocks: data.detailBlocks.map(item => item.dataValues)
-            };
-            const convert = convertDbToRowContainTable(results, listSubject);
-            res(convert);
-        }).catch(err => {
-            return Promise.reject(err);
-        })
+exports.getRowsContainTable = async request => {
+
+    let listSubject = [];
+    let convert ;
+    await subjectService.getSubjectList().then(subjects => {
+        listSubject = subjects.reduce((arr, subject) => {
+            return arr.concat(subject.dataValues);
+        }, []);
+    }).catch(err => {
+        return Promise.reject(err);
     })
+    await this.getEduContentByEduId(request).then(data => {
+        const results = {
+            eduContents: data.eduContents.map(item => item.dataValues),
+            subjectBlocks: data.subjectBlocks.map(item => item.dataValues),
+            detailBlocks: data.detailBlocks.map(item => item.dataValues)
+        };
+        convert = convertDbToRowContainTable(results, listSubject);
+    }).catch(err => {
+        return Promise.reject(err);
+    })
+    return Promise.resolve(convert);
 }
 
 const insertContentsAndRelationship = (data, IdEduProgram) => {
@@ -357,7 +329,8 @@ const convertDbToRowContainTable = (dataDb, subjects) => {
         if (content.Type) {
             const contents = addBlocksIntoTableName(content, blocksSubjects);
             let row = findRowParentOfTable(contentPro, content);
-            row.children.concat(contents);
+            row = {...row, children:[]};
+            row.children.push(contents);
             return arr.concat(row);
         }
         return arr;
@@ -398,10 +371,43 @@ const addBlocksIntoTableName = (content, blocks) => {
 }
 
 const findRowParentOfTable = (rows, rowChild) => {
-    return rows.find(row => {
-        if (row.KeyRow.includes(rowChild.KeyRow)) {
-            return row;
+    const keyChild = rowChild.KeyRow;
+    const parentKey = keyChild.slice(0, keyChild.lastIndexOf('.'));
+    const length = rows.length;
+    for(let i=0; i<length; i++){
+        if(rows[i].KeyRow === parentKey){
+            return rows[i];
+        }
+    }
+    return null;
+}
+
+const deleteContentsAndRelationship = async (idEduContents, listIdBlock, detailBlocks) => {
+    console.log("delete detail Block");
+
+    await db.detailblock.destroy({
+        where: {
+            Id: {
+                $in: detailBlocks
+            }
+        }
+    })
+    console.log("delete subjectBlock");
+    await db.subjectblock.destroy({
+        where: {
+            Id: {
+                $in: listIdBlock
+            }
+        }
+    });
+    console.log("delete content");
+    await db.eduprogcontent.destroy({
+        where: {
+            Id: {
+                $in: idEduContents.map(item => {
+                    return item.Id
+                })
+            }
         }
     })
 }
-

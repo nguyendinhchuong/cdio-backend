@@ -116,11 +116,14 @@ exports.getKnowledgeTable = (req, res) => {
                 response.data = data;
                 res.send(JSON.stringify(response));
             }).catch(err => {
+                console.log(err);
                 response.code = -1;
                 response.message = "fail";
                 res.send(JSON.stringify(response));
             })
     } catch (err) {
+        console.log("fail 2 ");
+        
         response.code = -1;
         response.message = "fail";
         res.send(JSON.stringify(response));
