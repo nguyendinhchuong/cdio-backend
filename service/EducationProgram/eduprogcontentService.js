@@ -70,8 +70,8 @@ exports.addEduContent = async (request) => {
         const idEduContents = [];
         const listIdBlock = [];
         const detailBlocks = [];
-        console.log("delete");
-
+        console.log("--1");
+        
         await getContents(request.IdEduProg).then(contents => {
             contents.map(content => {
                 idEduContents.push({
@@ -79,69 +79,70 @@ exports.addEduContent = async (request) => {
                     Type: content.dataValues.Type
                 });
             });
-            if (idEduContents.length) {
-                console.log('---Destroy-- educontent');
-                db.eduprogcontent.destroy({
-                    where: {
-                        Id: {
-                            $in: idEduContents.map(item => {
-                                return item.Id
-                            })
-                        }
-                    }
-                })
-            }
         }).catch(err => {
             console.log('ERR contents');
-
             return Promise.reject(err);
         })
-        if (idEduContents.length) {
-            await getSubjectBlocks(idEduContents).then(blocks => {
-                blocks.map(block => {
-                    listIdBlock.push(block.dataValues.Id);
-                })
-                if (listIdBlock.length) {
-                    console.log('---Destroy-- subjectBlock');
-                    db.subjectblock.destroy({
-                        where: {
-                            Id: {
-                                $in: listIdBlock
-                            }
-                        }
-                    })
-                }
-            }).catch(err => {
-                console.log('ERR subject Block');
-                return Promise.reject(err);
+        await getSubjectBlocks(idEduContents).then(blocks => {
+            blocks.map(block => {
+                listIdBlock.push(block.dataValues.Id);
             })
-        }
-        if (listIdBlock.length) {
-            await getDetailBlocks(listIdBlock).then(detailsOfBlock => {
-                detailsOfBlock.map(detail => {
-                    detailBlocks.push(detail.dataValues.Id)
-                })
-                if (detailBlocks.length) {
-                    console.log('---Destroy-- detail Block');
-                    db.detailblock.destroy({
-                        where: {
-                            Id: {
-                                $in: detailBlocks
-                            }
-                        }
-                    })
-                }
-            }).catch(err => {
-                console.log('ERR Detail Block');
-                return Promise.reject(err);
+        }).catch(err => {
+            console.log('ERR subject Block');
+            return Promise.reject(err);
+        })
+        await getDetailBlocks(listIdBlock).then(detailsOfBlock => {
+            detailsOfBlock.map(detail => {
+                detailBlocks.push(detail.dataValues.Id)
             })
-        }
+        }).catch(err => {
+            console.log('ERR Detail Block');
+            return Promise.reject(err);
+        })
+        console.log("----2");
+        console.log(idEduContents);
+        console.log(listIdBlock);
+        console.log(detailBlocks);
+        
+        
+        
+        await deleteContentsAndRelationship(idEduContents, listIdBlock, detailBlocks);
         // insert
         await insertContentsAndRelationship(request.data, request.IdEduProg);
         return Promise.resolve("OK");
     } catch (err) {
         return Promise.reject(err);
     }
+}
+
+const deleteContentsAndRelationship = async (idEduContents, listIdBlock, detailBlocks) => {
+    console.log("delete detail Block");
+
+    await db.detailblock.destroy({
+        where: {
+            Id: {
+                $in: detailBlocks
+            }
+        }
+    })
+    console.log("delete subjectBlock");
+    await db.subjectblock.destroy({
+        where: {
+            Id: {
+                $in: listIdBlock
+            }
+        }
+    });
+    console.log("delete content");
+    await db.eduprogcontent.destroy({
+        where: {
+            Id: {
+                $in: idEduContents.map(item => {
+                    return item.Id
+                })
+            }
+        }
+    })
 }
 
 exports.getBlocksSubjects = request => {
@@ -206,7 +207,7 @@ const insertContentsAndRelationship = (data, IdEduProgram) => {
                     blocks.map(subjects => {
                         insertSubjectBlocks(subjects, content.Id).then(block => {
                             subjects.map(subject => {
-                                console.log('-- insert detal block ' + block.Id);
+                                console.log('-- insert detail block ' + block.Id);
                                 insertDetailBlock(subject, block.Id);
                             })
 
@@ -337,14 +338,14 @@ const convertDbToBlocksSubjects = (dataDb, subjects) => {
         const blocksSubjects = addSubjectsIntoBlock(block, listSubjectFull);
         return arr.concat(blocksSubjects);
     }, []);
-    
-    const contentsBlocks = contentPro.reduce((arr, content)=>{
-        if(content.Type){
+
+    const contentsBlocks = contentPro.reduce((arr, content) => {
+        if (content.Type) {
             const contents = addBlocksIntoTableName(content, blocksSubjects);
             return arr.concat(contents);
         }
         return arr;
-    },[]);
+    }, []);
     // block into rowName
     return contentsBlocks;
 };
@@ -359,16 +360,16 @@ const convertDbToRowContainTable = (dataDb, subjects) => {
         const blocksSubjects = addSubjectsIntoBlock(block, listSubjectFull);
         return arr.concat(blocksSubjects);
     }, []);
-    
-    const contentsBlocks = contentPro.reduce((arr, content)=>{
-        if(content.Type){
+
+    const contentsBlocks = contentPro.reduce((arr, content) => {
+        if (content.Type) {
             const contents = addBlocksIntoTableName(content, blocksSubjects);
             let row = findRowParentOfTable(contentPro, content);
             row.children.concat(contents);
             return arr.concat(row);
         }
         return arr;
-    },[]);
+    }, []);
     // block into rowName
     return contentsBlocks;
 };
@@ -393,22 +394,22 @@ const addSubjectsIntoBlock = (block, subjectsFull) => {
     return blockSubjects;
 };
 
-const addBlocksIntoTableName = (content, blocks) =>{
-    const contentResults = {...content};
-    contentResults.block = blocks.reduce((arr, block)=>{
-        if(block.KeyRow === content.KeyRow){
+const addBlocksIntoTableName = (content, blocks) => {
+    const contentResults = { ...content };
+    contentResults.block = blocks.reduce((arr, block) => {
+        if (block.KeyRow === content.KeyRow) {
             return arr.concat(block);
         }
         return arr;
-    },[]);
+    }, []);
     return contentResults;
 }
 
-const findRowParentOfTable = (rows, rowChild) =>{
+const findRowParentOfTable = (rows, rowChild) => {
     return rows.find(row => {
-        if(row.KeyRow.includes(rowChild.KeyRow)){
-                return row;
-            }
+        if (row.KeyRow.includes(rowChild.KeyRow)) {
+            return row;
+        }
     })
 }
 
