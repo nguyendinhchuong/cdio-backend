@@ -51,13 +51,17 @@ exports.isAuthenticated = (req, res, next) => {
                 //permission: just use api url base on role defined in Role.js
                 let regex = /^[^?]+/gm;
                 let baseUrl = regex.exec(req.originalUrl);
+                console.log(payload);
                 payload.role.map(has_role => {
                     if (role[has_role] !== undefined) {
+                        
                         if (role[has_role].find(url => {
                             return url == baseUrl[0];
                         })) {
+                            console.log("code run here");
                             user.getUserByUsername(payload.username)
                                 .then(data => {
+                                    console.log(data.dataValues);
                                     req.user = data;
                                     next();
                                 })
