@@ -34,6 +34,7 @@ exports.getDetailTeachPlanBlock = (request) => {
                     .then(async data => {
                         const promises = data.map(async semester => {
                             let semester_obj = {};
+                            let subject_arr = [];
                             semester_obj.semester = semester.dataValues.Semester;
                             await db.detailteachplanblock.findAll({
                                 where: {
@@ -41,8 +42,9 @@ exports.getDetailTeachPlanBlock = (request) => {
                                 }
                             })
                                 .then(async data => {
-                                    subject_arr = [];
+
                                     const subject_promise = data.map(async detailblock => {
+
                                         let subject_obj = {}
                                         subject_obj = detailblock.dataValues;
                                         await db.subject.findByPk(detailblock.dataValues.IdSubject)
@@ -56,8 +58,7 @@ exports.getDetailTeachPlanBlock = (request) => {
                                                 subject_obj.PracticePeriod = data.dataValues.PracticePeriod;
                                                 subject_obj.ExercisePeriod = data.dataValues.ExercisePeriod;
                                                 subject_obj.Description = data.dataValues.Description;
-                                            })
-                                            .then(() => {
+
                                                 subject_arr.push(subject_obj);
                                             })
                                             .catch(err => {
@@ -67,7 +68,7 @@ exports.getDetailTeachPlanBlock = (request) => {
                                     await Promise.all(subject_promise);
                                 })
                                 .then(() => {
-                                    semester_obj.subjects = subject_arr;
+                                    semester_obj.subjects = Array.from(subject_arr);
                                     response.push(semester_obj);
                                     return response;
                                 })
