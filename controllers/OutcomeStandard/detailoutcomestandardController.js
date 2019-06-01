@@ -26,6 +26,7 @@ exports.addDetailOutcomeStandard = (req, res) => {
     })
 
     request.data = new_array;
+    request.IdOutcomeStandard = Number(params.idoutcome);
     detailOS.addDetailOutcomeStandard(request)
         .then(data => {
             let response = {};
