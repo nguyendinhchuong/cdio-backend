@@ -7,4 +7,5 @@ module.exports = (app) => {
     app.route('/detailblock/deleteone').post(detailblock.deleteOne);
     app.route('/detailblock/deletebyidsubject').post(detailblock.deleteByIdSubject);
     app.route('/detailblock/deletebyidsubjectblock').post(detailblock.deleteByIdSubjectBlock);
+    app.route('/detailblock/addteacher').post(detailblock.addTeacher);
 }

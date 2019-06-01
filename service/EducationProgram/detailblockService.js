@@ -175,3 +175,41 @@ exports.deleteByIdSubjectBlock = (request) => {
             })
     })
 }
+
+exports.addTeacher = (request) => {
+    return new Promise((resolve, reject) => {
+        db.sequelize.authenticate()
+            .then(() => {
+                db.detailblock.update({
+                    IdUser: request.IdUser
+                }, {
+                        where: {
+                            IdSubject: request.IdSubject,
+                            IdSubjectBlock: request.IdSubjectBlock
+                        }
+                    })
+                    .then(effectedRows => {
+                        console.log("Effected rows of detail block: ", effectedRows);
+                        let code = 1;
+                        resolve(code);
+                    })
+                    .catch(err => {
+                        reject(err);
+                    })
+            })
+            .catch(err => {
+                reject(err);
+            })
+    })
+}
+exports.addListTeacher = (request) => {
+    return new Promise((resolve, reject) => {
+        db.sequelize.authenticate()
+            .then(() => {
+                
+            })
+            .catch(err => {
+                reject(err);
+            })
+    })
+}

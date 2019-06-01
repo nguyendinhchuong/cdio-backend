@@ -38,6 +38,7 @@ exports.addDetailOutcomeStandard = (request) => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
             .then(() => {
+                db.detailoutcomestandard.
                 db.detailoutcomestandard.bulkCreate(request.data, { returning: true })
                     .then(async data => {
                         let general_info_array = [];

@@ -6,19 +6,21 @@ const QUAN_LY_SURVEY = 3;
 const VIEW_SYLLABUS = 4;
 const role = {
     5: [
-        '/user/getlist',
-        '/user/getinfo'
+        '/user/getlist/',
+        '/user/getinfo/',
+        '/user/changepass/'
     ],
     6: [
-        '/user/getlist',
-        '/user/getinfo'
+        '/user/getlist/',
+        '/user/getinfo/'
     ],
     1: [
-        '/user/getlist',
-        '/user/getinfo',
-        '/user/delete',
+        '/user/getlist/',
+        '/user/getinfo/',
+        '/user/delete/',
         '/user/register/',
-        '/user/getbyrole'
+        '/user/getbyrole/',
+        '/user/delete/'
     ]
 }
 
