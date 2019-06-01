@@ -34,6 +34,7 @@ exports.getDetailTeachPlanBlock = (request) => {
                     .then(async data => {
                         const promises = data.map(async semester => {
                             let semester_obj = {};
+                            let subject_arr = [];
                             semester_obj.semester = semester.dataValues.Semester;
                             await db.detailteachplanblock.findAll({
                                 where: {
@@ -41,13 +42,35 @@ exports.getDetailTeachPlanBlock = (request) => {
                                 }
                             })
                                 .then(async data => {
-                                    subject_arr = [];
-                                    await data.map(detailblock => {
-                                        subject_arr.push(detailblock.dataValues);
+
+                                    const subject_promise = data.map(async detailblock => {
+
+                                        let subject_obj = {}
+                                        subject_obj.IdTeachPlan = detailblock.dataValues.IdTeachPlan;
+                                        subject_obj.Note = detailblock.dataValues.Note;
+                                        subject_obj.Optional = detailblock.dataValues.Optional;
+                                        await db.subject.findByPk(detailblock.dataValues.IdSubject)
+                                            .then(data => {
+                                                subject_obj.Id = data.dataValues.Id;
+                                                subject_obj.SubjectCode = data.dataValues.SubjectCode;
+                                                subject_obj.SubjectName = data.dataValues.SubjectName;
+                                                subject_obj.SubjectEngName = data.dataValues.SubjectEngName;
+                                                subject_obj.Credit = data.dataValues.Credit;
+                                                subject_obj.TheoryPeriod = data.dataValues.TheoryPeriod;
+                                                subject_obj.PracticePeriod = data.dataValues.PracticePeriod;
+                                                subject_obj.ExercisePeriod = data.dataValues.ExercisePeriod;
+                                                subject_obj.Description = data.dataValues.Description;
+
+                                                subject_arr.push(subject_obj);
+                                            })
+                                            .catch(err => {
+                                                reject(err);
+                                            })
                                     })
+                                    await Promise.all(subject_promise);
                                 })
                                 .then(() => {
-                                    semester_obj.subjects = subject_arr;
+                                    semester_obj.subjects = Array.from(subject_arr);
                                     response.push(semester_obj);
                                     return response;
                                 })
@@ -137,7 +160,7 @@ exports.updateTeachPlanBlock = (request) => {
                                             detail_obj.IdTeachPlan = data.dataValues.Id;
                                             detail_obj.IdSubject = subject.Id;
                                             detail_obj.Note = subject.Note;
-                                            detail_obj.Optional = subject.Optional;
+                                            detail_obj.Optional = (subject.option === 'BB') ? 0 : 1;
                                             bulkDetail.push(detail_obj);
                                         });
                                         await Promise.all(promises);
@@ -176,7 +199,7 @@ exports.updateTeachPlanBlock = (request) => {
                                                         detail_obj.IdTeachPlan = data.dataValues.Id;
                                                         detail_obj.IdSubject = subject.Id;
                                                         detail_obj.Note = subject.Note;
-                                                        detail_obj.Optional = subject.Optional;
+                                                        detail_obj.Optional = (subject.option === 'BB') ? 0 : 1;
                                                         bulkDetail.push(detail_obj);
                                                     });
                                                     await Promise.all(promises);
@@ -206,7 +229,7 @@ exports.updateTeachPlanBlock = (request) => {
                                                         detail_obj.IdTeachPlan = data.dataValues.Id;
                                                         detail_obj.IdSubject = subject.Id;
                                                         detail_obj.Note = subject.Note;
-                                                        detail_obj.Optional = subject.Optional;
+                                                        detail_obj.Optional = (subject.option === 'BB') ? 0 : 1;
                                                         bulkDetail.push(detail_obj);
                                                     });
                                                     await Promise.all(promises);

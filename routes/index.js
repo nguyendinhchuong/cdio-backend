@@ -1706,6 +1706,7 @@ router.get('/get-standardoutput-7/:id', function (req, res) {
     }
 })
 
+
 router.get('/get-reality-matrix', function (req, res) {
     if (req.headers &&
         req.headers.authorization &&
@@ -1715,12 +1716,14 @@ router.get('/get-reality-matrix', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-                MatrixModel.getRealityMatrix().then(result => {
-                    return res.end(JSON.stringify(result));
+                const data = req.body.data;
+
+                MatrixModel.getRealityMatrix(data).then(result => {
+                  return res.end(JSON.stringify(result));
                 })
-                    .catch(err => {
-                        return res.end(JSON.stringify(err))
-                    });
+                  .catch(err => {
+                    return res.end(JSON.stringify(err))
+                  });
             }
         })
     } else {
@@ -1759,17 +1762,21 @@ router.get('/get-standard-matrix', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-                MatrixModel.getStandardMatrix().then(result => {
-                    return res.end(JSON.stringify(result));
+              
+                const data = req.body.data;
+
+                MatrixModel.getStandardMatrix(data).then(result => {
+                  return res.end(JSON.stringify(result));
                 })
-                    .catch(err => {
-                        return res.end(JSON.stringify(err))
-                    });
+                  .catch(err => {
+                    return res.end(JSON.stringify(err))
+                  });
             }
         })
     } else {
         res.send("Invalid token!");
     }
+
 });
 
 router.post('/update-standard-matrix', function (req, res) {
@@ -1796,6 +1803,7 @@ router.post('/update-standard-matrix', function (req, res) {
     }
 })
 
+
 router.get('/get-benchmark-matrix', function (req, res) {
     if (req.headers &&
         req.headers.authorization &&
@@ -1805,17 +1813,19 @@ router.get('/get-benchmark-matrix', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-                MatrixModel.getBenchmarkMatrix().then(result => {
-                    return res.end(JSON.stringify(result));
+                const data= req.body.data;
+                MatrixModel.getBenchmarkMatrix(data).then(result => {
+                  return res.end(JSON.stringify(result));
                 })
-                    .catch(err => {
-                        return res.end(JSON.stringify(err))
-                    });
+                  .catch(err => {
+                    return res.end(JSON.stringify(err))
+                  });
             }
         })
     } else {
         res.send("Invalid token!");
     }
+
 });
 
 

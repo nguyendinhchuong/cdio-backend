@@ -1,6 +1,7 @@
 const db = require('../../models/index');
 
 const subjectService = require('./subjectService');
+const userService = require('../User/userService');
 
 exports.getEduContentByEduId = (request) => {
     return new Promise((resolve, reject) => {
@@ -111,13 +112,18 @@ exports.addEduContent = async (request) => {
 
 exports.getBlocksSubjects = request => {
     return new Promise(async (res, rej) => {
-        let listSubject = [];
+        let listSubjects = [];
+        let listUsers = [];
         await subjectService.getSubjectList().then(subjects => {
-            listSubject = subjects.reduce((arr, subject) => {
+            listSubjects = subjects.reduce((arr, subject) => {
                 return arr.concat(subject.dataValues);
             }, []);
         }).catch(err => {
             return Promise.reject(err);
+        })
+        await userService.getList()
+        .then(users=>{
+            listUsers = [...users.data];
         })
         await this.getEduContentByEduId(request).then(data => {
             const results = {
@@ -125,7 +131,7 @@ exports.getBlocksSubjects = request => {
                 subjectBlocks: data.subjectBlocks.map(item => item.dataValues),
                 detailBlocks: data.detailBlocks.map(item => item.dataValues)
             };
-            const convert = convertDbToBlocksSubjects(results, listSubject);
+            const convert = convertDbToBlocksSubjects(results, listSubjects, listUsers);
             res(convert);
         }).catch(err => {
             return Promise.reject(err);
@@ -136,6 +142,7 @@ exports.getBlocksSubjects = request => {
 exports.getRowsContainTable = async request => {
 
     let listSubject = [];
+    let listUsers = [];
     let convert ;
     await subjectService.getSubjectList().then(subjects => {
         listSubject = subjects.reduce((arr, subject) => {
@@ -144,13 +151,17 @@ exports.getRowsContainTable = async request => {
     }).catch(err => {
         return Promise.reject(err);
     })
+    await userService.getList()
+        .then(users=>{
+            listUsers = [...users.data];
+        })
     await this.getEduContentByEduId(request).then(data => {
         const results = {
             eduContents: data.eduContents.map(item => item.dataValues),
             subjectBlocks: data.subjectBlocks.map(item => item.dataValues),
             detailBlocks: data.detailBlocks.map(item => item.dataValues)
         };
-        convert = convertDbToRowContainTable(results, listSubject);
+        convert = convertDbToRowContainTable(results, listSubject, listUsers);
     }).catch(err => {
         return Promise.reject(err);
     })
@@ -292,11 +303,15 @@ const groupBy = (array, f) => {
     });
 };
 
-const convertDbToBlocksSubjects = (dataDb, subjects) => {
+const convertDbToBlocksSubjects = (dataDb, subjects, users) => {
     const contentPro = [...dataDb.eduContents];
     const blocks = [...dataDb.subjectBlocks];
     const detailBlocks = [...dataDb.detailBlocks];
-    const listSubjectFull = mapSubjectWithDetailBlock(detailBlocks, subjects);
+    const listSubjectFull = mapSubjectWithDetailBlockAndUser(detailBlocks, subjects, users);
+    console.log("CCCC");
+    console.log(listSubjectFull);
+    
+    
     //subjects into block
     const blocksSubjects = blocks.reduce((arr, block) => {
         const blocksSubjects = addSubjectsIntoBlock(block, listSubjectFull);
@@ -314,11 +329,11 @@ const convertDbToBlocksSubjects = (dataDb, subjects) => {
     return contentsBlocks;
 };
 
-const convertDbToRowContainTable = (dataDb, subjects) => {
+const convertDbToRowContainTable = (dataDb, subjects, users) => {
     const contentPro = [...dataDb.eduContents];
     const blocks = [...dataDb.subjectBlocks];
     const detailBlocks = [...dataDb.detailBlocks];
-    const listSubjectFull = mapSubjectWithDetailBlock(detailBlocks, subjects);
+    const listSubjectFull = mapSubjectWithDetailBlockAndUser(detailBlocks, subjects, users);
     //subjects into block
     const blocksSubjects = blocks.reduce((arr, block) => {
         const blocksSubjects = addSubjectsIntoBlock(block, listSubjectFull);
@@ -339,10 +354,14 @@ const convertDbToRowContainTable = (dataDb, subjects) => {
     return contentsBlocks;
 };
 
-const mapSubjectWithDetailBlock = (detailBlocks, subjects) => {
+const mapSubjectWithDetailBlockAndUser = (detailBlocks, subjects, users) => {
     return detailBlocks.reduce((arr, detail) => {
         const subject = subjects.find(subject => subject.Id === detail.IdSubject);
-        const fullSub = { ...detail, ...subject };
+        let user = users.find(user => user.Id === detail.IdUser);
+        const fullSub = { ...detail, ...subject, username:null };
+        if(user){
+            fullSub.username = user.username ? user.username : null;
+        }
         return arr.concat(fullSub);
     }, []);
 };

@@ -8,9 +8,47 @@ exports.getList = () => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
             .then(() => {
+                let response = {};
+                let user_array = [];
                 db.user.findAll()
-                    .then(data => {
-                        resolve(data);
+                    .then(async data => {
+                        const promises = data.map(async user => {
+                            let obj = {};
+                            obj.id = user.dataValues.id;
+                            obj.username = user.dataValues.username;
+                            obj.name = user.dataValues.name;
+                            obj.email = user.dataValues.email;
+
+                            await db.user_has_role.findAll({
+                                where: {
+                                    idUser: user.dataValues.id
+                                }
+                            })
+                                .then(async data => {
+                                    let role_array = [];
+                                    const role_promise = data.map(async idRole => {
+                                        await db.role.findByPk(idRole.dataValues.idRole)
+                                            .then(data => {
+                                                role_array.push(data.dataValues.role);
+                                            })
+                                            .catch(err => {
+                                                reject(err);
+                                            })
+                                    })
+                                    await Promise.all(role_promise);
+                                    obj.role = role_array;
+                                    user_array.push(obj);
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
+                        })
+                        await Promise.all(promises);
+                    })
+                    .then(() => {
+                        response.data = user_array;
+                        response.code = 1;
+                        resolve(response);
                     })
                     .catch(err => {
                         reject(err);

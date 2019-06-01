@@ -71,9 +71,9 @@ exports.getList = (req, res) => {
     user.getList()
         .then(data => {
             let response = {};
-            if (data) {
+            if (data.code === 1) {
                 response.code = 1;
-                response.data = data;
+                response.data = data.data;
                 response.message = "success";
                 res.send(JSON.stringify(response));
             } else {

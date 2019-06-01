@@ -120,3 +120,28 @@ exports.deleteByIdSubjectBlock = (req, res) => {
             throw err;
         })
 }
+exports.addTeacher = (req, res) => {
+    let params = req.query;
+    let request = {};
+    request.IdUser = Number(params.iduser);
+    request.IdSubject = Number(params.idsubject);
+    request.IdSubjectBlock = Number(params.idsubjectblock);
+
+    detailblock.addTeacher(request)
+        .then(data => {
+            let response = {};
+            if (data === 1) {
+                response.code = 1;
+                response.message = "add success";
+                res.send(JSON.stringify(response));
+            } else {
+                response.code = -1;
+                response.message = "fail";
+                res.send(JSON.stringify(response));
+            }
+        })
+        .catch(err => {
+            throw err;
+        })
+
+}
