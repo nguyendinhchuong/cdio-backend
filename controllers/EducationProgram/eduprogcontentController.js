@@ -95,3 +95,37 @@ exports.getBlockSubjects = (req, res) => {
         res.send(JSON.stringify(response));
     }
 }
+
+exports.getKnowledgeTable = (req, res) => {
+    const request = {};
+    const response = {};
+    try {
+        const params = req.query;
+        request.IdEduProg = +params.id;
+
+        if (isNaN(+params.id)) {
+            response.code = -1;
+            response.message = "param isn't string";
+            res.send(JSON.stringify(response));
+        }
+
+        eduprogcontent.getRowsContainTable(request)
+            .then(data => {
+                response.code = 1;
+                response.message = "success";
+                response.data = data;
+                res.send(JSON.stringify(response));
+            }).catch(err => {
+                console.log(err);
+                response.code = -1;
+                response.message = "fail";
+                res.send(JSON.stringify(response));
+            })
+    } catch (err) {
+        console.log("fail 2 ");
+        
+        response.code = -1;
+        response.message = "fail";
+        res.send(JSON.stringify(response));
+    }
+}

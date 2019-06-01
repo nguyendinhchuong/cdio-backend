@@ -54,7 +54,8 @@ exports.register = (request) => {
                                     db.user_has_role.bulkCreate(idrole_array)
                                         .then(() => {
                                             let code = 1;
-                                            resolve(code);
+                                            response.code = code;
+                                            resolve(response);
                                         })
                                         .catch(err => {
                                             reject(err);

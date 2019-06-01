@@ -589,6 +589,28 @@ router.post('/add-teacher-review', function (req, res) {
   })
 })
 
+router.post('/get-teacher-subject', function(req, res) {
+  let data = req.body
+  Model4.getTeacherSubject(data, function(err, data) {
+    if (err) {
+      console.log(err);
+    } else{
+      res.send(data)
+    }   
+  })   
+})
+
+router.post('/get-teacher-review-subject', function(req, res) {
+  let data = req.body
+  Model4.getTeacherReviewSubject(data, function(err, data) {
+    if (err) {
+      console.log(err);
+    } else{
+      res.send(data)
+    }   
+  })   
+})
+
 //
 router.post('/add-data-5', function(req, res) {
 
