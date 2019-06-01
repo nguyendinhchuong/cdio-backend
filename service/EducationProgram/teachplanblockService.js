@@ -42,9 +42,29 @@ exports.getDetailTeachPlanBlock = (request) => {
                             })
                                 .then(async data => {
                                     subject_arr = [];
-                                    await data.map(detailblock => {
-                                        subject_arr.push(detailblock.dataValues);
+                                    const subject_promise = data.map(async detailblock => {
+                                        let subject_obj = {}
+                                        subject_obj = detailblock.dataValues;
+                                        await db.subject.findByPk(detailblock.dataValues.IdSubject)
+                                            .then(data => {
+                                                subject_obj.IdSubject = data.dataValues.Id;
+                                                subject_obj.SubjectCode = data.dataValues.SubjectCode;
+                                                subject_obj.SubjectName = data.dataValues.SubjectName;
+                                                subject_obj.SubjectEngName = data.dataValues.SubjectEngName;
+                                                subject_obj.Credit = data.dataValues.Credit;
+                                                subject_obj.TheoryPeriod = data.dataValues.TheoryPeriod;
+                                                subject_obj.PracticePeriod = data.dataValues.PracticePeriod;
+                                                subject_obj.ExercisePeriod = data.dataValues.ExercisePeriod;
+                                                subject_obj.Description = data.dataValues.Description;
+                                            })
+                                            .then(() => {
+                                                subject_arr.push(subject_obj);
+                                            })
+                                            .catch(err => {
+                                                reject(err);
+                                            })
                                     })
+                                    await Promise.all(subject_promise);
                                 })
                                 .then(() => {
                                     semester_obj.subjects = subject_arr;
