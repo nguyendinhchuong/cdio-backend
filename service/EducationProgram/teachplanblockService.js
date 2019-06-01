@@ -158,7 +158,7 @@ exports.updateTeachPlanBlock = (request) => {
                                             detail_obj.IdTeachPlan = data.dataValues.Id;
                                             detail_obj.IdSubject = subject.Id;
                                             detail_obj.Note = subject.Note;
-                                            detail_obj.Optional = subject.Optional;
+                                            detail_obj.Optional = (subject.option === 'BB') ? 0 : 1;
                                             bulkDetail.push(detail_obj);
                                         });
                                         await Promise.all(promises);
@@ -197,7 +197,7 @@ exports.updateTeachPlanBlock = (request) => {
                                                         detail_obj.IdTeachPlan = data.dataValues.Id;
                                                         detail_obj.IdSubject = subject.Id;
                                                         detail_obj.Note = subject.Note;
-                                                        detail_obj.Optional = subject.Optional;
+                                                        detail_obj.Optional = (subject.option === 'BB') ? 0 : 1;
                                                         bulkDetail.push(detail_obj);
                                                     });
                                                     await Promise.all(promises);
@@ -227,7 +227,7 @@ exports.updateTeachPlanBlock = (request) => {
                                                         detail_obj.IdTeachPlan = data.dataValues.Id;
                                                         detail_obj.IdSubject = subject.Id;
                                                         detail_obj.Note = subject.Note;
-                                                        detail_obj.Optional = subject.Optional;
+                                                        detail_obj.Optional = (subject.option === 'BB') ? 0 : 1;
                                                         bulkDetail.push(detail_obj);
                                                     });
                                                     await Promise.all(promises);
