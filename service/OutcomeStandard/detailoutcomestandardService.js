@@ -38,34 +38,116 @@ exports.addDetailOutcomeStandard = (request) => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
             .then(() => {
-                db.detailoutcomestandard.
-                db.detailoutcomestandard.bulkCreate(request.data, { returning: true })
-                    .then(async data => {
-                        let general_info_array = [];
-                        let promises = data.map(row => {
-                            let obj = {};
-                            obj.id = row.dataValues.Id;
-                            obj.del_flag = 0;
-                            general_info_array.push(obj);
-                        });
-                        await Promise.all(promises);
-                    })
-                    .then(() => {
-                        db.chuan_dau_ra_cdio.bulkCreate(general_info_array, { returning: true })
-                            .then(() => {
-                                let code = 1;
-                                let response = {};
-                                response.code = code;
-                                response.data = general_info_array;
-                                resolve(response);
+                db.detailoutcomestandard.findOne({
+                    IdOutcomeStandard: request.IdOutcomeStandard
+                })
+                    .then(data => {
+                        if (!data) {
+                            let general_info_array = [];
+                            db.detailoutcomestandard.bulkCreate(request.data, { returning: true })
+                                .then(async data => {
+                                    
+                                    let promises = data.map(row => {
+                                        let obj = {};
+                                        obj.id = row.dataValues.Id;
+                                        obj.del_flag = 0;
+                                        general_info_array.push(obj);
+                                    });
+                                    await Promise.all(promises);
+                                })
+                                .then(() => {
+                                    db.chuan_dau_ra_cdio.bulkCreate(general_info_array, { returning: true })
+                                        .then(() => {
+                                            let code = 1;
+                                            let response = {};
+                                            response.code = code;
+                                            response.data = general_info_array;
+                                            resolve(response);
+                                        })
+                                        .catch(err => {
+                                            reject(err);
+                                        })
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
+                        } else {
+                            db.detailoutcomestandard.findAll({
+                                where: {
+                                    IdOutcomeStandard: request.IdOutcomeStandard
+                                }
                             })
-                            .catch(err => {
-                                reject(err);
-                            })
+
+                                .then(async data => {
+                                    let id_detail = [];
+                                    const promises = data.map(detail => {
+                                        id_detail.push(detail.dataValues.Id);
+                                    });
+                                    await Promise.all(promises);
+                                    await db.chuan_dau_ra_cdio.update({
+                                        del_flag: 1
+                                    }, {
+                                            where: {
+                                                id: id_detail
+                                            }
+                                        })
+                                        .then(effectedRows => {
+                                            console.log("Effected rows of chuandaura: ", effectedRows);
+                                        })
+                                        .catch(err => {
+                                            reject(err);
+                                        })
+                                })
+                                .then(() => {
+                                    db.detailoutcomestandard.destroy({
+                                        where: {
+                                            IdOutcomeStandard: request.IdOutcomeStandard
+                                        }
+                                    })
+                                        .then(effectedRows => {
+                                            console.log("Effected rows of detail outcome: ", effectedRows);
+                                        })
+                                        .catch(err => {
+                                            reject(err);
+                                        })
+                                })
+                                .then(() => {
+                                    let general_info_array = [];
+                                    db.detailoutcomestandard.bulkCreate(request.data, { returning: true })
+                                        .then(async data => {
+                                            
+                                            let promises = data.map(row => {
+                                                let obj = {};
+                                                obj.id = row.dataValues.Id;
+                                                obj.del_flag = 0;
+                                                general_info_array.push(obj);
+                                            });
+                                            await Promise.all(promises);
+                                        })
+                                        .then(() => {
+                                            db.chuan_dau_ra_cdio.bulkCreate(general_info_array, { returning: true })
+                                                .then(() => {
+                                                    let code = 1;
+                                                    let response = {};
+                                                    response.code = code;
+                                                    response.data = general_info_array;
+                                                    resolve(response);
+                                                })
+                                                .catch(err => {
+                                                    reject(err);
+                                                })
+                                        })
+                                        .catch(err => {
+                                            reject(err);
+                                        })
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
+
+                        }
                     })
-                    .catch(err => {
-                        reject(err);
-                    })
+
             })
             .catch(err => {
                 reject(err);

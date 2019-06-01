@@ -29,7 +29,7 @@ exports.addDetailOutcomeStandard = (req, res) => {
     detailOS.addDetailOutcomeStandard(request)
         .then(data => {
             let response = {};
-            if (data === 1) {
+            if (data.code === 1) {
                 response.code = 1;
                 response.message = "save success";
                 res.send(JSON.stringify(response));
