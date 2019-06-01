@@ -18,6 +18,9 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.DATE,
             allowNull: true
         },
+        IdUser:{
+            type: Sequelize.INTEGER
+        }
     },{
         freezeTableName: true,
         timestamps: false
