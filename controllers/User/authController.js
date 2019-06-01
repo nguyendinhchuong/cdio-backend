@@ -37,12 +37,14 @@ const role = require('../../config/Role');
 // }
 exports.isAuthenticated = (req, res, next) => {
     let response = {};
-    console.log(req.headers);
+    //console.log(req.headers);
     if (req.headers &&
         req.headers.authorization &&
         req.headers.authorization.split(' ')[0] === 'JWT') {
         var jwtToken = req.headers.authorization.split(' ')[1];
+        console.log("jwtToken", jwtToken);
         jwt.verify(jwtToken, config.jwtSecret, (err, payload) => {
+            console.log("AA")
             if (err) {
                 response.code = -1;
                 response.message = "Unauthorized user!";

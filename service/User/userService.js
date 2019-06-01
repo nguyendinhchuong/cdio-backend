@@ -171,7 +171,7 @@ exports.login = (request) => {
                                 role: id_role_array
                             };
                             console.log("role_array: " + role_array);
-                            let jwtToken = jwt.sign(payload, config.jwtSecret, { expiresIn: 1 * 86400 });
+                            let jwtToken = jwt.sign(payload, config.jwtSecret, { expiresIn: '3600s' });
                             let response = {};
                             //dataValues.role = role_array;
                             response.access_token = jwtToken;
@@ -194,6 +194,78 @@ exports.login = (request) => {
                 reject(err);
             })
     })
+}
+
+exports.authenMe = (username) => {
+    return new Promise((resolve, reject) => {
+        db.user.findOne({
+            where: {
+                username: username
+            }
+        })
+            .then(async data => {
+                if (!data) {
+                    let response = {};
+                    response.code = -3;
+                    resolve(response);
+                } else {
+                    let id_role_array = [];
+                    let role_array = [];
+                    let username = data.dataValues.username;
+                    //response data to client
+                    let dataValues = {};
+                    dataValues.Id = data.dataValues.id;
+                    dataValues.Username = data.dataValues.username;
+                    dataValues.Name = data.dataValues.name;
+                    dataValues.Email = data.dataValues.email;
+                    dataValues.Role = [];
+                    await db.user_has_role.findAll({
+                        where: {
+                            idUser: data.dataValues.id
+                        }
+                    })
+                        .then(async data => {
+                            const promises = data.map(async row => {
+                                await id_role_array.push(row.dataValues.idRole);
+                                await db.role.findByPk(row.dataValues.idRole)
+                                    .then(async data => {
+                                        await dataValues.Role.push(data.dataValues.role);
+                                        return role_array;
+                                    })
+                                    .catch(err => {
+                                        reject(err);
+                                    })
+                            })
+                            const results = await Promise.all(promises);
+                            console.log(results)
+                        })
+                        .catch(err => {
+                            reject(err);
+                        })
+                    //set basic info in payload
+
+                    let payload = {
+                        username: username,
+                        role: id_role_array
+                    };
+                    console.log("role_array: " + role_array);
+                    let jwtToken = jwt.sign(payload, config.jwtSecret, { expiresIn: '3600s' });
+                    let response = {};
+                    //dataValues.role = role_array;
+                    response.access_token = jwtToken;
+                    response.code = 1;
+                    response.data = dataValues;
+                    resolve(response);
+                }
+            })
+            .catch(err => {
+                reject(err);
+            })
+    })
+
+        .catch(err => {
+            reject(err);
+        })
 }
 
 exports.getUserByUsername = (request) => {

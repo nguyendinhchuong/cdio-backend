@@ -66,6 +66,7 @@ exports.login = (req, res) => {
         })
 }
 
+
 exports.getList = (req, res) => {
     user.getList()
         .then(data => {
