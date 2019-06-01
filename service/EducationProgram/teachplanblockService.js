@@ -46,10 +46,12 @@ exports.getDetailTeachPlanBlock = (request) => {
                                     const subject_promise = data.map(async detailblock => {
 
                                         let subject_obj = {}
-                                        subject_obj = detailblock.dataValues;
+                                        subject_obj.IdTeachPlan = detailblock.dataValues.IdTeachPlan;
+                                        subject_obj.Note = detailblock.dataValues.Note;
+                                        subject_obj.Optional = detailblock.dataValues.Optional;
                                         await db.subject.findByPk(detailblock.dataValues.IdSubject)
                                             .then(data => {
-                                                subject_obj.IdSubject = data.dataValues.Id;
+                                                subject_obj.Id = data.dataValues.Id;
                                                 subject_obj.SubjectCode = data.dataValues.SubjectCode;
                                                 subject_obj.SubjectName = data.dataValues.SubjectName;
                                                 subject_obj.SubjectEngName = data.dataValues.SubjectEngName;
