@@ -2075,7 +2075,9 @@ router.post('/add-data-survey', function (req, res) {
                 const data = req.body.data;
                 const id_qa = req.body.id_qa;
                 const idMon = req.body.idMon;
-                ModelSurvey.addData(data, id_qa, idMon, (result) => {
+                const id_giaovien = req.body.id_giaovien
+                const id_ctdt = req.body.id_ctdt
+                ModelSurvey.addData(data, id_qa, idMon, id_giaovien, id_ctdt, (result) => {
                     //res.send(result)
                 });
             }
@@ -2083,9 +2085,6 @@ router.post('/add-data-survey', function (req, res) {
     } else {
         res.send("Invalid token!");
     }
-  const id_giaovien = req.body.id_giaovien
-  const id_ctdt = req.body.id_ctdt
-  ModelSurvey.addData(data, id_qa, idMon, id_giaovien, id_ctdt, (result) => {
 })
 router.post('/save-survey-qa', function (req, res) {
     if (req.headers &&
@@ -2155,7 +2154,7 @@ router.get('/get-surveyqa/:id', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-                let id = req.params
+                let id = req.params.id
                 ModelSurvey.getQA(id, (result) => {
                     res.send(result);
                 })
@@ -2164,7 +2163,6 @@ router.get('/get-surveyqa/:id', function (req, res) {
     } else {
         res.send("Invalid token!");
     }
-  let id = req.params.id
 })
 
 router.get('/get-survey/:id', function (req, res) {
@@ -2176,8 +2174,8 @@ router.get('/get-survey/:id', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-                let id = req.params
-                ModelSurvey.getITUwithQA(id, (result) => {
+              let data = req.body.data
+              ModelSurvey.getITUwithQA(data, (result) => {
                     res.send(result);
                 })
             }
@@ -2185,8 +2183,6 @@ router.get('/get-survey/:id', function (req, res) {
     } else {
         res.send("Invalid token!");
     }
-  let data = req.body.data
-  ModelSurvey.getITUwithQA(data, (result) => {
 })
 
 router.post('/add-to-edit-matrix', function (req, res) {
@@ -2235,10 +2231,6 @@ router.post('/authen-me', function (req, res) {
         }
     })
 })
-
-
-
-
 
 router.post('/checkstatus', function(req, res) {
   let data = req.body.data;
