@@ -965,9 +965,10 @@ router.get('/get-standardoutput-7/:id', function(req, res) {
   })
 })
 
-router.get('/get-reality-matrix', function (req, res) {
+router.post('/get-reality-matrix', function (req, res) {
+  const data = req.body.data;
 
-  MatrixModel.getRealityMatrix().then(result => {
+  MatrixModel.getRealityMatrix(data).then(result => {
     return res.end(JSON.stringify(result));
   })
     .catch(err => {
@@ -985,9 +986,10 @@ router.get('/get-cdr-cdio', function (req, res) {
     });
 });
 
-router.get('/get-standard-matrix', function (req, res) {
+router.post('/get-standard-matrix', function (req, res) {
+  const data = req.body.data;
 
-  MatrixModel.getStandardMatrix().then(result => {
+  MatrixModel.getStandardMatrix(data).then(result => {
     return res.end(JSON.stringify(result));
   })
     .catch(err => {
@@ -1005,9 +1007,21 @@ router.post('/update-standard-matrix', function (req, res) {
   })
 })
 
-router.get('/get-benchmark-matrix', function (req, res) {
 
-  MatrixModel.getBenchmarkMatrix().then(result => {
+// router.get('/get-benchmark-matrix1', function (req, res) {
+
+//   MatrixModel.getBenchmarkMatrix1().then(result => {
+//     return res.end(JSON.stringify(result));
+//   })
+//     .catch(err => {
+//       return res.end(JSON.stringify(err))
+//     });
+// });
+
+router.post('/get-benchmark-matrix', function (req, res) {
+
+  const data= req.body.data;
+  MatrixModel.getBenchmarkMatrix(data).then(result => {
     return res.end(JSON.stringify(result));
   })
     .catch(err => {
