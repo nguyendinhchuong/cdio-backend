@@ -9,11 +9,12 @@ close = () => {
   sql.end();
 };
 
-MatrixModel.getRealityMatrix = () => {
+MatrixModel.getRealityMatrix = (listIdSubject) => {
   return new Promise((resolve, reject) => {
     var resultRes = [];
+    let str = listIdSubject.toString();
     sql.query(
-      `select sb.Id,sb.SubjectName from thong_tin_chung ttc,subject sb where ttc.del_flag = 0 and ttc.id = sb.Id`,
+      `select sb.Id,sb.SubjectName from thong_tin_chung ttc,subject sb where ttc.del_flag = 0 and ttc.id = sb.Id and sb.Id in (${str})`,
       (err, listSubject) => {
         if (err) {
           console.log("error:", err);
@@ -31,7 +32,7 @@ MatrixModel.getRealityMatrix = () => {
 
             selectCDR(subject.Id).then(
               res => {
-                itemRes.itu = res;
+                itemRes.itu = res;  
                 resultRes.push(itemRes);
 
                 if (index === listSubject.length - 1){
@@ -184,10 +185,10 @@ insertStandardMatrix = (resultRes)=>{
 }
 
 
-MatrixModel.getStandardMatrix = ()=>{
+MatrixModel.getStandardMatrix = (listSubject)=>{
   return new Promise((resolve,reject)=>{
     sql.query(`SELECT mt.id,mt.muc_do,mt.thong_tin_chung_id,mt.chuan_dau_ra_cdio_id FROM matrix mt,thong_tin_chung ttc
-    WHERE mt.thong_tin_chung_id = ttc.id AND ttc.del_flag = 0`, (err, matrix) => {
+    WHERE mt.thong_tin_chung_id = ttc.id AND ttc.del_flag = 0 AND ttc.id in (${listSubject})`, (err, matrix) => {
         if (err) {
           console.log("error:", err);
            return reject(err);
@@ -212,9 +213,10 @@ MatrixModel.updateStandardMatrix = (body,result)=>{
 
 
 
-MatrixModel.getBenchmarkMatrix = ()=>{
+MatrixModel.getBenchmarkMatrix = (listSubject)=>{
   return new Promise((resolve,reject)=>{
-      getAmountITUForBenchMark().then(res=>{
+      getAmountITUForBenchMark(listSubject).then(res=>{
+
         let data = {
           I:[],
           T:[],
@@ -237,19 +239,63 @@ MatrixModel.getBenchmarkMatrix = ()=>{
           }
         }
         resolve(data);
-
+        
       }).catch(err=>{
         reject(err);
       })
   })
 }
 
+convert = (listSubject)=>{
+  return new Promise((resolve,reject)=>{
+        
+    MatrixModel.getStandardMatrix(listSubject).then(standardMatrix=>{
+      
+      let mapSubject = new Map();
+
+      standardMatrix.forEach((itemStandard,index)=>{
+            if(mapSubject.has(itemStandard.thong_tin_chung_id)){
+              let itu = mapSubject.get(itemStandard.thong_tin_chung_id);
+              itu.push(itemStandard.muc_do);
+              mapSubject.set(itemStandard.thong_tin_chung_id,itu);
+            }
+            else{
+              let itu = [];
+              itu.push(itemStandard.muc_do);
+              mapSubject.set(itemStandard.thong_tin_chung_id,itu);
+            }
 
 
-getAmountITUForBenchMark = ()=>{
+
+            if(index===standardMatrix.length-1){
+              let data = []
+              for (const [k, v] of mapSubject.entries()) {
+                let temp = {
+                  idSubject:k,
+                  itu:v
+                }
+                data.push(temp);
+              }
+              resolve(data);
+            }
+
+      })
+     
+
+
+
+})
+
+  //   })
+  })
+}
+
+
+getAmountITUForBenchMark = (listSubject)=>{
   return new Promise((resolve,reject)=>{
 
-    MatrixModel.getRealityMatrix().then(realityMatrix=>{
+    convert(listSubject).then(realityMatrix=>{
+
         MatrixModel.getCdrCDIO().then(res=>{
           let data = [];
           res.forEach((cdrCDIO,index)=>{
