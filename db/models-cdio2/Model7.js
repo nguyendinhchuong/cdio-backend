@@ -204,8 +204,8 @@ Model7.getCDR = (body,result) => {
 }
 
   Model7.save = (data,result) => {
-    
-  sql.query(`select id from danh_gia where thong_tin_chung_id = ${data.thongtinchungid} and del_flag =0 `,(err,response) => {
+
+    sql.query(`select id from danh_gia where thong_tin_chung_id = ${data.thongtinchungid} and del_flag =0 `,(err,response) => {
         if(err){
           console.log("err: " , err);
           return result(err,null);
@@ -239,7 +239,7 @@ Model7.getCDR = (body,result) => {
                 }
               })
       
-              sql.query(`select id from danh_gia where ma = '${data.description[i].mathanhphan}' and del_flag=0`,
+              sql.query(`select id from danh_gia where ma = '${data.description[i].mathanhphan}' and thong_tin_chung_id='${data.thongtinchungid}' and del_flag=0`,
               (err,response) => {
                 if(err){
                   console.log("err: ",err);
@@ -255,15 +255,16 @@ Model7.getCDR = (body,result) => {
                       }
                     })
                   }
-                  
+
                   for(let j=0;j<data.description[i].standardOutput.length;j++){
                     sql.query(`select id from chuan_dau_ra_mon_hoc where chuan_dau_ra = '${data.description[i].standardOutput[j]}' and thong_tin_chung_id = ${data.thongtinchungid} and del_flag =0`,(err,res) => {
                       if(err){
                         console.log("err: " ,err);
                         return result(err,null);
                       }else{
-                    
                         var chuan_dau_ra_mon_hoc_id = res[0].id;
+                        console.log(chuan_dau_ra_mon_hoc_id,danhGiaId);
+
                         sql.query(`insert cdrmh_has_dg(chuan_dau_ra_mon_hoc_id,danh_gia_id) values (${chuan_dau_ra_mon_hoc_id},${danhGiaId})`,(err,res) => {
                           if(err) {
                             console.log("Error save data in model 8 : ", err);
