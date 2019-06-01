@@ -1707,7 +1707,7 @@ router.get('/get-standardoutput-7/:id', function (req, res) {
 })
 
 
-router.get('/get-reality-matrix', function (req, res) {
+router.post('/get-reality-matrix', function (req, res) {
     if (req.headers &&
         req.headers.authorization &&
         req.headers.authorization.split(' ')[0] === 'JWT') {
@@ -1753,7 +1753,7 @@ router.get('/get-cdr-cdio', function (req, res) {
     }
 });
 
-router.get('/get-standard-matrix', function (req, res) {
+router.post('/get-standard-matrix', function (req, res) {
     if (req.headers &&
         req.headers.authorization &&
         req.headers.authorization.split(' ')[0] === 'JWT') {
@@ -1804,7 +1804,7 @@ router.post('/update-standard-matrix', function (req, res) {
 })
 
 
-router.get('/get-benchmark-matrix', function (req, res) {
+router.post('/get-benchmark-matrix', function (req, res) {
     if (req.headers &&
         req.headers.authorization &&
         req.headers.authorization.split(' ')[0] === 'JWT') {
@@ -2208,12 +2208,15 @@ router.post('/authen-me', function (req, res) {
     access = req.body.access;
     jwt.verify(access, config.jwtSecret, (err, authData) => {
         if (err) {
-            res.sendStatus(401);
+            let response = {};
+            response.status = 401;
+            res.send(JSON.stringify(response));
         } else {
             Users.authenMe(authData.username)
             .then(data => {
                 console.log(data.data);
                 let response = {};
+                    response.status = 200;
                     response.code = data.code;
                     response.token = data.access_token;
                     response.data = data.data;
