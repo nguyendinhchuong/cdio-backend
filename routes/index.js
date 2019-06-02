@@ -1815,11 +1815,11 @@ router.post('/get-benchmark-matrix', function (req, res) {
             } else {
                 const data= req.body.data;
                 MatrixModel.getBenchmarkMatrix(data).then(result => {
-                  return res.end(JSON.stringify(result));
+                    return res.end(JSON.stringify(result));
                 })
-                  .catch(err => {
+                .catch(err => {
                     return res.end(JSON.stringify(err))
-                  });
+                });
             }
         })
     } else {
@@ -2108,22 +2108,25 @@ router.post('/save-survey-qa', function (req, res) {
 })
 
 router.get('/get-matrix-survey', function (req, res) {
-    if (req.headers &&
-        req.headers.authorization &&
-        req.headers.authorization.split(' ')[0] === 'JWT') {
-        jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
-            if (err) {
-                //res.sendStatus(403);
-                res.send("Unauthorized user!");
-            } else {
-                ModelSurvey.getDataMatixSurvey(result => {
-                    res.send(result);
-                });
-            }
-        })
-    } else {
-        res.send("Invalid token!");
-    }
+    // if (req.headers &&
+    //     req.headers.authorization &&
+    //     req.headers.authorization.split(' ')[0] === 'JWT') {
+    //     jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
+    //         if (err) {
+    //             //res.sendStatus(403);
+    //             res.send("Unauthorized user!");
+    //         } else {
+    //             ModelSurvey.getDataMatixSurvey(result => {
+    //                 res.send(result);
+    //             });
+    //         }
+    //     })
+    // } else {
+    //     res.send("Invalid token!");
+    // }
+    ModelSurvey.getDataMatixSurvey(result => {
+        res.send(result);
+    });
 })
 
 router.post('/get-survey-itu', function (req, res) {
