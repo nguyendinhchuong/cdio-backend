@@ -81,6 +81,7 @@ exports.register = (request) => {
                             user.email = request.Email;
                             db.user.create(user)
                                 .then(async data => {
+                                    response.data = data.dataValues;
                                     let idUser = data.dataValues.id;
                                     let idrole_array = [];
                                     await request.Role.map(role => {
