@@ -7,7 +7,6 @@ var connection = mysql.createConnection({
   user     : 'namtv',
   password : 'Aa123456',
   database : 'cdio_db',
-  host     : 'localhost',
   // user     : 'root',
   // password : 'hoangphupy',
   // database : 'syllabusdb'
