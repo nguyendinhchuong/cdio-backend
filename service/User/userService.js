@@ -395,11 +395,11 @@ exports.changePass = (request) => {
         db.sequelize.authenticate()
             .then(() => {
                 db.user.update({
-                    Password: request.Password
+                    password: request.Password
                 }, {
                         returning: true,
                         where: {
-                            Username: request.Username
+                            username: request.Username
                         }
                     })
                     .then(rowsUpdate => {
@@ -422,7 +422,7 @@ exports.deleteUser = (request) => {
             .then(() => {
                 db.user.destroy({
                     where: {
-                        Username: request
+                        username: request
                     }
                 })
                     .then(effectedRows => {
