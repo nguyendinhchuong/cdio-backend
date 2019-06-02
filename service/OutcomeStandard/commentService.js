@@ -30,7 +30,6 @@ exports.getComment = (request) => {
                                         reject(err);
                                     })
                             }
-                            console.log(obj);
                             data_comment.push(obj);
                         })
                         await Promise.all(promises);
