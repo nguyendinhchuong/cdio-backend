@@ -1,5 +1,4 @@
 const TEACHER = 5;
-const EDITOR = 6;
 const ADMIN = 1;
 const BIEN_SOAN = 2;
 const QUAN_LY_SURVEY = 3;

@@ -20,13 +20,17 @@ exports.getComment = (request) => {
                                 .catch(err => {
                                     reject(err);
                                 })
-                            await db.user.findByPk(comment.dataValues.UserDone)
-                                .then(data => {
-                                    obj.doneName = data.dataValues.name;
-                                })
-                                .catch(err => {
-                                    reject(err);
-                                })
+                            if (comment.dataValues.UserDone) {
+                                await db.user.findByPk(comment.dataValues.UserDone)
+                                    .then(data => {
+                                        console.log(data.dataValues.name);
+                                        obj.doneName = data.dataValues.name;
+                                    })
+                                    .catch(err => {
+                                        reject(err);
+                                    })
+                            }
+
                             response.data.push(obj);
                         })
                         await Promise.all(promises);

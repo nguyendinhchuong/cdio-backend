@@ -24,14 +24,11 @@ exports.isAuthenticated = (req, res, next) => {
                 console.log(payload);
                 payload.role.map(has_role => {
                     if (role[has_role] !== undefined) {
-                        console.log(role[has_role]);
                         if (role[has_role].find(url => {
                             return url == baseUrl[0];
                         })) {
-                            console.log("code run here");
                             user.getUserByUsername(payload.username)
                                 .then(data => {
-                                    console.log(data.dataValues);
                                     req.user = data;
                                     next();
                                 })
