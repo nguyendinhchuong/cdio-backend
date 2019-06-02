@@ -18,7 +18,7 @@ exports.register = (req, res) => {
         .then(data => {
             let response = {};
             if (data.code === 1) {
-                sendmail.sendMail(data.data).catch(err);
+                sendmail.sendMail(data.data).catch(err => { throw err });
                 response.code = 1;
                 response.message = "add success";
                 res.send(JSON.stringify(response));
