@@ -38,11 +38,8 @@ close = () => {
     sql.end();
 }
 
-ModelSurvey.addData = (data, id_qa, idMon, result) => {
+ModelSurvey.addData = (data, id_qa, idMon, id_giaovien, id_ctdt, result) => {
     try {
-        const id_ctdt = 0;
-        const id_giaovien = 0;
-
         data.forEach(element => {
             let resultValue = '';
             
@@ -50,8 +47,8 @@ ModelSurvey.addData = (data, id_qa, idMon, result) => {
                 resultValue += value + ',';
             });
 
-            query(`INSERT INTO survey  (id_ctdt, id_mon, id_giaovien, id, value, mo_ta, id_qa)  VALUES
-            ('${id_ctdt}','${idMon}','${id_giaovien}', '${element.key}', '${resultValue}','${element.description}','${id_qa}')`)
+            query(`INSERT INTO survey  (id_ctdt, id_mon, id_giaovien, id, value, mo_ta, id_qa, status)  VALUES
+            ('${id_ctdt}','${idMon}','${id_giaovien}', '${element.key}', '${resultValue}','${element.description}','${id_qa}', 1)`)
             .then (res => {
                 console.log(res);
             })
@@ -205,7 +202,7 @@ ModelSurvey.getITU = (obj, result) => {
 }
 
 ModelSurvey.getQA = (id, result) => {
-    sql.query(`SELECT * from survey_qa where id = 1`, (err, res) => {
+    sql.query(`SELECT * from survey_qa where id = ${id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -214,8 +211,8 @@ ModelSurvey.getQA = (id, result) => {
     })
 }
 
-ModelSurvey.getITUwithQA = (id, result) => {
-    sql.query(`SELECT * FROM survey where id_ctdt =0 and id_mon =1 and id_giaovien =0 and id_qa=0`, (err, res) => {
+ModelSurvey.getITUwithQA = (data, result) => {
+    sql.query(`SELECT * FROM survey where id_ctdt = ${data.id_ctdt} and id_mon = ${data.id_mon} and id_giaovien = ${data.id_giaovien} and id_qa = ${data.id_qa}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -277,4 +274,20 @@ ModelSurvey.addData2 = (data, id_survey, result) => {
         console.log(e);
     }
 }
+
+ModelSurvey.checkStatus = (data, result) => {
+    sql.query(`SELECT status, id_qa, end_date FROM survey where id_mon = ${data.id_mon} and id_giaovien = ${data.id_giaovien}`, (err, res) => {
+        if (err) {
+            console.log("err: ", err);
+            return result(err);
+        } else {
+            if (res) {
+                return result(res);
+            }
+            return result("done")
+        }
+
+    })
+}
+
 module.exports = ModelSurvey;

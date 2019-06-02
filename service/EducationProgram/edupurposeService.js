@@ -27,12 +27,12 @@ exports.addEduPurpose = async (request) => {
     await deleteEduPurpose(request);
     await insertMutipleDataPurpose(request.data)
     .then(() =>{
-        let code = 1;
-        return Promise.resolve(code);
     })
     .catch(err =>{
         return Promise.reject(err);
     })
+    let code = 1;
+    return Promise.resolve(code);
 }
 exports.updateEduPurpose = (request) => {
     return new Promise((resolve, reject) => {

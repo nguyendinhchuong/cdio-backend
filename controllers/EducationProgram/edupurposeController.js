@@ -28,7 +28,6 @@ exports.addEduPurpose = (req, res) => {
     const params = req.query;
     const request = {};
     const response = {};
-    console.log("+++Insert edupurpose");
     
     const array = [];
     body.map(row => {

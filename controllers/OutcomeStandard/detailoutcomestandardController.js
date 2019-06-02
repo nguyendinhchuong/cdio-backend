@@ -26,10 +26,11 @@ exports.addDetailOutcomeStandard = (req, res) => {
     })
 
     request.data = new_array;
+    request.IdOutcomeStandard = Number(params.idoutcome);
     detailOS.addDetailOutcomeStandard(request)
         .then(data => {
             let response = {};
-            if (data === 1) {
+            if (data.code === 1) {
                 response.code = 1;
                 response.message = "save success";
                 res.send(JSON.stringify(response));

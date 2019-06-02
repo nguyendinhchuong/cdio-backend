@@ -11,6 +11,10 @@ var connection = mysql.createConnection({
   // user     : 'root',
   // password : 'hoangphupy',
   // database : 'syllabusdb'
+  // host     : 'localhost',
+  // user     : 'root',
+  // password : 'mug3nnsx',
+  // database : 'cdio_db'
 
 });
 connection.connect();

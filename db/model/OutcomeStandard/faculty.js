@@ -1,4 +1,3 @@
-var db = require('../../../models/index');
 
 module.exports = (sequelize, Sequelize) => {
     const faculty = sequelize.define('faculty', {
@@ -22,18 +21,3 @@ module.exports = (sequelize, Sequelize) => {
 
 
 
-// exports.getFaculty = () => {
-//     return new Promise((resolve, reject) => {
-//         db.sequelize.authenticate()
-//             .then(() => {
-//                 db.sequelize.query("select * from faculty", { model: faculty })
-//                     .then(faculty => {
-//                         resolve(faculty)
-//                     })
-//             })
-//             .catch(err => {
-//                 reject(err);
-//             })
-//     })
-
-// }

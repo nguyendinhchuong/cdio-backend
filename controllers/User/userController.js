@@ -1,5 +1,6 @@
 const user = require('../../service/User/userService');
 const generator = require('generate-password');
+const sendmail = require('../User/sendMailController');
 
 exports.register = (req, res) => {
     let body = JSON.parse(req.body.data);
@@ -17,6 +18,7 @@ exports.register = (req, res) => {
         .then(data => {
             let response = {};
             if (data.code === 1) {
+                sendmail.sendMail(data.data).catch(err);
                 response.code = 1;
                 response.message = "add success";
                 res.send(JSON.stringify(response));
@@ -65,6 +67,7 @@ exports.login = (req, res) => {
             throw err;
         })
 }
+
 
 exports.getList = (req, res) => {
     user.getList()
