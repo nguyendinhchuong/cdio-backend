@@ -3,6 +3,8 @@ const db = require('../../models/index');
 const subjectService = require('./subjectService');
 const userService = require('../User/userService');
 
+const keyKnowledge = "7.2";
+
 exports.getEduContentByEduId = (request) => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
@@ -108,12 +110,9 @@ exports.addEduContent = async (request) => {
     }
 }
 
-
-
 exports.getBlocksSubjects = request => {
     return new Promise(async (res, rej) => {
         let listSubjects = [];
-        let listUsers = [];
         await subjectService.getSubjectList().then(subjects => {
             listSubjects = subjects.reduce((arr, subject) => {
                 return arr.concat(subject.dataValues);
@@ -121,17 +120,13 @@ exports.getBlocksSubjects = request => {
         }).catch(err => {
             return Promise.reject(err);
         })
-        await userService.getList()
-        .then(users=>{
-            listUsers = [...users.data];
-        })
         await this.getEduContentByEduId(request).then(data => {
             const results = {
                 eduContents: data.eduContents.map(item => item.dataValues),
                 subjectBlocks: data.subjectBlocks.map(item => item.dataValues),
                 detailBlocks: data.detailBlocks.map(item => item.dataValues)
             };
-            const convert = convertDbToBlocksSubjects(results, listSubjects, listUsers);
+            const convert = convertDbToBlocksSubjects(results, listSubjects);
             res(convert);
         }).catch(err => {
             return Promise.reject(err);
@@ -142,7 +137,6 @@ exports.getBlocksSubjects = request => {
 exports.getRowsContainTable = async request => {
 
     let listSubject = [];
-    let listUsers = [];
     let convert ;
     await subjectService.getSubjectList().then(subjects => {
         listSubject = subjects.reduce((arr, subject) => {
@@ -151,17 +145,13 @@ exports.getRowsContainTable = async request => {
     }).catch(err => {
         return Promise.reject(err);
     })
-    await userService.getList()
-        .then(users=>{
-            listUsers = [...users.data];
-        })
     await this.getEduContentByEduId(request).then(data => {
         const results = {
             eduContents: data.eduContents.map(item => item.dataValues),
             subjectBlocks: data.subjectBlocks.map(item => item.dataValues),
             detailBlocks: data.detailBlocks.map(item => item.dataValues)
         };
-        convert = convertDbToRowContainTable(results, listSubject, listUsers);
+        convert = convertDbToRowContainTable(results, listSubject);
     }).catch(err => {
         return Promise.reject(err);
     })
@@ -303,14 +293,11 @@ const groupBy = (array, f) => {
     });
 };
 
-const convertDbToBlocksSubjects = (dataDb, subjects, users) => {
+const convertDbToBlocksSubjects = (dataDb, subjects) => {
     const contentPro = [...dataDb.eduContents];
     const blocks = [...dataDb.subjectBlocks];
     const detailBlocks = [...dataDb.detailBlocks];
-    const listSubjectFull = mapSubjectWithDetailBlockAndUser(detailBlocks, subjects, users);
-    console.log("CCCC");
-    console.log(listSubjectFull);
-    
+    const listSubjectFull = mapSubjectWithDetailBlock(detailBlocks, subjects);
     
     //subjects into block
     const blocksSubjects = blocks.reduce((arr, block) => {
@@ -329,11 +316,11 @@ const convertDbToBlocksSubjects = (dataDb, subjects, users) => {
     return contentsBlocks;
 };
 
-const convertDbToRowContainTable = (dataDb, subjects, users) => {
+const convertDbToRowContainTable = (dataDb, subjects) => {
     const contentPro = [...dataDb.eduContents];
     const blocks = [...dataDb.subjectBlocks];
     const detailBlocks = [...dataDb.detailBlocks];
-    const listSubjectFull = mapSubjectWithDetailBlockAndUser(detailBlocks, subjects, users);
+    const listSubjectFull = mapSubjectWithDetailBlock(detailBlocks, subjects);
     //subjects into block
     const blocksSubjects = blocks.reduce((arr, block) => {
         const blocksSubjects = addSubjectsIntoBlock(block, listSubjectFull);
@@ -346,6 +333,9 @@ const convertDbToRowContainTable = (dataDb, subjects, users) => {
             let row = findRowParentOfTable(contentPro, content);
             row = {...row, children:[]};
             row.children.push(contents);
+            if(!checkRowIsProfessionalKnowledge(row.KeyRow,keyKnowledge)){
+                return arr;
+            }
             return arr.concat(row);
         }
         return arr;
@@ -354,14 +344,16 @@ const convertDbToRowContainTable = (dataDb, subjects, users) => {
     return contentsBlocks;
 };
 
-const mapSubjectWithDetailBlockAndUser = (detailBlocks, subjects, users) => {
+const checkRowIsProfessionalKnowledge = (key, keyProfessional) =>{
+    const len1 = key.length;
+    const len2 = keyProfessional.length;
+    return (key.includes(keyProfessional) && len1 > len2);
+}
+
+const mapSubjectWithDetailBlock = (detailBlocks, subjects) => {
     return detailBlocks.reduce((arr, detail) => {
         const subject = subjects.find(subject => subject.Id === detail.IdSubject);
-        let user = users.find(user => user.Id === detail.IdUser);
-        const fullSub = { ...detail, ...subject, username:null };
-        if(user){
-            fullSub.username = user.username ? user.username : null;
-        }
+        const fullSub = { ...detail, ...subject };
         return arr.concat(fullSub);
     }, []);
 };
