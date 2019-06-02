@@ -203,8 +203,8 @@ exports.changePass = (req, res) => {
 }
 
 exports.deleteUser = (req, res) => {
-    let body = JSON.parse(req.body.data);
-    let request = body.username;
+    let params = req.query;
+    let request = params.username;
 
     user.deleteUser(request)
         .then(data => {

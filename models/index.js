@@ -46,7 +46,8 @@ db.detailrevision = require('../db/model/OutcomeStandard/detailrevision')(sequel
 db.outcomeeduprogram = require('../db/model/OutcomeStandard/OutcomeEduProgram')(sequelize, Sequelize);
 db.chuan_dau_ra_cdio = require('../db/model/OutcomeStandard/chuan_dau_ra')(sequelize, Sequelize);
 db.comemnt = require('../db/model/OutcomeStandard/comment')(sequelize, Sequelize);
-
+db.outcomesurvey = require('../db/model/OutcomeStandard/outcomesurvey')(sequelize, Sequelize);
+db.surveyquestion = require('../db/model/OutcomeStandard/surveyquestion')(sequelize, Sequelize);
 
 db.subject = require('../db/model/EducationProgram/subject')(sequelize, Sequelize);
 db.eduprogram = require('../db/model/EducationProgram/EduProgram')(sequelize, Sequelize);
