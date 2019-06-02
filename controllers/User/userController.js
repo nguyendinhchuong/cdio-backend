@@ -37,6 +37,47 @@ exports.register = (req, res) => {
         })
 }
 
+exports.registerList = (req, res) => {
+    let body = JSON.parse(req.body.data);
+    let request = {};
+    let list_user = [];
+    body.map(row => {
+        let obj = {};
+        obj.Username = row.username;
+        obj.Name = row.name;
+        obj.Email = row.email;
+        obj.Role = row.role;
+        obj.Password = generator.generate({
+            length: 8,
+            numbers: true
+        })
+        list_user.push(obj);
+    })
+    request.data = list_user;
+    user.registerList(request)
+        .then(async data => {
+            let response = {};
+            let register_error = 0;
+            let register_success = 0;
+            const promise = data.map(async row => {
+                if (row.error) {
+                    register_error++;
+                }
+                else {
+                    register_success++;
+                    sendmail.sendMail(row.data).catch(err => { throw err });
+                }
+            })
+            await Promise.all(promise);
+            response.register_error = register_error;
+            response.register_success = register_success;
+            res.send(JSON.stringify(response));
+        })
+        .catch(err => {
+            throw err;
+        })
+}
+
 exports.login = (req, res) => {
     let body = JSON.parse(req.body.data);
     let request = {};

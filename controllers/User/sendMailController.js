@@ -23,7 +23,7 @@ exports.sendMail = async (data) => {
         text: `Admin đã đăng ký thành công tài khoản cho ${data.name} với:
         username: ${data.username}
         password: ${data.password}
-        Login tại ${host} để sử dụng hệ thống.` // plain text body
+Login tại ${host} để sử dụng hệ thống.` // plain text body
         // html: "<b>Hello world?</b>" // html body
     });
 
