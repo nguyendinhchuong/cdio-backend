@@ -11,6 +11,7 @@ exports.getComment = (request) => {
                 })
                     .then(async data => {
                         let response = {};
+                        let data_comment = [];
                         const promises = data.map(async comment => {
                             let obj = Object.assign({}, comment.dataValues);
                             await db.user.findByPk(comment.dataValues.IdUser)
@@ -23,17 +24,17 @@ exports.getComment = (request) => {
                             if (comment.dataValues.UserDone) {
                                 await db.user.findByPk(comment.dataValues.UserDone)
                                     .then(data => {
-                                        console.log(data.dataValues.name);
                                         obj.doneName = data.dataValues.name;
                                     })
                                     .catch(err => {
                                         reject(err);
                                     })
                             }
-
-                            response.data.push(obj);
+                            console.log(obj);
+                            data_comment.push(obj);
                         })
                         await Promise.all(promises);
+                        response.data = Array.from(data_comment);
                         resolve(response);
                     })
                     .catch(err => {
