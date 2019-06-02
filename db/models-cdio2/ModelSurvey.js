@@ -225,4 +225,56 @@ ModelSurvey.getITUwithQA = (id, result) => {
 
     })
 }
+
+ModelSurvey.getTeacherWithSubject = (id,result) => {
+    sql.query(`SELECT IdUser FROM teachersubject where IdSubject=${id.id}`,(err,res)=>{
+        if(err){
+            console.log("err:",err);
+            return result(err);
+        }else{
+            return result(res);
+        }
+    })
+}
+
+
+ModelSurvey.addSurveyData = (data,result) => {
+    let listIdUser = data.id_giaovien;
+    listIdUser.forEach(item => {
+        sql.query(`insert into survey2(id_ctdt,id_mon,id_giaovien,status,start_date,end_date) values ('${data.id_ctdt}','${data.id_mon}','${item}',0,${data.start_date},${data.end_date})`,
+    (err, res) => {
+        if (err) {
+            console.log("Error add data in model survey : ", err);
+            result(err)
+        } 
+    })
+    })
+
+   result("1");
+}
+
+
+ModelSurvey.addData2 = (data, id_survey, result) => {
+    try {
+        // const id_ctdt = 0;
+        // const id_giaovien = 0;
+
+        data.forEach(element => {
+            let resultValue = '';
+            
+            element.value.forEach(value => {
+                resultValue += value + ',';
+            });
+
+            query(`INSERT INTO survey2  (id, value, mo_ta, id_survey)  VALUES
+            ('${element.key}', '${resultValue}','${element.description}','${id_survey}')`)
+            .then (res => {
+                console.log(res);
+            })
+        });
+        
+    } catch (e) {
+        console.log(e);
+    }
+}
 module.exports = ModelSurvey;

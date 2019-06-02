@@ -1145,4 +1145,18 @@ router.post('/add-to-edit-matrix', function(req, res) {
       return res.end(result);
     })
 })
+
+router.get('/get-teacher-with-subject/:id',function(req,res){
+  let id = req.params;
+  ModelSurvey.getTeacherWithSubject(id,(result)=>{
+    res.send(result);
+  })
+})
+
+router.post('/add-survey-data',function(req,res){
+  let data = req.body;
+  ModelSurvey.addSurveyData(data,(result)=>{
+    return res.end(result);
+  })
+})
 module.exports = router;
