@@ -178,35 +178,27 @@ exports.getByRole = (req, res) => {
 }
 exports.changePass = (req, res) => {
     let body = JSON.parse(req.body.data);
-    console.log(req.user);
-    if (req.user.dataValues.Username !== body.username) {
-        let response = {};
-        response.code = -3;
-        response.message = "fail";
-        res.send(JSON.stringify(response));
-    } else {
-        let request = {};
-        request.Username = body.username;
-        request.Password = body.password;
-        console.log(request);
-        user.changePass(request)
-            .then(data => {
-                let response = {};
-                if (data) {
-                    response.code = 1;
-                    response.data = data;
-                    response.message = "change pass success";
-                    res.send(JSON.stringify(response));
-                } else {
-                    response.code = -1;
-                    response.message = "change pass fail";
-                    res.send(JSON.stringify(response));
-                }
-            })
-            .catch(err => {
-                throw err;
-            })
-    }
+    let request = {};
+    request.Username = body.username;
+    request.Password = body.password;
+    user.changePass(request)
+        .then(data => {
+            let response = {};
+            if (data) {
+                response.code = 1;
+                response.data = data;
+                response.message = "change pass success";
+                res.send(JSON.stringify(response));
+            } else {
+                response.code = -1;
+                response.message = "change pass fail";
+                res.send(JSON.stringify(response));
+            }
+        })
+        .catch(err => {
+            throw err;
+        })
+
 
 }
 
