@@ -27,16 +27,16 @@ exports.getComment = (req, res) => {
 exports.addNewComment = (req, res) => {
     let params = req.query;
     const body = JSON.parse(req.body.data);
-    let data = [];
-    body.map(row => {
-        data.IdOutcome = Number(params.idoutcome);
-        data.KeyRow = row.keyrow;
-        data.IdUser = Number(row.iduser);
-        data.Content = row.content;
-        data.CommentDate = row.date;
-    })
     let request = {};
-    request.data;
+    let data = {};
+
+    data.IdOutcome = Number(params.idoutcome);
+    data.KeyRow = body.keyrow;
+    data.IdUser = Number(body.iduser);
+    data.Content = body.content;
+    data.CommentDate = body.date;
+
+    request.data = data;
 
     comment.addNewComment(request)
         .then(data => {
@@ -61,7 +61,7 @@ exports.doneComment = (req, res) => {
     const body = JSON.parse(req.body.data);
     let request = {};
     request.UserDone = Number(params.iduser);
-    request.idOutcome = Number(params.idoutcome);
+    request.IdOutcome = Number(params.idoutcome);
     request.Id = body;
 
     comment.doneComment(request)
