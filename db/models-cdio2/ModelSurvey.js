@@ -351,4 +351,26 @@ ModelSurvey.addSurveyList = (data,result) => {
     })
 }
 
+ModelSurvey.getSurveyList = (result) => {
+    sql.query(`select * from surveyList`,(err,res)=>{
+        if(err){
+            console.log("err: ",err);
+            return result(err);
+        }else{
+            return result(res);
+        }
+    })
+}
+
+ModelSurvey.getSurveyWithIdSurveyList = (id,result)=>{
+    sql.query(`select * from survey2 where idSurveyList = ${id}`,(err,res) => {
+        if(err){
+            console.log("err: ",err );
+            return result(err);
+        }else{
+            return result(res);
+        }
+    })
+}
+
 module.exports = ModelSurvey;

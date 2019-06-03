@@ -2318,5 +2318,18 @@ router.post('/get-survey-ctdt-time2',function(req,res){
     })
 })
 
+router.get('/get-survey-list',function(req,res){
+    ModelSurvey.getSurveyList(result => {
+        res.send(result);
+    })
+})
+
+router.get('/get-survey-with-id-survey-list/:id',function(req,res){
+    let id = req.params;
+    ModelSurvey.getSurveyWithIdSurveyList(id,result => {
+        res.send(result);
+    })
+})
+
 
 module.exports = router;
