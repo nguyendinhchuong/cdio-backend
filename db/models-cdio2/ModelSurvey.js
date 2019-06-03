@@ -240,8 +240,7 @@ ModelSurvey.getTeacherWithSubject = (id,result) => {
 ModelSurvey.addSurveyData = (data,result) => {
     let listIdUser = data.id_giaovien;
     listIdUser.forEach(item => {
-        sql.query(`insert into survey2(id_ctdt,id_mon,id_giaovien,status,start_date,end_date) values ('${data.id_ctdt}','${data.id_mon}','${item}',0,${data.start_date},${data.end_date})`,
-    (err, res) => {
+        sql.query(`insert into survey2(id_mon,id_giaovien,idSurveyList) values ('${data.id_mon}','${item}','${data.idSurveyList}')`,    (err, res) => {
         if (err) {
             console.log("Error add data in model survey : ", err);
             result(err)
@@ -317,12 +316,35 @@ ModelSurvey.checkStatus = (data, result) => {
 
 ModelSurvey.getSurveyWithCTDTandTime = (data,result) =>{
     console.log(data)
-    sql.query(`SELECT id from survey2 where id_ctdt=${data.id_ctdt} and ((start_date <= ${data.start_date} and end_date >= ${data.start_date}) or (start_date <= ${data.end_date} and end_date >= ${data.end_date})
+    sql.query(`SELECT id from surveyList where id_ctdt=${data.id_ctdt} and ((start_date <= ${data.start_date} and end_date >= ${data.start_date}) or (start_date <= ${data.end_date} and end_date >= ${data.end_date})
     or (start_date >= ${data.start_date} and end_date <= ${data.end_date}))`,(err,res) => {
         if(err){
             console.log("err: " , err);
             return result(err);
 
+        }else{
+            return result(res);
+        }
+    })
+}
+
+
+ModelSurvey.getSurveyWithCTDTandTime2 = (data,result) => {
+    sql.query(`SELECT id from surveyList where id_ctdt=${data.id_ctdt} and start_date=${data.start_date} and end_date=${data.end_date} and status = 1`,(err,res)=>{
+        if(err){
+            console.log("err: ", err);
+            return result(err);
+        }else{
+            return result(res);
+        }
+    })
+}
+
+ModelSurvey.addSurveyList = (data,result) => {
+    sql.query(`insert into surveyList(id_ctdt,status,start_date,end_date) values (${data.id_ctdt},1,${data.start_date},${data.end_date})`,(err,res)=>{
+        if(err){
+            console.log("err: " , err);
+            return result(err);
         }else{
             return result(res);
         }
