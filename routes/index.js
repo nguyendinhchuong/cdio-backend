@@ -1719,11 +1719,11 @@ router.post('/get-reality-matrix', function (req, res) {
                 const data = req.body.data;
 
                 MatrixModel.getRealityMatrix(data).then(result => {
-                  return res.end(JSON.stringify(result));
+                    return res.end(JSON.stringify(result));
                 })
-                  .catch(err => {
-                    return res.end(JSON.stringify(err))
-                  });
+                    .catch(err => {
+                        return res.end(JSON.stringify(err))
+                    });
             }
         })
     } else {
@@ -1762,15 +1762,15 @@ router.post('/get-standard-matrix', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-              
+
                 const data = req.body.data;
 
                 MatrixModel.getStandardMatrix(data).then(result => {
-                  return res.end(JSON.stringify(result));
+                    return res.end(JSON.stringify(result));
                 })
-                  .catch(err => {
-                    return res.end(JSON.stringify(err))
-                  });
+                    .catch(err => {
+                        return res.end(JSON.stringify(err))
+                    });
             }
         })
     } else {
@@ -1813,7 +1813,7 @@ router.post('/get-benchmark-matrix', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-                const data= req.body.data;
+                const data = req.body.data;
                 MatrixModel.getBenchmarkMatrix(data).then(result => {
                     return res.end(JSON.stringify(result));
                 })
@@ -2177,8 +2177,8 @@ router.get('/get-survey/:id', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-              let data = req.body.data
-              ModelSurvey.getITUwithQA(data, (result) => {
+                let data = req.body.data
+                ModelSurvey.getITUwithQA(data, (result) => {
                     res.send(result);
                 })
             }
@@ -2218,44 +2218,66 @@ router.post('/authen-me', function (req, res) {
             res.send(JSON.stringify(response));
         } else {
             Users.authenMe(authData.username)
-            .then(data => {
-                console.log(data.data);
-                let response = {};
+                .then(data => {
+                    console.log(data.data);
+                    let response = {};
                     response.status = 200;
                     response.code = data.code;
                     response.token = data.access_token;
                     response.data = data.data;
                     response.message = "login success";
                     res.send(JSON.stringify(response));
-            })
-            .catch(err => {
-                throw err;
-            })
+                })
+                .catch(err => {
+                    throw err;
+                })
         }
     })
 })
 
-<<<<<<< HEAD
-router.get('/get-teacher-with-subject/:id',function(req,res){
-  let id = req.params;
-  ModelSurvey.getTeacherWithSubject(id,(result)=>{
-    res.send(result);
-  })
+router.get('/get-teacher-with-subject/:id', function (req, res) {
+    let id = req.params;
+    ModelSurvey.getTeacherWithSubject(id, (result) => {
+        res.send(result);
+    })
 })
 
-router.post('/add-survey-data',function(req,res){
-  let data = req.body;
-  ModelSurvey.addSurveyData(data,(result)=>{
-    return res.end(result);
-=======
-router.post('/checkstatus', function(req, res) {
-  let data = req.body.data;
-  console.log(data)
-  ModelSurvey.checkStatus(data, result => {
-    if (result !== 'done') {
-      res.send(result[0])
-    } else res.send(result)
->>>>>>> b0b59e79c1034a9d3c3039e2c1d24892314a6910
-  })
+router.post('/add-survey-data', function (req, res) {
+    let data = req.body;
+    ModelSurvey.addSurveyData(data, (result) => {
+        return res.end(result);
+    })
 })
+
+router.post('/checkstatus', function (req, res) {
+    let data = req.body.data;
+    console.log(data)
+    ModelSurvey.checkStatus(data, result => {
+        if (result !== 'done') {
+            res.send(result[0])
+        } else res.send(result)
+    })
+})
+
+router.get('/get-all-data-survey', function (req, res) {
+    ModelSurvey.getDataSurvey(result => {
+        res.send(result)
+    })
+})
+
+router.post('/get-survey-id',function(req,res){
+    let data = req.body;
+    ModelSurvey.getDataSurvey1(data,result=>{
+        res.send(result);
+    })
+})
+
+router.post('/get-survey-ctdt-time',function(req,res){
+    let data = req.body;
+    ModelSurvey.getSurveyWithCTDTandTime(data,result => {
+        res.send(result)
+    })
+})
+
+
 module.exports = router;
