@@ -3,7 +3,8 @@ var sql = require('../db');
 var ModelSurvey = () => { }
 
 class Survey {
-    constructor(mon, giaovien, itu) {
+    constructor(id_mon, mon, giaovien, itu) {
+        this.id_mon = id_mon; 
         this.mon = mon;
         this.giaovien = giaovien;
         this.itu = itu;
@@ -138,6 +139,7 @@ ModelSurvey.getDataMatixSurvey = (result) => {
                                     });
 
                                     const object = new Survey(
+                                        id,
                                         subjectName,
                                         'Nam',
                                         data

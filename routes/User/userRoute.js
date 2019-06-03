@@ -7,7 +7,8 @@ module.exports = (app) => {
     app.route('/user/getbyrole').get(auth.isAuthenticated, user.getByRole);
 
     app.route('/user/register').post(auth.isAuthenticated, user.register);
+    app.route('/user/registerlist').post(auth.isAuthenticated, user.registerList);
     app.route('/user/login').post(user.login);
-    app.route('/user/changepass').post(auth.isAuthenticated, user.changePass);
+    app.route('/user/changepass').post(user.changePass);
     app.route('/user/delete').post(auth.isAuthenticated, user.deleteUser);
 }

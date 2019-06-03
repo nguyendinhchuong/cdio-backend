@@ -1,4 +1,4 @@
-var db = require('../../../models/index');
+
 
 module.exports = (sequelize, Sequelize)=>{
     const program = sequelize.define('program', {

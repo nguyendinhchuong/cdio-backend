@@ -18,7 +18,7 @@ exports.register = (req, res) => {
         .then(data => {
             let response = {};
             if (data.code === 1) {
-                sendmail.sendMail(data.data).catch(err);
+                sendmail.sendMail(data.data).catch(err => { throw err });
                 response.code = 1;
                 response.message = "add success";
                 res.send(JSON.stringify(response));
@@ -37,6 +37,47 @@ exports.register = (req, res) => {
         })
 }
 
+exports.registerList = (req, res) => {
+    let body = JSON.parse(req.body.data);
+    let request = {};
+    let list_user = [];
+    body.map(row => {
+        let obj = {};
+        obj.Username = row.username;
+        obj.Name = row.name;
+        obj.Email = row.email;
+        obj.Role = row.role;
+        obj.Password = generator.generate({
+            length: 8,
+            numbers: true
+        })
+        list_user.push(obj);
+    })
+    request.data = list_user;
+    user.registerList(request)
+        .then(async data => {
+            let response = {};
+            let register_error = 0;
+            let register_success = 0;
+            const promise = data.map(async row => {
+                if (row.error) {
+                    register_error++;
+                }
+                else {
+                    register_success++;
+                    sendmail.sendMail(row.data).catch(err => { throw err });
+                }
+            })
+            await Promise.all(promise);
+            response.register_error = register_error;
+            response.register_success = register_success;
+            res.send(JSON.stringify(response));
+        })
+        .catch(err => {
+            throw err;
+        })
+}
+
 exports.login = (req, res) => {
     let body = JSON.parse(req.body.data);
     let request = {};
@@ -45,7 +86,6 @@ exports.login = (req, res) => {
 
     user.login(request)
         .then(data => {
-            console.log(data.data);
             let response = {};
             if (data.code === -3) {
                 response.code = data.code;
@@ -137,41 +177,33 @@ exports.getByRole = (req, res) => {
 }
 exports.changePass = (req, res) => {
     let body = JSON.parse(req.body.data);
-    console.log(req.user);
-    if (req.user.dataValues.Username !== body.username) {
-        let response = {};
-        response.code = -3;
-        response.message = "fail";
-        res.send(JSON.stringify(response));
-    } else {
-        let request = {};
-        request.Username = body.username;
-        request.Password = body.password;
-        console.log(request);
-        user.changePass(request)
-            .then(data => {
-                let response = {};
-                if (data) {
-                    response.code = 1;
-                    response.data = data;
-                    response.message = "change pass success";
-                    res.send(JSON.stringify(response));
-                } else {
-                    response.code = -1;
-                    response.message = "change pass fail";
-                    res.send(JSON.stringify(response));
-                }
-            })
-            .catch(err => {
-                throw err;
-            })
-    }
+    let request = {};
+    request.Username = body.username;
+    request.Password = body.password;
+    user.changePass(request)
+        .then(data => {
+            let response = {};
+            if (data) {
+                response.code = 1;
+                response.data = data;
+                response.message = "change pass success";
+                res.send(JSON.stringify(response));
+            } else {
+                response.code = -1;
+                response.message = "change pass fail";
+                res.send(JSON.stringify(response));
+            }
+        })
+        .catch(err => {
+            throw err;
+        })
+
 
 }
 
 exports.deleteUser = (req, res) => {
-    let body = JSON.parse(req.body.data);
-    let request = body.username;
+    let params = req.query;
+    let request = params.username;
 
     user.deleteUser(request)
         .then(data => {

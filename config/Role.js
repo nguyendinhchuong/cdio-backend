@@ -7,14 +7,12 @@ const role = {
     5: [
         '/user/getlist/',
         '/user/getinfo/',
-        '/user/changepass/',
         '/comment/get/',
         '/comment/add/'
     ],
     2: [
         '/user/getlist/',
         '/user/getinfo/',
-        '/user/changepass/',
         '/comment/get/',
         '/comment/done/'
     ],
@@ -23,9 +21,9 @@ const role = {
         '/user/getinfo/',
         '/user/delete/',
         '/user/register/',
+        '/user/registerlist/',
         '/user/getbyrole/',
-        '/user/delete/',
-        '/user/changepass/'
+        '/user/delete/'
     ]
 }
 

@@ -1,5 +1,37 @@
 const eduprogram = require('../../service/EducationProgram/eduprogramService');
 
+
+exports.getListOfContent = (req, res) => {
+    let params = req.query;
+    let request = {};
+    let response = {};
+    if (isNaN(+params.id)) {
+        response.code = -1;
+        response.message = "id isn't string";
+        res.send(JSON.stringify(response));
+    }
+    request.IdEduProgram = +params.id;
+    eduprogram.getListOfContent(request)
+        .then(data => {
+            if (data) {
+                response.code = 1;
+                response.message = "success";
+                response.data = data;
+                res.send(JSON.stringify(response));
+            } else {
+                response.code = -1;
+                response.message = "fail";
+                response.data = data;
+                res.send(JSON.stringify(response));
+            }
+        })
+        .catch(err => {
+            response.code = -1;
+            response.message = "Throw err";
+            res.send(JSON.stringify(response));
+        })
+}
+
 exports.getEduProgList = (req, res) => {
     eduprogram.getEduProgram()
         .then(data => {

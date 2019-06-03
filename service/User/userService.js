@@ -115,7 +115,67 @@ exports.register = (request) => {
     })
 }
 
+exports.registerList = (request) => {
+    return new Promise((resolve, reject) => {
+        db.sequelize.authenticate()
+            .then(async () => {
+                let response = [];
+                const promise = request.data.map(async row => {
+                    let obj = {};
+                    await db.user.findOne({
+                        where: {
+                            username: row.Username
+                        }
+                    })
+                        .then(async data => {
+                            if (data) {
+                                obj.error = true;
+                                obj.data = row;
+                                response.push(obj);
+                            } else {
+                                let user = {};
+                                user.username = row.Username;
+                                user.password = row.Password;
+                                user.name = row.Name;
+                                user.email = row.Email;
+                                await db.user.create(user)
+                                    .then(async data => {
+                                        obj.data = data.dataValues;
+                                        let idUser = data.dataValues.id;
+                                        let idrole_array = [];
+                                        await row.Role.map(role => {
+                                            let role_obj = {};
+                                            role_obj.idUser = idUser;
+                                            role_obj.idRole = role;
+                                            idrole_array.push(role_obj);
+                                        })
+                                        await db.user_has_role.bulkCreate(idrole_array)
+                                            .then(() => {
+                                                obj.error = false;
+                                                response.push(obj);
+                                            })
+                                            .catch(err => {
+                                                reject(err);
+                                            })
+                                    })
+                                    .catch(err => {
+                                        reject(err);
+                                    })
+                            }
 
+                        })
+                        .catch(err => {
+                            reject(err);
+                        })
+                })
+                await Promise.all(promise);
+                resolve(response);
+            })
+            .catch(err => {
+                reject(err);
+            })
+    })
+}
 
 exports.login = (request) => {
     return new Promise((resolve, reject) => {
@@ -335,11 +395,11 @@ exports.changePass = (request) => {
         db.sequelize.authenticate()
             .then(() => {
                 db.user.update({
-                    Password: request.Password
+                    password: request.Password
                 }, {
                         returning: true,
                         where: {
-                            Username: request.Username
+                            username: request.Username
                         }
                     })
                     .then(rowsUpdate => {
@@ -362,7 +422,7 @@ exports.deleteUser = (request) => {
             .then(() => {
                 db.user.destroy({
                     where: {
-                        Username: request
+                        username: request
                     }
                 })
                     .then(effectedRows => {

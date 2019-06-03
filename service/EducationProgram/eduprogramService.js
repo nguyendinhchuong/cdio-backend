@@ -1,5 +1,59 @@
 const db = require('../../models/index');
 
+exports.getListOfContent = async (request) => {
+    const idEduProgram = request.IdEduProgram;
+    let idLevel, idProgram;
+    let listProgram = [];
+    let listDetailPro = [];
+    let results = [];
+    await getLevelAndProgramOfEduPro(idEduProgram)
+        .then(data => {
+            const result = data.dataValues;
+            idLevel = result.IdLevel;
+            idProgram = result.IdProgram;
+        })
+        .catch(err => {
+            console.log("err getLevelAndProgramOfEduPro");
+            return Promise.reject(err);
+        });
+
+    await getListEduProByLevelAndProgram(+idLevel, +idProgram)
+        .then(data => {
+            listProgram = data.reduce((arr, item) => {
+                return arr.concat(item.dataValues);
+            }, []);
+        })
+        .catch(err => {
+            console.log("err getListEduProByLevelAndProgram");
+            return Promise.reject(err);
+        });
+
+    await getListDetailEdupro(
+        listProgram.map(item => {
+            return item.Id;
+        }))
+        .then(data => {
+            listDetailPro = data.reduce((arr, item)=>{
+                return arr.concat(item.dataValues);
+            },[]);
+            // map full
+            const len = listDetailPro.length;
+            results = listProgram.reduce((arr, item)=>{
+                for(let i = 0 ; i< len; i++){
+                    if(item.Id === listDetailPro[i].IdEduProgram){
+                        return arr.concat({...item, IdDetailPro: listDetailPro[i].Id});
+                    }
+                }
+                return arr;
+            },[]);
+        })
+        .catch(err => {
+            console.log("err getListDetailEdupro");
+            return Promise.reject(err);
+        })
+    return Promise.resolve(results);
+}
+
 exports.getEduProgram = () => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
@@ -225,5 +279,35 @@ exports.updateEduProg = (request) => {
             .catch(err => {
                 reject(err);
             })
+    })
+}
+
+const getListEduProByLevelAndProgram = (idLevel, idPro) => {
+    return db.eduprogram.findAll({
+        where: {
+            IdLevel: idLevel,
+            IdProgram: idPro
+        },
+        attributes: ['Id', 'EduName']
+    })
+}
+
+const getListDetailEdupro = idsPro => {
+    return db.detaileduprog.findAll({
+        where: {
+            IdEduProgram: {
+                $in: idsPro
+            }
+        },
+        attributes: ['Id', 'IdEduProgram']
+    })
+}
+
+const getLevelAndProgramOfEduPro = idPro => {
+    return db.eduprogram.findOne({
+        where: {
+            Id: idPro
+        },
+        attributes: ['IdLevel', 'IdProgram']
     })
 }
