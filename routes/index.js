@@ -1731,6 +1731,31 @@ router.post('/get-reality-matrix', function (req, res) {
     }
 });
 
+router.post('/insert-standard-matrix', function (req, res) {
+    if (req.headers &&
+        req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'JWT') {
+        jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
+            if (err) {
+                //res.sendStatus(403);
+                res.send("Unauthorized user!");
+            } else {
+                const data = req.body.data;
+
+                MatrixModel.insertStandardMatrix(data).then(result => {
+                  return res.end(JSON.stringify(result));
+                })
+                  .catch(err => {
+                    return res.end(JSON.stringify(err))
+                  });
+            }
+        })
+    } else {
+        res.send("Invalid token!");
+    }
+});
+
+
 router.get('/get-cdr-cdio', function (req, res) {
     if (req.headers &&
         req.headers.authorization &&
@@ -2290,6 +2315,12 @@ router.post('/get-survey-itu',function(req,res){
         res.send(result)
     })
 })
+router.post('/add-survey-list',function(req,res){
+    let data = req.body;
+    ModelSurvey.addSurveyList(data,result => {
+        res.send(result)
+    })
+})
 
 router.get('/getidqa/:id', function(req, res) {
     let id = req.params.id;
@@ -2299,5 +2330,13 @@ router.get('/getidqa/:id', function(req, res) {
       } else res.send(result)
     })
   })
+
+router.post('/get-survey-ctdt-time2',function(req,res){
+    let data = req.body;
+    ModelSurvey.getSurveyWithCTDTandTime2(data,result =>{
+        res.send(result);
+    })
+})
+
 
 module.exports = router;

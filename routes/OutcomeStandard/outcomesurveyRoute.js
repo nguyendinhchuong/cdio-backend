@@ -2,10 +2,12 @@ const outcomesurvey = require('../../controllers/OutcomeStandard/outcomesurveyCo
 const auth = require('../../controllers/User/authController');
 
 module.exports = (app) => {
-    //app.route('/getprogram').get(program.getPrograms);
     app.route('/outcome/getsurveylist').get(outcomesurvey.getSurvey);
+    app.route('/outcome/getsurveyquestion').get(outcomesurvey.getSurveyQuestion);
+    app.route('/outcome/getresult').get(outcomesurvey.getSurveyResult);
 
     app.route('/outcome/add').post(outcomesurvey.addNewSurvey);
-    // app.route('/program/addbulk').post(program.addBulkProgram);
-    // app.route('/program/delete').post(program.deleteProgram);
+    app.route('/outcome/addsurveyquestion').post(outcomesurvey.addSurveyQuestion);
+    app.route('/outcome/dosurvey').post(outcomesurvey.doSurvey);
+    
 }

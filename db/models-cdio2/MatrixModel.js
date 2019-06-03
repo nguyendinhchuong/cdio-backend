@@ -37,7 +37,7 @@ MatrixModel.getRealityMatrix = (listIdSubject) => {
 
                 if (index === listSubject.length - 1){
                   
-                  insertStandardMatrix(resultRes);
+                  //insertStandardMatrix(resultRes);
                   resolve(resultRes);
                 } 
               },
@@ -150,7 +150,7 @@ MatrixModel.getCdrCDIO = ()=>{
 
 
 
-insertStandardMatrix = (resultRes)=>{
+MatrixModel.insertStandardMatrix = (resultRes)=>{
   return new Promise((resolve,reject)=>{
     resultRes.forEach((item,index)=>{
       sql.query(`SELECT * FROM matrix WHERE thong_tin_chung_id = ${item.idSubject}`,(err,result)=>{
@@ -177,8 +177,11 @@ insertStandardMatrix = (resultRes)=>{
             }
           })
 
-          resolve("1");
+          if(index === resultRes.length -1) resolve(1);
         }
+        else{
+          if(index === resultRes.length -1) resolve(0);        }
+        
       })
     })
   })
@@ -216,6 +219,7 @@ MatrixModel.updateStandardMatrix = (body,result)=>{
 MatrixModel.getBenchmarkMatrix = (listSubject)=>{
   return new Promise((resolve,reject)=>{
       getAmountITUForBenchMark(listSubject).then(res=>{
+        if(res.length===0) resolve([]);
 
         let data = {
           I:[],
@@ -250,6 +254,7 @@ convert = (listSubject)=>{
   return new Promise((resolve,reject)=>{
         
     MatrixModel.getStandardMatrix(listSubject).then(standardMatrix=>{
+      if(standardMatrix.length===0) resolve([]);
       
       let mapSubject = new Map();
 
@@ -295,6 +300,7 @@ getAmountITUForBenchMark = (listSubject)=>{
   return new Promise((resolve,reject)=>{
 
     convert(listSubject).then(realityMatrix=>{
+      if(realityMatrix.length===0) resolve([]);
 
         MatrixModel.getCdrCDIO().then(res=>{
           let data = [];
