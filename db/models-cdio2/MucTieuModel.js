@@ -10,7 +10,7 @@ MucTieuModel.save = (data, result) => {
   // sql.query(`update muc_tieu_mon_hoc set del_flag = 1 where thong_tin_chung_id = ${data.id}`);
   data.body.forEach(element => {
     console.log(element.id)
-    if (element.id === -1) {
+    if (element.id === -1 && element.del_flag === 0) {
       sql.query(`insert into muc_tieu_mon_hoc(muc_tieu, mo_ta, thong_tin_chung_id) values ('${element.objectName}', '${element.description}', ${data.id})`,
       (err, res) => {
         if (err) {

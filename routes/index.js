@@ -2073,11 +2073,8 @@ router.post('/add-data-survey', function (req, res) {
                 res.send("Unauthorized user!");
             } else {
                 const data = req.body.data;
-                const id_qa = req.body.id_qa;
-                const idMon = req.body.idMon;
-                const id_giaovien = req.body.id_giaovien
-                const id_ctdt = req.body.id_ctdt
-                ModelSurvey.addData(data, id_qa, idMon, id_giaovien, id_ctdt, (result) => {
+                const id_survey = req.body.id_survey
+                ModelSurvey.addData(data, id_survey, (result) => {
                     //res.send(result)
                 });
             }
@@ -2138,7 +2135,8 @@ router.post('/get-survey-itu', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-                ModelSurvey.getITU(req.body, (result) => {
+                console.log(req.body)
+                ModelSurvey.getSurveyITU(req.body.data, (result) => {
                     res.send(result);
                 })
             }
@@ -2146,6 +2144,13 @@ router.post('/get-survey-itu', function (req, res) {
     } else {
         res.send("Invalid token!");
     }
+})
+
+router.get('set-status/:id', function(req, res) {
+    let id = req.params
+    ModelSurvey.setStatus(id, result => {
+        res.send(result)
+    })
 })
 
 router.get('/get-surveyqa/:id', function (req, res) {
@@ -2279,5 +2284,20 @@ router.post('/get-survey-ctdt-time',function(req,res){
     })
 })
 
+router.post('/get-survey-itu',function(req,res){
+    let data = req.body.data;
+    ModelSurvey.getSurveyWithCTDTandTime(data,result => {
+        res.send(result)
+    })
+})
+
+router.get('/getidqa/:id', function(req, res) {
+    let id = req.params.id;
+    ModelSurvey.getIDQA(id, result => {
+      if (result !== 'done') {
+        res.send(result[0])
+      } else res.send(result)
+    })
+  })
 
 module.exports = router;
