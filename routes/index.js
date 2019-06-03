@@ -1731,6 +1731,31 @@ router.post('/get-reality-matrix', function (req, res) {
     }
 });
 
+router.post('/insert-standard-matrix', function (req, res) {
+    if (req.headers &&
+        req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'JWT') {
+        jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
+            if (err) {
+                //res.sendStatus(403);
+                res.send("Unauthorized user!");
+            } else {
+                const data = req.body.data;
+
+                MatrixModel.insertStandardMatrix(data).then(result => {
+                  return res.end(JSON.stringify(result));
+                })
+                  .catch(err => {
+                    return res.end(JSON.stringify(err))
+                  });
+            }
+        })
+    } else {
+        res.send("Invalid token!");
+    }
+});
+
+
 router.get('/get-cdr-cdio', function (req, res) {
     if (req.headers &&
         req.headers.authorization &&
