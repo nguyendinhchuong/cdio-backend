@@ -86,7 +86,6 @@ exports.login = (req, res) => {
 
     user.login(request)
         .then(data => {
-            console.log(data.data);
             let response = {};
             if (data.code === -3) {
                 response.code = data.code;
