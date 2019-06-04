@@ -239,6 +239,7 @@ ModelSurvey.getTeacherWithSubject = (id,result) => {
 
 ModelSurvey.addSurveyData = (data,result) => {
     let listIdUser = data.id_giaovien;
+    console.log(data)
     listIdUser.forEach(item => {
         sql.query(`insert into survey2(id_mon,id_giaovien,idSurveyList) values ('${data.id_mon}','${item}','${data.idSurveyList}')`,    (err, res) => {
         if (err) {
@@ -315,7 +316,6 @@ ModelSurvey.checkStatus = (data, result) => {
 }
 
 ModelSurvey.getSurveyWithCTDTandTime = (data,result) =>{
-    console.log(data)
     sql.query(`SELECT id from surveyList where id_ctdt=${data.id_ctdt} and ((start_date <= ${data.start_date} and end_date >= ${data.start_date}) or (start_date <= ${data.end_date} and end_date >= ${data.end_date})
     or (start_date >= ${data.start_date} and end_date <= ${data.end_date}))`,(err,res) => {
         if(err){
@@ -330,8 +330,6 @@ ModelSurvey.getSurveyWithCTDTandTime = (data,result) =>{
 
 
 ModelSurvey.getSurveyWithCTDTandTime2 = (data,result) => {
-    sql.query(`SELECT id from surveyList where id_ctdt=${data.id_ctdt} and start_date=${data.start_date} and end_date=${data.end_date} and status = 1`,(err,res)=>{
-        if(err){
             console.log("err: ", err);
             return result(err);
         }else{
@@ -373,4 +371,6 @@ ModelSurvey.getSurveyWithIdSurveyList = (id,result)=>{
     })
 }
 
+    sql.query(`SELECT id from surveyList where id_ctdt=${data.id_ctdt} and start_date=${data.start_date} and end_date=${data.end_date} and status = 1`,(err,res)=>{
+        if(err){
 module.exports = ModelSurvey;

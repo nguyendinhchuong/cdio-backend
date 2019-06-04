@@ -2309,8 +2309,8 @@ router.post('/get-survey-ctdt-time',function(req,res){
 
 router.post('/add-survey-list',function(req,res){
     let data = req.body;
-    ModelSurvey.addSurveyList(data,result => {
-        res.send(result)
+    ModelSurvey.addSurveyList(data,result =>{
+        res.send("1")
     })
 })
 
