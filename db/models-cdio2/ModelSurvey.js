@@ -328,8 +328,9 @@ ModelSurvey.getSurveyWithCTDTandTime = (data,result) =>{
     })
 }
 
-
 ModelSurvey.getSurveyWithCTDTandTime2 = (data,result) => {
+    sql.query(`SELECT id from surveyList where id_ctdt=${data.id_ctdt} and start_date=${data.start_date} and end_date=${data.end_date} and status = 1`,(err,res)=>{
+        if(err){
             console.log("err: ", err);
             return result(err);
         }else{
@@ -371,6 +372,4 @@ ModelSurvey.getSurveyWithIdSurveyList = (id,result)=>{
     })
 }
 
-    sql.query(`SELECT id from surveyList where id_ctdt=${data.id_ctdt} and start_date=${data.start_date} and end_date=${data.end_date} and status = 1`,(err,res)=>{
-        if(err){
 module.exports = ModelSurvey;
