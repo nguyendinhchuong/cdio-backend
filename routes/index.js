@@ -2205,8 +2205,8 @@ router.get('/get-survey/:id', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-                let data = req.body.data
-                ModelSurvey.getITUwithQA(data, (result) => {
+                let id = req.params.id
+                ModelSurvey.getITUwithQA(id, (result) => {
                     res.send(result);
                 })
             }
@@ -2309,8 +2309,8 @@ router.post('/get-survey-ctdt-time',function(req,res){
 
 router.post('/add-survey-list',function(req,res){
     let data = req.body;
-    ModelSurvey.addSurveyList(data,result => {
-        res.send(result)
+    ModelSurvey.addSurveyList(data,result =>{
+        res.send("1")
     })
 })
 
