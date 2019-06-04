@@ -420,15 +420,38 @@ exports.deleteUser = (request) => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
             .then(() => {
-                db.user.destroy({
+                db.user.findOne({
                     where: {
                         username: request
                     }
                 })
-                    .then(effectedRows => {
-                        console.log("Effected rows of User: " + effectedRows);
-                        let code = 1;
-                        resolve(code);
+                    .then(data => {
+                        db.user_has_role.destroy({
+                            where: {
+                                idUser: data.dataValues.id
+                            }
+                        })
+                            .then(effectedRows => {
+                                console.log("effected row of user_has_role: ", effectedRows);
+                            })
+                            .then(() => {
+                                db.user.destroy({
+                                    where: {
+                                        username: request
+                                    }
+                                })
+                                    .then(effectedRows => {
+                                        console.log("Effected rows of User: " + effectedRows);
+                                        let code = 1;
+                                        resolve(code);
+                                    })
+                                    .catch(err => {
+                                        reject(err);
+                                    })
+                            })
+                            .catch(err => {
+                                reject(err);
+                            })
                     })
                     .catch(err => {
                         reject(err);
