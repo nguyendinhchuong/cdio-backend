@@ -42,6 +42,7 @@
     "react-chartjs-2": "^2.7.6",
     "sequelize": "^4.43.0",
     "sequelize-cli": "^5.4.0",
+    "taskkill": "^3.0.0",
     "wkhtmltopdf": "^0.3.4"
   }
 }

@@ -14,8 +14,6 @@ Model4.save = (data, result) => {
                     if (err) {
                         console.log("error:", err);
                         result(null, err)
-                    } else {
-                        result(null, res);
                     }
                 });
             }
@@ -34,8 +32,6 @@ Model4.save = (data, result) => {
                     if (err) {
                         console.log("error:", err);
                         result(null, err)
-                    } else {
-                        result(null, res);
                     }
                 });
             }
@@ -47,14 +43,14 @@ Model4.save = (data, result) => {
                             if (err) {
                                 console.log("error:", err);
                                 result(null, err)
-                            } else {
-                                result(null, res);
                             }
                         })
                 }
             }
         }
-        
+        if(i === data.data.length - 1) {
+            result(null, {status: "OK"})
+        }
     }
 }
 

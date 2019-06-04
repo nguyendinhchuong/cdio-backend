@@ -522,8 +522,11 @@ router.post('/save-data-4', function (req, res) {
                 Model4.save(data, function (err, description) {
                     if (err) {
                         console.log(err);
+                    } else {
+                        console.log("done");
+                        res.send(description);
                     }
-                    console.log("done");
+                    
                 })
             }
         })
