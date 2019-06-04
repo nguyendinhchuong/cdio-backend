@@ -204,7 +204,7 @@ ModelSurvey.getITU = (obj, result) => {
 }
 
 ModelSurvey.getQA = (id, result) => {
-    sql.query(`SELECT * from survey_qa where id = ${id}`, (err, res) => {
+    sql.query(`SELECT * from survey_qa where id_survey = ${id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -213,8 +213,8 @@ ModelSurvey.getQA = (id, result) => {
     })
 }
 
-ModelSurvey.getITUwithQA = (data, result) => {
-    sql.query(`SELECT * FROM survey where id_ctdt = ${data.id_ctdt} and id_mon = ${data.id_mon} and id_giaovien = ${data.id_giaovien} and id_qa = ${data.id_qa}`, (err, res) => {
+ModelSurvey.getITUwithQA = (id, result) => {
+    sql.query(`SELECT * FROM survey_itu where id_survey=${id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -263,7 +263,7 @@ ModelSurvey.getDataSurvey = (result) => {
 }
 
 ModelSurvey.getDataSurvey1 = (data,result) => {
-    sql.query(`select * from survey2 where id_ctdt='${data.id_ctdt}' and id_mon='${data.id_mon}' and id_giaovien = '${data.id_giaovien}' and status = 0`,(err,res)=>{
+    sql.query(`select id from survey2 where id_ctdt='${data.id_ctdt}' and id_mon='${data.id_mon}' and id_giaovien = '${data.id_giaovien}' and status = 0`,(err,res)=>{
         if(err){
             console.log("Error get data from survey2 : ",err);
             result(err);
