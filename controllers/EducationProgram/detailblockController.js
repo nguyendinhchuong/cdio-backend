@@ -145,3 +145,34 @@ exports.addTeacher = (req, res) => {
         })
 
 }
+
+exports.addListTeacher = (req, res) => {
+    let body = JSON.parse(req.body.data);
+    let request = {};
+    let data = [];
+    body.map(row => {
+        let obj = {};
+        obj.IdSubjectBlock = Number(row.idsubjectblock);
+        obj.IdSubject = Number(row.idsubject);
+        obj.IdUser = row.iduser.toString();
+        data.push(obj);
+    });
+    request.data = Array.from(data);
+    detailblock.addListTeacher(request)
+        .then(data => {
+            let response = {};
+            if (data === 1) {
+                response.code = 1;
+                response.message = "add success";
+                res.send(JSON.stringify(response));
+            } else {
+                response.code = -1;
+                response.message = "fail";
+                res.send(JSON.stringify(response));
+            }
+        })
+        .catch(err => {
+            throw err;
+        })
+
+}
