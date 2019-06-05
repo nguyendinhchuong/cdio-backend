@@ -39,7 +39,8 @@ close = () => {
     sql.end();
 }
 
-ModelSurvey.addData = (data, id_qa, idMon, id_giaovien, id_ctdt, result) => {
+ModelSurvey.addData = (data, id_survey, result) => {
+    console.log(data, id_survey)
     try {
         data.forEach(element => {
             let resultValue = '';
@@ -48,8 +49,8 @@ ModelSurvey.addData = (data, id_qa, idMon, id_giaovien, id_ctdt, result) => {
                 resultValue += value + ',';
             });
 
-            query(`INSERT INTO survey  (id_ctdt, id_mon, id_giaovien, id, value, mo_ta, id_qa, status)  VALUES
-            ('${id_ctdt}','${idMon}','${id_giaovien}', '${element.key}', '${resultValue}','${element.description}','${id_qa}', 1)`)
+            query(`INSERT INTO survey_itu  (id, value, mo_ta, id_survey)  VALUES
+            ('${element.key}', '${resultValue}','${element.description}',${id_survey})`)
             .then (res => {
                 console.log(res);
             })
@@ -204,17 +205,30 @@ ModelSurvey.getITU = (obj, result) => {
 }
 
 ModelSurvey.getQA = (id, result) => {
-    sql.query(`SELECT * from survey_qa where id = ${id}`, (err, res) => {
+    if (id !== 'undefined') {
+        sql.query(`SELECT * from survey_qa where id = ${id}`, (err, res) => {
+            if (err) {
+                console.log("err: ", err);
+                return result(err);
+            } else
+                return result(res);
+        })
+    }
+}
+
+ModelSurvey.getSurveyITU = (id, result) => {
+    sql.query(`SELECT * from survey_itu where id_survey = ${id.id_survey}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
         } else
+        console.log('itu:',res)
             return result(res);
     })
 }
 
-ModelSurvey.getITUwithQA = (data, result) => {
-    sql.query(`SELECT * FROM survey where id_ctdt = ${data.id_ctdt} and id_mon = ${data.id_mon} and id_giaovien = ${data.id_giaovien} and id_qa = ${data.id_qa}`, (err, res) => {
+ModelSurvey.getITUwithQA = (id, result) => {
+    sql.query(`SELECT * FROM survey_itu where id_survey=${id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -239,6 +253,7 @@ ModelSurvey.getTeacherWithSubject = (id,result) => {
 
 ModelSurvey.addSurveyData = (data,result) => {
     let listIdUser = data.id_giaovien;
+    console.log(data)
     listIdUser.forEach(item => {
         sql.query(`insert into survey2(id_mon,id_giaovien,idSurveyList) values ('${data.id_mon}','${item}','${data.idSurveyList}')`,    (err, res) => {
         if (err) {
@@ -263,7 +278,7 @@ ModelSurvey.getDataSurvey = (result) => {
 }
 
 ModelSurvey.getDataSurvey1 = (data,result) => {
-    sql.query(`select * from survey2 where id_ctdt='${data.id_ctdt}' and id_mon='${data.id_mon}' and id_giaovien = '${data.id_giaovien}' and status = 0`,(err,res)=>{
+    sql.query(`select id from survey2 where id_ctdt='${data.id_ctdt}' and id_mon='${data.id_mon}' and id_giaovien = '${data.id_giaovien}' and status = 0`,(err,res)=>{
         if(err){
             console.log("Error get data from survey2 : ",err);
             result(err);
@@ -298,9 +313,9 @@ ModelSurvey.addData2 = (data, id_survey, result) => {
     }
 }
 
-ModelSurvey.checkStatus = (data, result) => {
-    // sql.query(`SELECT status, id_qa, end_date FROM survey where id_mon = ${data.id_mon} and id_giaovien = ${data.id_giaovien}`, (err, res) => {
-        sql.query(`SELECT status, id, end_date FROM survey2 where id_mon = ${data.id_mon} and id_giaovien = ${data.id_giaovien}`, (err, res) => {
+ModelSurvey.setStatus = (id, result) => {
+    console.log(id)
+    sql.query(`Update survey2 set status = 1 where id_survey = ${id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -314,8 +329,39 @@ ModelSurvey.checkStatus = (data, result) => {
     })
 }
 
+ModelSurvey.checkStatus = (data, result) => {
+    sql.query(`SELECT id, status, end_date FROM survey2 where id_ctdt = ${data.id_ctdt} and id_mon = ${data.id_mon} and id_giaovien = ${data.id_giaovien}`, (err, res) => {
+        if (err) {
+            console.log("err: ", err);
+            return result(err);
+        } else {
+            if (res) {
+                return result(res);
+            }
+            return result("done")
+        }
+
+    })
+}
+
+ModelSurvey.getIDQA = (id, result) => {
+    if (id !== 'undefined') {
+        sql.query(`SELECT id FROM survey_qa where id_survey = ${id}`, (err, res) => {
+            if (err) {
+                console.log("err: ", err);
+                return result(err);
+            } else {
+                if (res) {
+                    return result(res);
+                }
+                return result("done")
+            }
+    
+        })
+    }
+}
+
 ModelSurvey.getSurveyWithCTDTandTime = (data,result) =>{
-    console.log(data)
     sql.query(`SELECT id from surveyList where id_ctdt=${data.id_ctdt} and ((start_date <= ${data.start_date} and end_date >= ${data.start_date}) or (start_date <= ${data.end_date} and end_date >= ${data.end_date})
     or (start_date >= ${data.start_date} and end_date <= ${data.end_date}))`,(err,res) => {
         if(err){
@@ -327,7 +373,6 @@ ModelSurvey.getSurveyWithCTDTandTime = (data,result) =>{
         }
     })
 }
-
 
 ModelSurvey.getSurveyWithCTDTandTime2 = (data,result) => {
     sql.query(`SELECT id from surveyList where id_ctdt=${data.id_ctdt} and start_date=${data.start_date} and end_date=${data.end_date} and status = 1`,(err,res)=>{

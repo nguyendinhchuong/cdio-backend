@@ -205,8 +205,23 @@ exports.addTeacher = (request) => {
 exports.addListTeacher = (request) => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
-            .then(() => {
-                
+            .then(async () => {
+                let data_array = [];
+                const promises = request.data.map(row => {
+                    let obj = {};
+                    obj.IdSubjectBlock = row.IdSubjectBlock;
+                    obj.IdSubject = row.IdSubject;
+                    obj.IdUser = row.IdUser;
+                    data_array.push(obj);
+                });
+                await Promise.all(promises);
+                await db.detailblock.bulkCreate(data_array)
+                    .then(() => {
+                        resolve(1);
+                    })
+                    .catch(err => {
+                        reject(err);
+                    })
             })
             .catch(err => {
                 reject(err);
