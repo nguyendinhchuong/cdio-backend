@@ -290,10 +290,7 @@ Model4.deletecdrmdhd = (data, result) => {
 Model4.getTeacherList = (data, result) => {
     sql.query(`select user.id , user.name from cdio_db.user
     where user.id not in (select teacher_review_subject.idTeacher from cdio_db.teacher_review_subject where teacher_review_subject.idTTC = ${data.thong_tin_chung_id})
-     && user.id != ${data.idCurrentUser}
-     && user.id not in (select user_has_role.idUser from cdio_db.user_has_role
-                            JOIN cdio_db.role ON user_has_role.idRole = role.id
-                            where role.role != "TEACHER")`,
+     && user.id != ${data.idCurrentUser}`,
         (err, res) => {
             if (err) {
                 console.log("error:", err);
