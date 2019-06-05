@@ -522,8 +522,11 @@ router.post('/save-data-4', function (req, res) {
                 Model4.save(data, function (err, description) {
                     if (err) {
                         console.log(err);
+                    } else {
+                        console.log("done");
+                        res.send(description);
                     }
-                    console.log("done");
+                    
                 })
             }
         })
@@ -2207,8 +2210,8 @@ router.get('/get-survey/:id', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-                let data = req.body.data
-                ModelSurvey.getITUwithQA(data, (result) => {
+                let id = req.params.id
+                ModelSurvey.getITUwithQA(id, (result) => {
                     res.send(result);
                 })
             }
@@ -2317,8 +2320,8 @@ router.post('/get-survey-itu',function(req,res){
 })
 router.post('/add-survey-list',function(req,res){
     let data = req.body;
-    ModelSurvey.addSurveyList(data,result => {
-        res.send(result)
+    ModelSurvey.addSurveyList(data,result =>{
+        res.send("1")
     })
 })
 
@@ -2334,6 +2337,19 @@ router.get('/getidqa/:id', function(req, res) {
 router.post('/get-survey-ctdt-time2',function(req,res){
     let data = req.body;
     ModelSurvey.getSurveyWithCTDTandTime2(data,result =>{
+        res.send(result);
+    })
+})
+
+router.get('/get-survey-list',function(req,res){
+    ModelSurvey.getSurveyList(result => {
+        res.send(result);
+    })
+})
+
+router.get('/get-survey-with-id-survey-list/:id',function(req,res){
+    let id = req.params;
+    ModelSurvey.getSurveyWithIdSurveyList(id,result => {
         res.send(result);
     })
 })
