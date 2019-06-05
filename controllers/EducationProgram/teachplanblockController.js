@@ -77,7 +77,7 @@ exports.updateTeachPlanBlock = (req, res) => {
     const body = JSON.parse(req.body.data);
     const request = {};
 
-    request.IdDetailEdu = Number(params.iddetailedu);
+    request.IdDetailEduProg = Number(params.iddetailedu);
     request.data = body;
 
     teachplanblock.updateTeachPlanBlock(request)

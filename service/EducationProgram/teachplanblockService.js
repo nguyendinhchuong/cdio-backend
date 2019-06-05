@@ -28,7 +28,7 @@ exports.getDetailTeachPlanBlock = (request) => {
                 let response = [];
                 db.teachplanblock.findAll({
                     where: {
-                        IdDetailEdu: request.IdDetailEdu
+                        IdDetailEdu: request.IdDetailEduProg
                     }
                 })
                     .then(async data => {
