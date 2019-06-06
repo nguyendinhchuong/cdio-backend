@@ -255,7 +255,7 @@ ModelSurvey.addSurveyData = (data,result) => {
     let listIdUser = data.id_giaovien;
     console.log(data)
     listIdUser.forEach(item => {
-        sql.query(`insert into survey2(id_mon,id_giaovien,idSurveyList) values ('${data.id_mon}','${item}','${data.idSurveyList}')`,    (err, res) => {
+        sql.query(`insert into survey2(id_mon,id_giaovien,idSurveyList,status) values ('${data.id_mon}','${item}','${data.idSurveyList}','${data.status}')`,    (err, res) => {
         if (err) {
             console.log("Error add data in model survey : ", err);
             result(err)
@@ -278,7 +278,8 @@ ModelSurvey.getDataSurvey = (result) => {
 }
 
 ModelSurvey.getDataSurvey1 = (data,result) => {
-    sql.query(`select id from survey2 where id_ctdt='${data.id_ctdt}' and id_mon='${data.id_mon}' and id_giaovien = '${data.id_giaovien}' and status = 0`,(err,res)=>{
+    console.log(data)
+    sql.query(`select * from survey2 where idSurveyList=${data.data}`,(err,res)=>{
         if(err){
             console.log("Error get data from survey2 : ",err);
             result(err);
@@ -330,7 +331,8 @@ ModelSurvey.setStatus = (id, result) => {
 }
 
 ModelSurvey.checkStatus = (data, result) => {
-    sql.query(`SELECT id, status, end_date FROM survey2 where id_ctdt = ${data.id_ctdt} and id_mon = ${data.id_mon} and id_giaovien = ${data.id_giaovien}`, (err, res) => {
+    // sql.query(`SELECT status, id_qa, end_date FROM survey where id_mon = ${data.id_mon} and id_giaovien = ${data.id_giaovien}`, (err, res) => {
+        sql.query(`SELECT status, id, end_date FROM survey2 where id_survey = ${data.id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -375,7 +377,7 @@ ModelSurvey.getSurveyWithCTDTandTime = (data,result) =>{
 }
 
 ModelSurvey.getSurveyWithCTDTandTime2 = (data,result) => {
-    sql.query(`SELECT id from surveyList where id_ctdt=${data.id_ctdt} and start_date=${data.start_date} and end_date=${data.end_date} and status = 1`,(err,res)=>{
+    sql.query(`SELECT id from surveyList where id_ctdt=${data.id_ctdt} and start_date=${data.start_date} and end_date=${data.end_date}`,(err,res)=>{
         if(err){
             console.log("err: ", err);
             return result(err);
@@ -386,7 +388,7 @@ ModelSurvey.getSurveyWithCTDTandTime2 = (data,result) => {
 }
 
 ModelSurvey.addSurveyList = (data,result) => {
-    sql.query(`insert into surveyList(id_ctdt,status,start_date,end_date) values (${data.id_ctdt},1,${data.start_date},${data.end_date})`,(err,res)=>{
+    sql.query(`insert into surveyList(id_ctdt,status,start_date,end_date) values (${data.id_ctdt},${data.status},${data.start_date},${data.end_date})`,(err,res)=>{
         if(err){
             console.log("err: " , err);
             return result(err);
@@ -411,6 +413,17 @@ ModelSurvey.getSurveyWithIdSurveyList = (id,result)=>{
     sql.query(`select * from survey2 where idSurveyList = ${id}`,(err,res) => {
         if(err){
             console.log("err: ",err );
+            return result(err);
+        }else{
+            return result(res);
+        }
+    })
+}
+
+ModelSurvey.getSubjectWithId = (listId,result) => {
+    sql.query(`select * from subject where Id in (${listId})`,(err,res) => {
+        if(err){
+            console.log("err: " , err);
             return result(err);
         }else{
             return result(res);
