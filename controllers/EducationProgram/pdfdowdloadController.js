@@ -1,18 +1,22 @@
+const fs = require("fs");
+const path = require("path");
+const puppeteer = require('puppeteer');
+const handlebars = require("handlebars");
+
+//require for eduprogram data
 const eduprog = require('../../service/EducationProgram/eduprogramService');
 const detailedu = require('../../service/EducationProgram/detaileduprogService');
 const edupurpose = require('../../service/EducationProgram/edupurposeService');
 const educontent = require('../../service/EducationProgram/eduprogcontentService');
 const teachplanblock = require('../../service/EducationProgram/teachplanblockService');
 
+//require for course list
+const subjecteduprog = require('../../service/EducationProgram/subjecteduprogService');
 
-const fs = require("fs");
-const path = require("path");
-const puppeteer = require('puppeteer');
-const handlebars = require("handlebars");
+
 
 const createPDFEduProgramData = async (ideduprog) => {
     let request = {};
-    console.log(ideduprog);
     request.IdEduProgram = ideduprog;
     request.Id = ideduprog;
     let data = {};
@@ -51,7 +55,12 @@ const createPDFEduProgramData = async (ideduprog) => {
 }
 
 const createPDFCourseListData = async (ideduprog) => {
+    let request = {};
+    request.IdEduProg = ideduprog;
 
+    const subjecteduData = await subjecteduprog.getDetailSubjectByEduId(request);
+
+    console.log(subjecteduData);
 }
 
 const createPDF = async (data, file_template) => {
@@ -101,3 +110,8 @@ exports.getData = async (req, res) => {
         }
     })
 }   
+
+exports.exportPDFCourseList = async (req, res)=>{
+    let params = req.query;
+    const data = await createPDFCourseListData(Number(params.ideduprog));
+}
