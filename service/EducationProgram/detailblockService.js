@@ -32,15 +32,22 @@ exports.addSubjectToDetailBlock = (request) => {
                         IdSubjectBlock: request.IdSubjectBlock
                     }
                 })
-                    .then(data => {
+                    .then(async data => {
                         if (data) {
                             let code = -2;
                             resolve(code);
                         } else {
-                            db.detailblock.create(request)
+                            await db.detailblock.create(request)
+                                .catch(err => {
+                                    reject(err);
+                                })
+                            let obj = {};
+                            obj.IdSubject = request.IdSubject;
+                            obj.IdEduProg = request.IdEduProg;
+                            obj.DateCreated = request.DateCreated;
+                            await db.subjecteduprog.create(obj)
                                 .then(() => {
-                                    let code = 1;
-                                    resolve(code);
+                                    resolve(1);
                                 })
                                 .catch(err => {
                                     reject(err);
@@ -205,8 +212,26 @@ exports.addTeacher = (request) => {
 exports.addListTeacher = (request) => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
-            .then(() => {
-                
+            .then(async () => {
+                const promises = request.data.map(row => {
+                    db.detailblock.update({
+                        IdUser: row.IdUser,
+                        IdMainTeacher: row.IdMainTeacher
+                    }, {
+                            where: {
+                                IdSubjectBlock: row.IdSubjectBlock,
+                                IdSubject: row.IdSubject
+                            }
+                        })
+                        .then(() => {
+                            resolve(1);
+                        })
+                        .catch(err => {
+                            reject(err);
+                        })
+                });
+                await Promise.all(promises);
+
             })
             .catch(err => {
                 reject(err);
