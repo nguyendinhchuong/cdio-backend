@@ -27,7 +27,7 @@ exports.getTeachPlanBlock = (req, res) => {
 exports.getDetailTeachPlanBlock = (req, res) => {
     let params = req.query;
     let request = {};
-    request.IdDetailEdu = Number(params.iddetailedu);
+    request.IdDetailEduProg = Number(params.iddetailedu);
 
     teachplanblock.getDetailTeachPlanBlock(request)
         .then(data => {
