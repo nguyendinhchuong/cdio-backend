@@ -2278,7 +2278,7 @@ router.post('/add-survey-data', function (req, res) {
 })
 
 router.post('/checkstatus', function (req, res) {
-    let data = req.body.data;
+    let data = req.body;
     console.log(data)
     ModelSurvey.checkStatus(data, result => {
         if (result !== 'done') {
@@ -2294,8 +2294,9 @@ router.get('/get-all-data-survey', function (req, res) {
 })
 
 router.post('/get-survey-id',function(req,res){
-    let data = req.body;
-    ModelSurvey.getDataSurvey1(data,result=>{
+    let id = req.body;
+    console.log(req.body)
+    ModelSurvey.getDataSurvey1(id,result=>{
         res.send(result);
     })
 })
@@ -2330,6 +2331,13 @@ router.get('/get-survey-list',function(req,res){
 router.get('/get-survey-with-id-survey-list/:id',function(req,res){
     let id = req.params;
     ModelSurvey.getSurveyWithIdSurveyList(id,result => {
+        res.send(result);
+    })
+})
+
+router.post('/get-subject-with-id',function(req,res){
+    let listId = req.body;
+    ModelSurvey.getSubjectWithId(listId,result => {
         res.send(result);
     })
 })
