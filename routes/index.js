@@ -425,6 +425,9 @@ router.get('/get-cdr-3', (req, res) => {
                 res.send("Unauthorized user!");
             } else {
                 MucTieuModel.getCDR((resData) => {
+                    resData.forEach(element2 => {
+                          element2.KeyRow = element2.KeyRow.slice(0, element2.KeyRow.length -1)
+                      });
                     res.send(resData);
                 })
             }
@@ -2163,7 +2166,6 @@ router.post('/get-survey-itu', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-                console.log(req.body)
                 ModelSurvey.getSurveyITU(req.body.data, (result) => {
                     res.send(result);
                 })
@@ -2174,8 +2176,10 @@ router.post('/get-survey-itu', function (req, res) {
     }
 })
 
-router.get('set-status/:id', function(req, res) {
-    let id = req.params
+router.get('/set-status/:id', function(req, res) {
+    let id = req.params.id
+    console.log(id);
+    
     ModelSurvey.setStatus(id, result => {
         res.send(result)
     })
@@ -2282,10 +2286,18 @@ router.post('/add-survey-data', function (req, res) {
     })
 })
 
-router.post('/checkstatus', function (req, res) {
-    let data = req.body.data;
-    console.log(data)
+router.get('/checkstatus/:id', function (req, res) {
+    let data = req.params.id;
     ModelSurvey.checkStatus(data, result => {
+        if (result !== 'done') {
+            res.send(result[0])
+        } else res.send(result)
+    })
+})
+
+router.get('/checkdate/:id', function (req, res) {
+    let data = req.params.id;
+    ModelSurvey.checkDate(data, result => {
         if (result !== 'done') {
             res.send(result[0])
         } else res.send(result)
