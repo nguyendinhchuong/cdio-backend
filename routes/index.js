@@ -2374,5 +2374,14 @@ router.post('/get-subject-with-id',function(req,res){
     })
 })
 
+router.post('/get-list-survey',function(req,res){
+    let id_ctdt = req.body.id_ctdt;
+    let id_user = req.body.id_user;
+
+    ModelSurvey.getlistSurvey(id_ctdt,id_user,result =>{
+        res.send(result);
+    })
+})
+
 
 module.exports = router;

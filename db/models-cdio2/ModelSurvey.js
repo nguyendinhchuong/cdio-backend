@@ -444,4 +444,36 @@ ModelSurvey.getSubjectWithId = (listId,result) => {
     })
 }
 
+ModelSurvey.getlistSurvey = (id_ctdt,id_user,result) => {
+    sql.query(`select * from surveyList where id_ctdt = ${id_ctdt}`,(err,res) => {
+        if(res!= null){
+            let listIdSurveyList = [];
+            let listSurveyList = res;
+            listSurveyList.forEach(item => {
+                listIdSurveyList.push(item.id);
+            })
+                sql.query(`select * from survey2 where idSurveyList in (${listIdSurveyList}) and id_giaovien = ${id_user} and status = 1`,(err,res)=>{
+                    let response = [];
+                    listSurveyList.forEach(item => {
+                        let obj = [];
+                        res.forEach(element => {
+                            if(item.id === element.idSurveyList){
+                                obj.push(element)
+                            }
+                        })
+                       
+                        let data = {
+                            "survey-list" : item,
+                            "survey" : obj,
+                        }
+                        response.push(data);
+                    })
+                   
+                    result(response)
+                })
+           
+        }
+    })
+}
+
 module.exports = ModelSurvey;
