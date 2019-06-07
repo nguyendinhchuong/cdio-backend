@@ -28,14 +28,15 @@ const createPDFEduProgramData = async (ideduprog) => {
 
     const teachplanblockData = await teachplanblock.getDetailTeachPlanBlock(request);
 
-    console.log("Edu Prog: ", eduprogData);
-    console.log("Detail Edu: ", detaileduData.dataValues);
+    // console.log("Edu Prog: ", eduprogData);
+    // console.log("Detail Edu: ", detaileduData.dataValues);
     console.log("Edu Purpose");
     for (var i = 0; i < edupurposeData.length; i++) {
         console.log(edupurposeData[i].dataValues);
     }
-    console.log("Teach Plan Block: ", teachplanblockData);
+    // console.log("Teach Plan Block: ", teachplanblockData);
 
+    //Edu Info
     data.EduName = eduprogData[0].EduName;
     data.LevelName = eduprogData[0].LevelName;
     data.MajorCode = eduprogData[0].MajorCode;
@@ -43,11 +44,46 @@ const createPDFEduProgramData = async (ideduprog) => {
     data.ProgramName = eduprogData[0].NameProgram;
     data.SchoolYear = eduprogData[0].SchoolYear;
 
-    data.EduPurpose = edupurposeData;
+    //Edu purpose
+
+
+    for (var i = 0; i < edupurposeData.length; i++) {
+
+        switch (edupurposeData.dataValues.KeyRow) {
+            //Level 1.x
+            case '1.1.':
+                data.EduPurposeLevel1.KeyRowTitle = edupurposeData.dataValues[i].KeyRow;
+                data.EduPurposeLevel1.Title = edupurposeData.dataValues[i].NameRow;
+                break;
+            case '1.2.':
+
+                break;
+            case '1.3.':
+
+                break;
+                //
+            case '1.1.':
+
+                break;
+
+            case '1.1.':
+
+                break;
+
+
+            default:
+                break;
+        }
+    }
+
+
     data.EduTime = detaileduData.dataValues.EduTime;
-    data.KnowledgeWeight = detaileduData.dataValues.KnowledgeWeight;
+    data.EnrollmentTarget = detaileduData.dataValues.EnrollmentTarget;
+    data.EduWeight = detaileduData.dataValues.EduWeight;
     data.EduProcess = detaileduData.dataValues.EduProcess;
     data.GraduatedCon = detaileduData.dataValues.GraduatedCon;
+
+
 
     data.TeachPlnBlock = teachplanblockData;
     console.log(data);
@@ -109,9 +145,9 @@ exports.getData = async (req, res) => {
             throw err;
         }
     })
-}   
+}
 
-exports.exportPDFCourseList = async (req, res)=>{
+exports.exportPDFCourseList = async (req, res) => {
     let params = req.query;
     const data = await createPDFCourseListData(Number(params.ideduprog));
 }

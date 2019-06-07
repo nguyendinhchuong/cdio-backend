@@ -6,11 +6,11 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true,
             autoIncrement: true
         },
-        IdEduProgram:{
+        IdEduProgram: {
             type: Sequelize.INTEGER,
             allowNull: false
         },
-        IdOutcome:{
+        IdOutcome: {
             type: Sequelize.INTEGER,
             allowNull: false
         },
@@ -18,22 +18,28 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: false
         },
-        DateCreated:{
+        DateCreated: {
             type: Sequelize.DATE,
-            allowNull:false
+            allowNull: false
         },
-        EduProcess:{
+        EduProcess: {
             type: Sequelize.STRING,
         },
-        GraduatedCon:{
+        GraduatedCon: {
             type: Sequelize.STRING,
         },
-        OSUsedNode:{
+        OSUsedNode: {
             type: Sequelize.STRING,
+        },
+        EduTime: {
+            type: Sequelize.STRING
+        },
+        EduWeight: {
+            type: Sequelize.INTEGER
         }
-    },{
-        freezeTableName: true,
-        timestamps: false
-    })
+    }, {
+            freezeTableName: true,
+            timestamps: false
+        })
     return detaileduprogram;
 }
