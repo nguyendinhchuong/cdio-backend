@@ -2311,8 +2311,9 @@ router.get('/get-all-data-survey', function (req, res) {
 })
 
 router.post('/get-survey-id',function(req,res){
-    let data = req.body;
-    ModelSurvey.getDataSurvey1(data,result=>{
+    let id = req.body;
+    console.log(req.body)
+    ModelSurvey.getDataSurvey1(id,result=>{
         res.send(result);
     })
 })
@@ -2362,6 +2363,22 @@ router.get('/get-survey-list',function(req,res){
 router.get('/get-survey-with-id-survey-list/:id',function(req,res){
     let id = req.params;
     ModelSurvey.getSurveyWithIdSurveyList(id,result => {
+        res.send(result);
+    })
+})
+
+router.post('/get-subject-with-id',function(req,res){
+    let listId = req.body;
+    ModelSurvey.getSubjectWithId(listId,result => {
+        res.send(result);
+    })
+})
+
+router.post('/get-list-survey',function(req,res){
+    let id_ctdt = req.body.id_ctdt;
+    let id_user = req.body.id_user;
+
+    ModelSurvey.getlistSurvey(id_ctdt,id_user,result =>{
         res.send(result);
     })
 })

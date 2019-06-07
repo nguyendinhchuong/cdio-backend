@@ -1,18 +1,22 @@
+const fs = require("fs");
+const path = require("path");
+const puppeteer = require('puppeteer');
+const handlebars = require("handlebars");
+
+//require for eduprogram data
 const eduprog = require('../../service/EducationProgram/eduprogramService');
 const detailedu = require('../../service/EducationProgram/detaileduprogService');
 const edupurpose = require('../../service/EducationProgram/edupurposeService');
 const educontent = require('../../service/EducationProgram/eduprogcontentService');
 const teachplanblock = require('../../service/EducationProgram/teachplanblockService');
 
+//require for course list
+const subjecteduprog = require('../../service/EducationProgram/subjecteduprogService');
 
-const fs = require("fs");
-const path = require("path");
-const puppeteer = require('puppeteer');
-const handlebars = require("handlebars");
+
 
 const createPDFEduProgramData = async (ideduprog) => {
     let request = {};
-    console.log(ideduprog);
     request.IdEduProgram = ideduprog;
     request.Id = ideduprog;
     let data = {};
@@ -24,14 +28,15 @@ const createPDFEduProgramData = async (ideduprog) => {
 
     const teachplanblockData = await teachplanblock.getDetailTeachPlanBlock(request);
 
-    console.log("Edu Prog: ", eduprogData);
-    console.log("Detail Edu: ", detaileduData.dataValues);
+    // console.log("Edu Prog: ", eduprogData);
+    // console.log("Detail Edu: ", detaileduData.dataValues);
     console.log("Edu Purpose");
     for (var i = 0; i < edupurposeData.length; i++) {
         console.log(edupurposeData[i].dataValues);
     }
-    console.log("Teach Plan Block: ", teachplanblockData);
+    // console.log("Teach Plan Block: ", teachplanblockData);
 
+    //Edu Info
     data.EduName = eduprogData[0].EduName;
     data.LevelName = eduprogData[0].LevelName;
     data.MajorCode = eduprogData[0].MajorCode;
@@ -39,11 +44,139 @@ const createPDFEduProgramData = async (ideduprog) => {
     data.ProgramName = eduprogData[0].NameProgram;
     data.SchoolYear = eduprogData[0].SchoolYear;
 
-    data.EduPurpose = edupurposeData;
+    //Edu purpose
+
+    Object.defineProperties(data, {
+        'EduPurposeLevel1': {
+            value: Object,
+            writable: true
+        },
+        'EduPurposeLevel2': {
+            value: Object,
+            writable: true
+        },
+        'EduPurposeLevel3': {
+            value: Object,
+            writable: true
+        }
+    });
+    Object.defineProperties(data.EduPurposeLevel1, {
+        'KeyRowTitle1': {
+            value: true,
+            writable: true
+        },
+        'Title1': {
+            value: true,
+            writable: true
+        },
+        'KeyRowTitle2': {
+            value: true,
+            writable: true
+        },
+        'Title2': {
+            value: true,
+            writable: true
+        },
+        'KeyRowTitle3': {
+            value: true,
+            writable: true
+        },
+        'Title3': {
+            value: true,
+            writable: true
+        }
+    });
+    Object.defineProperties(data.EduPurposeLevel2, {
+        'KeyRowTitle1': {
+            value: true,
+            writable: true
+        },
+        'Title1': {
+            value: true,
+            writable: true
+        },
+        'KeyRowTitle2': {
+            value: true,
+            writable: true
+        },
+        'Title2': {
+            value: true,
+            writable: true
+        },
+        'KeyRowTitle3': {
+            value: true,
+            writable: true
+        },
+        'Title3': {
+            value: true,
+            writable: true
+        }
+    });
+    Object.defineProperties(data.EduPurposeLevel3, {
+        'Row1': {
+            value: Array,
+            writable: true
+        },
+        'Row2': {
+            value: Array,
+            writable: true
+        },
+        'Row3': {
+            value: Array,
+            writable: true
+        }
+    });
+    console.log(typeof(data.EduPurposeLevel3.Row1));
+
+    for (var i = 0; i < edupurposeData.length; i++) {
+
+        switch (edupurposeData[i].dataValues.KeyRow) {
+            //Level 1.x
+            case '1.1.':
+                data.EduPurposeLevel1.KeyRowTitle1 = edupurposeData[i].dataValues.KeyRow;
+                data.EduPurposeLevel1.Title1 = edupurposeData[i].dataValues.NameRow;
+                break;
+            case '1.2.':
+                data.EduPurposeLevel1.KeyRowTitle2 = edupurposeData[i].dataValues.KeyRow;
+                data.EduPurposeLevel1.Title2 = edupurposeData[i].dataValues.NameRow;
+                break;
+            case '1.3.':
+                data.EduPurposeLevel1.KeyRowTitle3 = edupurposeData[i].dataValues.KeyRow;
+                data.EduPurposeLevel1.Title3 = edupurposeData[i].dataValues.NameRow;
+                break;
+            //
+            case '1.1.1':
+                data.EduPurposeLevel2.KeyRowTitle1 = edupurposeData[i].dataValues.KeyRow;
+                data.EduPurposeLevel2.Title1 = edupurposeData[i].dataValues.NameRow;
+                break;
+
+            case '1.2.1':
+                data.EduPurposeLevel2.KeyRowTitle2 = edupurposeData[i].dataValues.KeyRow;
+                data.EduPurposeLevel2.Title2 = edupurposeData[i].dataValues.NameRow;
+                break;
+
+
+            default:
+                break;
+        }
+        // if (edupurposeData[i].dataValues.KeyRow.indexOf('1.1.1.') >= 0) {
+        //     data.EduPurposeLevel3.Row1.push(edupurposeData[i].dataValues.NameRow);
+        // } else if (edupurposeData[i].dataValues.KeyRow.indexOf('1.2.1.') >= 0) {
+        //     data.EduPurposeLevel3.Row2.push(edupurposeData[i].dataValues.NameRow);
+        // } else if (edupurposeData[i].dataValues.KeyRow.indexOf('1.3.1.') >= 0) {
+        //     data.EduPurposeLevel3.Row3.push(edupurposeData[i].dataValues.NameRow);
+        // }
+
+    }
+
+
     data.EduTime = detaileduData.dataValues.EduTime;
-    data.KnowledgeWeight = detaileduData.dataValues.KnowledgeWeight;
+    data.EnrollmentTarget = detaileduData.dataValues.EnrollmentTarget;
+    data.EduWeight = detaileduData.dataValues.EduWeight;
     data.EduProcess = detaileduData.dataValues.EduProcess;
     data.GraduatedCon = detaileduData.dataValues.GraduatedCon;
+
+
 
     data.TeachPlnBlock = teachplanblockData;
     console.log(data);
@@ -51,7 +184,12 @@ const createPDFEduProgramData = async (ideduprog) => {
 }
 
 const createPDFCourseListData = async (ideduprog) => {
+    let request = {};
+    request.IdEduProg = ideduprog;
 
+    const subjecteduData = await subjecteduprog.getDetailSubjectByEduId(request);
+
+    console.log(subjecteduData);
 }
 
 const createPDF = async (data, file_template) => {
@@ -100,4 +238,9 @@ exports.getData = async (req, res) => {
             throw err;
         }
     })
-}   
+}
+
+exports.exportPDFCourseList = async (req, res) => {
+    let params = req.query;
+    const data = await createPDFCourseListData(Number(params.ideduprog));
+}
