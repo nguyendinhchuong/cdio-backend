@@ -99,17 +99,28 @@
                 <div class="row">
                     <div class=" col-sm-1 col-md-1 col-lg-1"></div>
                     <h5 class="font-weight-bold font-weight- col-sm-10 col-md-10 col-lg-10  ml-2 ">1.1.<d class="ml-4">
-                            MỤC TIÊU CHUNG</d>
+                            {{EduPurposeLevel1.Title1}}</d>
                     </h5>
                 </div>
                 <div class="row">
                     <div class="col-sm-1 col-md-1 col-lg-1"></div>
-                    <div class="col-sm-9 col-md-9 col-lg-9 ml-4 font-weight-bold">1.1.1.<d class="ml-4"> Mục tiêu của
-                            chương trình đào tạo nhằm đào tạo ra các sinh viên tốt nghiệp:</d>
+                    <div class="col-sm-9 col-md-9 col-lg-9 ml-4 font-weight-bold">
+                        <d class="ml-4">{{EduPurposeLevel2.Title1}}</d>
                     </div>
                 </div>
                 <br>
-                <div class="row">
+                <ul>
+                    {{#each EduPurposeLevel3.Row1}}
+                    <li>
+                        <div class="row">
+                            <div class="col-sm-1 col-md-1 col-lg-1"></div>
+                            <div class="col-sm-8 col-md-8 col-lg-8 offset-sm-1">
+                                <d class="ml-4">{{this}}</d>
+                            </div>
+                    </li>
+                    {{/each}}
+                </ul>
+                <!-- <div class="row">
                     <div class="col-sm-1 col-md-1 col-lg-1"></div>
                     <div class="col-sm-8 col-md-8 col-lg-8 offset-sm-1"><strong>1.1.1.1.</strong>
                         <d class="ml-4"> Có kiến thức kỹ thuật vững chắc; hiểu được các trách nhiệm và đạo đức nghề
@@ -133,23 +144,30 @@
                         <d class="ml-4"> Sinh viên được trang bị đầy đủ để có thể hình thành vấn đề, phân tích, thiết
                             kế, giảiquyết vấn đề và vận hành hệ thống CNTT</d>
                     </div>
-                </div>
+                </div> -->
+
 
                 <br>
                 <div class="row">
                     <div class=" col-sm-1 col-md-1 col-lg-1"></div>
                     <h5 class="font-weight-bold font-weight- col-sm-10 col-md-10 col-lg-10  ml-2 ">1.2.<d class="ml-4">
-                            MỤC TIÊU CỤ THỂ – CHUẨN ĐẦU RA CỦA CHƯƠNG TRÌNH ĐÀO TẠO</d>
+                            {{EduPurposeLevel1.Title2}}</d>
                     </h5>
                 </div>
                 <div class="row">
                     <div class="col-sm-1 col-md-1 col-lg-1"></div>
-                    <div class="col-sm-8 col-md-8 col-lg-8 ml-4 font-weight-bold">1.2.1.<d class="ml-4"> Mục tiêu cụ thể
+                    <div class="col-sm-8 col-md-8 col-lg-8 ml-4 font-weight-bold">1.2.1.<d class="ml-4">
+                            {{EduPurposeLevel2.Title2}}
                         </d>
                     </div>
                 </div>
                 <br>
-                <div class="row">
+                <ul>
+                    {{#each EduPurposeLevel3.Row2}}
+                    <li>{{this}}</li>
+                    {{/each}}
+                </ul>
+                <!-- <div class="row">
                     <div class="col-sm-1 col-md-1 col-lg-1"></div>
                     <div class="col-sm-8 col-md-8 col-lg-8 offset-sm-1"><strong>1.2.1.1.</strong>
                         <d class="ml-4"> Biết được trách nhiệm, đạo đức nghề nghiệp, và hiện trạng kinh tế, môi trường
@@ -189,7 +207,7 @@
                         <d class="ml-4"> Có khả năng sử dụng các công cụ, phương pháp, quy trình, kỹ thuật, v.v... để hỗ
                             trợ quá trình giải quyết các bài toán CNTT.</d>
                     </div>
-                </div>
+                </div> -->
                 <br>
 
                 <div class="row">
