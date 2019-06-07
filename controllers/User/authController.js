@@ -66,7 +66,8 @@ exports.authenRole = (req, res, next) => {
 
     if (req.headers && req.headers.username && req.headers.role) {
         request.username = req.headers.username;
-        request.role = JSON.parse("[" + req.headers.role + "]");
+        // request.role = JSON.parse("[" + req.headers.role + "]");
+        request.role = req.headers.role.split();
         console.log(request);
         user.authenRole(request)
             .then(data => {

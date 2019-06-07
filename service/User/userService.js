@@ -476,7 +476,7 @@ exports.authenRole = (request) => {
                         if (!data) {
                             resolve(0);
                         } else {
-                            let id_role_array = [];
+                            let role_array = [];
                             await db.user_has_role.findAll({
                                 where: {
                                     idUser: data.dataValues.id
@@ -484,7 +484,13 @@ exports.authenRole = (request) => {
                             })
                                 .then(async data => {
                                     const promises = data.map(row => {
-                                        id_role_array.push(row.dataValues.idRole);
+                                        db.role.findByPk(row.dataValues.idRole)
+                                            .then(async data => {
+                                                role_array.push(data.dataValues.role);
+                                            })
+                                            .catch(err => {
+                                                reject(err);
+                                            })
                                     });
                                     await Promise.all(promises);
                                 })
@@ -493,14 +499,14 @@ exports.authenRole = (request) => {
                                 })
                             let count_role = 0;
                             await request.role.map(async role => {
-                                await id_role_array.find(async db_role => {
+                                await role_array.find(async db_role => {
                                     if (db_role === role) {
                                         count_role = count_role + 1;
                                     }
                                 })
                             })
                             //check role number
-                            if (count_role === id_role_array.length) {
+                            if (count_role === role_array.length) {
                                 resolve(1);
                             } else {
                                 resolve(0);

@@ -52,18 +52,21 @@ const createPDFEduProgramData = async (ideduprog) => {
         switch (edupurposeData.dataValues.KeyRow) {
             //Level 1.x
             case '1.1.':
-                data.EduPurposeLevel1.KeyRowTitle = edupurposeData.dataValues[i].KeyRow;
-                data.EduPurposeLevel1.Title = edupurposeData.dataValues[i].NameRow;
+                data.EduPurposeLevel1.KeyRowTitle1 = edupurposeData.dataValues[i].KeyRow;
+                data.EduPurposeLevel1.Title1 = edupurposeData.dataValues[i].NameRow;
                 break;
             case '1.2.':
-
+                data.EduPurposeLevel1.KeyRowTitle2 = edupurposeData.dataValues[i].KeyRow;
+                data.EduPurposeLevel1.Title2 = edupurposeData.dataValues[i].NameRow;
                 break;
             case '1.3.':
-
+                data.EduPurposeLevel1.KeyRowTitle3 = edupurposeData.dataValues[i].KeyRow;
+                data.EduPurposeLevel1.Title3 = edupurposeData.dataValues[i].NameRow;
                 break;
-                //
-            case '1.1.':
-
+            //
+            case '1.1.1':
+                data.EduPurposeLevel2.KeyRowTitle1 = edupurposeData.dataValues[i].KeyRow;
+                data.EduPurposeLevel2.Title1 = edupurposeData.dataValues[i].NameRow;
                 break;
 
             case '1.1.':
