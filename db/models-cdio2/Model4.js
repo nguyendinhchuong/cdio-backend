@@ -288,8 +288,12 @@ Model4.deletecdrmdhd = (data, result) => {
 }
 
 Model4.getTeacherList = (data, result) => {
+    let date = new Date();
+    let dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
     sql.query(`select user.id , user.name from cdio_db.user
-    where user.id not in (select teacher_review_subject.idTeacher from cdio_db.teacher_review_subject where teacher_review_subject.idTTC = ${data.thong_tin_chung_id})
+    where user.id not in (select teacher_review_subject.idTeacher from cdio_db.teacher_review_subject 
+        where teacher_review_subject.idTTC = ${data.thong_tin_chung_id}
+        && DATE(teacher_review_subject.end_Date) >= '${dateString}')
      && user.id != ${data.idCurrentUser}
      && user.id not in (select user_has_role.idUser from cdio_db.user_has_role
         JOIN cdio_db.role ON user_has_role.idRole = role.id
@@ -370,8 +374,12 @@ Model4.getTeacherSubject = (data, result) => {
 }
 
 Model4.getTeacherReviewSubject = (data, result) => {
+    let date = new Date();
+    let dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
     sql.query(`select teacher_review_subject.idTTC from cdio_db.teacher_review_subject
-    where teacher_review_subject.idTeacher = ${data.idUser}`,
+    where teacher_review_subject.idTeacher = ${data.idUser}
+    && DATE(teacher_review_subject.start_Date) <= '${dateString}'
+    && DATE(teacher_review_subject.end_Date) >= '${dateString}'`,
         (err, res) => {
             if (err) {
                 console.log("error:", err);
