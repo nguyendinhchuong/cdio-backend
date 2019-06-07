@@ -462,3 +462,57 @@ exports.deleteUser = (request) => {
             })
     })
 }
+
+exports.authenRole = (request) => {
+    return new Promise((resolve, reject) => {
+        db.sequelize.authenticate()
+            .then(() => {
+                db.user.findOne({
+                    where: {
+                        username: request.username
+                    }
+                })
+                    .then(async data => {
+                        if (!data) {
+                            resolve(0);
+                        } else {
+                            let id_role_array = [];
+                            await db.user_has_role.findAll({
+                                where: {
+                                    idUser: data.dataValues.id
+                                }
+                            })
+                                .then(async data => {
+                                    const promises = data.map(row => {
+                                        id_role_array.push(row.dataValues.idRole);
+                                    });
+                                    await Promise.all(promises);
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
+                            let count_role = 0;
+                            await request.role.map(async role => {
+                                await id_role_array.find(async db_role => {
+                                    if (db_role === role) {
+                                        count_role = count_role + 1;
+                                    }
+                                })
+                            })
+                            //check role number
+                            if (count_role === id_role_array.length) {
+                                resolve(1);
+                            } else {
+                                resolve(0);
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        reject(err);
+                    })
+            })
+            .catch(err => {
+                reject(err);
+            })
+    })
+}
