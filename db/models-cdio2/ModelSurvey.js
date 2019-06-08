@@ -119,12 +119,13 @@ function handleValueITU(listSurvey) {
 
 ModelSurvey.getDataMatixSurvey = (idSurveyList, resp) => {
     const TABLE_SURVEY = "survey2";
-    
+    const STATUS = 0;
+
     //version 2
     try {
         query(` SELECT COUNT(*) as SL 
                 FROM ${TABLE_SURVEY} 
-                WHERE idSurveyList = ${idSurveyList}`
+                WHERE idSurveyList = ${idSurveyList} and status = ${STATUS}`
         ).then(count => {
             
             query(` SELECT id,id_mon,id_giaovien 
@@ -553,7 +554,7 @@ ModelSurvey.getlistSurvey = (id_ctdt,id_user,result) => {
                                 })
                                
                                 let data = {
-                                    "survey-list" : item,
+                                    "surveyList" : item,
                                     "survey" : obj,
                                 }
                                 result(data)

@@ -292,7 +292,7 @@ Model6.getEvalActs = (idSubject,result)=>{
     return new Promise((resolve,reject)=>{
       let standardOutput = [];
       sql.query(`SELECT cdr.chuan_dau_ra FROM chuan_dau_ra_mon_hoc cdr,khth_has_cdrmh has
-      WHERE has.ke_hoach_thuc_hanh_id = ${idKHTH} AND cdr.id = has.chuan_dau_ra_mon_hoc_id`,(err,result)=>{
+      WHERE has.ke_hoach_thuc_hanh_id = ${idKHTH} AND cdr.id = has.chuan_dau_ra_mon_hoc_id AND cdr.del_flag = 0`,(err,result)=>{
         if(err){
           console.log("err:", err);
           reject(err);
@@ -309,7 +309,7 @@ Model6.getEvalActs = (idSubject,result)=>{
     return new Promise((resolve,reject)=>{
       let evalActs = [];
       sql.query(`SELECT dg.ma FROM danh_gia dg,khth_has_dg has
-      WHERE has.ke_hoach_thuc_hanh_id = ${idKHTH} AND dg.id = has.danh_gia_id`,(err,result)=>{
+      WHERE has.ke_hoach_thuc_hanh_id = ${idKHTH} AND dg.id = has.danh_gia_id and dg.del_flag = 0`,(err,result)=>{
         if(err){
           console.log("err:", err);
           reject(err);

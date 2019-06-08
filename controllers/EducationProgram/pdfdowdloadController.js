@@ -10,6 +10,7 @@ const edupurpose = require('../../service/EducationProgram/edupurposeService');
 const educontent = require('../../service/EducationProgram/eduprogcontentService');
 const teachplanblock = require('../../service/EducationProgram/teachplanblockService');
 
+
 //require for course list
 const subjecteduprog = require('../../service/EducationProgram/subjecteduprogService');
 
@@ -27,14 +28,10 @@ const createPDFEduProgramData = async (ideduprog) => {
     const edupurposeData = await edupurpose.getEduPurpose(request);
 
     const teachplanblockData = await teachplanblock.getDetailTeachPlanBlock(request);
+    const educontentData = await educontent.getEduContentByEduId(request);
 
-    // console.log("Edu Prog: ", eduprogData);
-    // console.log("Detail Edu: ", detaileduData.dataValues);
-    console.log("Edu Purpose");
-    for (var i = 0; i < edupurposeData.length; i++) {
-        console.log(edupurposeData[i].dataValues);
-    }
-    // console.log("Teach Plan Block: ", teachplanblockData);
+    console.log(educontentData);
+    
 
     //Edu Info
     data.EduName = eduprogData[0].EduName;
@@ -45,6 +42,91 @@ const createPDFEduProgramData = async (ideduprog) => {
     data.SchoolYear = eduprogData[0].SchoolYear;
 
     //Edu purpose
+
+    Object.defineProperties(data, {
+        'EduPurposeLevel1': {
+            value: Object,
+            writable: true
+        },
+        'EduPurposeLevel2': {
+            value: Object,
+            writable: true
+        },
+        'EduPurposeLevel3': {
+            value: Object,
+            writable: true
+        }
+    });
+    Object.defineProperties(data.EduPurposeLevel1, {
+        'KeyRowTitle1': {
+            value: true,
+            writable: true
+        },
+        'Title1': {
+            value: true,
+            writable: true
+        },
+        'KeyRowTitle2': {
+            value: true,
+            writable: true
+        },
+        'Title2': {
+            value: true,
+            writable: true
+        },
+        'KeyRowTitle3': {
+            value: true,
+            writable: true
+        },
+        'Title3': {
+            value: true,
+            writable: true
+        }
+    });
+    Object.defineProperties(data.EduPurposeLevel2, {
+        'KeyRowTitle1': {
+            value: true,
+            writable: true
+        },
+        'Title1': {
+            value: true,
+            writable: true
+        },
+        'KeyRowTitle2': {
+            value: true,
+            writable: true
+        },
+        'Title2': {
+            value: true,
+            writable: true
+        },
+        'KeyRowTitle3': {
+            value: true,
+            writable: true
+        },
+        'Title3': {
+            value: true,
+            writable: true
+        }
+    });
+    Object.defineProperties(data.EduPurposeLevel3, {
+        'Row1': {
+            value: Array,
+            writable: true
+        },
+        'Row2': {
+            value: Array,
+            writable: true
+        },
+        'Row3': {
+            value: Array,
+            writable: true
+        }
+    });
+    let array_row1 = [];
+    let array_row2 = [];
+    let array_row3 = [];
+
 
 
     for (var i = 0; i < edupurposeData.length; i++) {
@@ -72,11 +154,27 @@ const createPDFEduProgramData = async (ideduprog) => {
             case '1.1.':
 
                 break;
+            case '1.2.1':
+                data.EduPurposeLevel2.KeyRowTitle3 = edupurposeData[i].dataValues.KeyRow;
+                data.EduPurposeLevel2.Title3 = edupurposeData[i].dataValues.NameRow;
+                break;
 
 
             default:
                 break;
         }
+
+        if (edupurposeData[i].dataValues.KeyRow.indexOf('1.1.1.') >= 0) {
+            array_row1.push(edupurposeData[i].dataValues.NameRow);
+            data.EduPurposeLevel3.Row1 = Array.from(array_row1);
+        } else if (edupurposeData[i].dataValues.KeyRow.indexOf('1.2.1.') >= 0) {
+            array_row2.push(edupurposeData[i].dataValues.NameRow);
+            data.EduPurposeLevel3.Row2 = Array.from(array_row2);
+        } else if (edupurposeData[i].dataValues.KeyRow.indexOf('1.3.1.') >= 0) {
+            array_row3.push(edupurposeData[i].dataValues.NameRow);
+            data.EduPurposeLevel3.Row3 = Array.from(array_row3);
+        }
+
     }
 
 
@@ -88,18 +186,25 @@ const createPDFEduProgramData = async (ideduprog) => {
 
 
 
-    data.TeachPlnBlock = teachplanblockData;
-    console.log(data);
+    handlebars.registerHelper("inc", function (value, options) {
+        return parseInt(value) + 1;
+    });
+    data.TeachPlanBlock = teachplanblockData;
     return data;
 }
 
 const createPDFCourseListData = async (ideduprog) => {
     let request = {};
     request.IdEduProg = ideduprog;
-
+    request.Id = ideduprog;
+    const eduprogData = await eduprog.getEduProgramById(request);
     const subjecteduData = await subjecteduprog.getDetailSubjectByEduId(request);
 
+    let data = {};
+    data.EduName = eduprogData[0].EduName + " Syllabus";
+    data.Subjects = subjecteduData;
     console.log(subjecteduData);
+    return data;
 }
 
 const createPDF = async (data, file_template) => {
@@ -153,4 +258,11 @@ exports.getData = async (req, res) => {
 exports.exportPDFCourseList = async (req, res) => {
     let params = req.query;
     const data = await createPDFCourseListData(Number(params.ideduprog));
+    const path = await createPDF(data, 'course.html');
+    const file = `${path}`;
+    res.download(file, err => {
+        if (err) {
+            throw err;
+        }
+    })
 }

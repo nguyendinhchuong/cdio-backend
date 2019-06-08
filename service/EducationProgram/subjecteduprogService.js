@@ -141,14 +141,14 @@ exports.getDetailSubjectByEduId = (request) => {
                     .then(async data => {
                         let response = [];
                         const promises = data.map(async subject => {
+                            let obj = {};
                             await db.subject.findOne({
                                 where: {
                                     Id: subject.dataValues.IdSubject,
                                     del_flat: { [Op.or]: [null, 0] }
                                 }
                             })
-                                .then(data => {
-                                    let obj = {};
+                                .then(async data => {
                                     obj.SubjectCode = data.dataValues.SubjectCode;
                                     obj.SubjectName = data.dataValues.SubjectName;
                                     obj.SubjectEngName = data.dataValues.SubjectEngName;
@@ -157,11 +157,23 @@ exports.getDetailSubjectByEduId = (request) => {
                                     obj.PracticePeriod = data.dataValues.PracticePeriod;
                                     obj.ExercisePeriod = data.dataValues.ExercisePeriod;
                                     obj.Description = data.dataValues.Description;
-                                    response.push(obj);
                                 })
                                 .catch(err => {
                                     reject(err);
                                 })
+                            await db.user.findOne({
+                                where: {
+                                    id: subject.IdMainTeacher
+                                }
+                            })
+                                .then(data => {
+                                    obj.InstructorName = data.dataValues.name;
+                                    obj.InstructorEmail = data.dataValues.email;
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
+                            response.push(obj);
                         });
                         await Promise.all(promises);
                         resolve(response);
