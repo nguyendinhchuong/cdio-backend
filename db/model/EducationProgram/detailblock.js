@@ -19,6 +19,9 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: true
         },
         IdUser:{
+            type: Sequelize.STRING
+        },
+        IDMainTeacher:{
             type: Sequelize.INTEGER
         }
     },{
