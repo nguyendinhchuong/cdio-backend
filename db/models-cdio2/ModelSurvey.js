@@ -638,6 +638,8 @@ ModelSurvey.updateStatusSurveyList = (currentDate,result) => {
         }
     })
 
+    result("done")
+
 }
 
 module.exports = ModelSurvey;
