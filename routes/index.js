@@ -2096,8 +2096,9 @@ router.post("/get-reality-matrix", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           const data = req.body.data;
+          const idCtdt = req.body.idCtdt;
 
-          MatrixModel.getRealityMatrix(data)
+          MatrixModel.getRealityMatrix(data,idCtdt)
             .then(result => {
               return res.end(JSON.stringify(result));
             })
@@ -2143,7 +2144,7 @@ router.post("/insert-standard-matrix", function(req, res) {
   }
 });
 
-router.get("/get-cdr-cdio", function(req, res) {
+router.get("/get-cdr-cdio/:idCtdt", function(req, res) {
   if (
     req.headers &&
     req.headers.authorization &&
@@ -2157,7 +2158,8 @@ router.get("/get-cdr-cdio", function(req, res) {
           //res.sendStatus(403);
           res.send("Unauthorized user!");
         } else {
-          MatrixModel.getCdrCDIO()
+          let idCtdt = req.params.idCtdt;
+          MatrixModel.getCdrCDIO(idCtdt)
             .then(result => {
               return res.end(JSON.stringify(result));
             })
