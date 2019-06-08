@@ -61,3 +61,30 @@ exports.isAuthenticated = (req, res, next) => {
     }
 }
 
+exports.authenRole = (req, res, next) => {
+    let request = {};
+
+    if (req.headers && req.headers.username && req.headers.role) {
+        request.username = req.headers.username;
+        // request.role = JSON.parse("[" + req.headers.role + "]");
+        request.role = req.headers.role.split();
+        console.log(request);
+        user.authenRole(request)
+            .then(data => {
+                let response = {};
+                if (data) {
+                    next();
+                } else {
+                    response.code = -1;
+                    response.message = "access denied";
+                    res.send(JSON.stringify(response));
+                }
+            })
+            .catch(err => {
+                throw err;
+            })
+    }
+
+
+
+}

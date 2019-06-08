@@ -1,6 +1,6 @@
 const detaileduprogram = require('../../service/EducationProgram/detaileduprogService');
 
-exports.getPDF = (req, res) =>{
+exports.exportPDF = (req, res) =>{
     let params = req.query;
     let request = {};
     let response = {};
@@ -10,7 +10,7 @@ exports.getPDF = (req, res) =>{
         res.send(JSON.stringify(response));
     }
     request.IdEduProgram = +params.ideduprog;
-    detaileduprogram.getDetailEduProgram(request)
+    detaileduprogram.exportPDF(request)
     .then(data => {
         if (data) {
             response.code = 1;

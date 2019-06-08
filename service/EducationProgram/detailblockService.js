@@ -32,15 +32,22 @@ exports.addSubjectToDetailBlock = (request) => {
                         IdSubjectBlock: request.IdSubjectBlock
                     }
                 })
-                    .then(data => {
+                    .then(async data => {
                         if (data) {
                             let code = -2;
                             resolve(code);
                         } else {
-                            db.detailblock.create(request)
+                            await db.detailblock.create(request)
+                                .catch(err => {
+                                    reject(err);
+                                })
+                            let obj = {};
+                            obj.IdSubject = request.IdSubject;
+                            obj.IdEduProg = request.IdEduProg;
+                            obj.DateCreated = request.DateCreated;
+                            await db.subjecteduprog.create(obj)
                                 .then(() => {
-                                    let code = 1;
-                                    resolve(code);
+                                    resolve(1);
                                 })
                                 .catch(err => {
                                     reject(err);
@@ -206,22 +213,25 @@ exports.addListTeacher = (request) => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
             .then(async () => {
-                let data_array = [];
                 const promises = request.data.map(row => {
-                    let obj = {};
-                    obj.IdSubjectBlock = row.IdSubjectBlock;
-                    obj.IdSubject = row.IdSubject;
-                    obj.IdUser = row.IdUser;
-                    data_array.push(obj);
+                    db.detailblock.update({
+                        IdUser: row.IdUser,
+                        IdMainTeacher: row.IdMainTeacher
+                    }, {
+                            where: {
+                                IdSubjectBlock: row.IdSubjectBlock,
+                                IdSubject: row.IdSubject
+                            }
+                        })
+                        .then(() => {
+                            resolve(1);
+                        })
+                        .catch(err => {
+                            reject(err);
+                        })
                 });
                 await Promise.all(promises);
-                await db.detailblock.bulkCreate(data_array)
-                    .then(() => {
-                        resolve(1);
-                    })
-                    .catch(err => {
-                        reject(err);
-                    })
+
             })
             .catch(err => {
                 reject(err);

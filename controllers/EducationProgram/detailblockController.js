@@ -23,12 +23,14 @@ exports.getSubjectBySubjectBlockId = (req, res) => {
 }
 
 exports.addSubjectToDetailBlock = (req, res) => {
+    let params = req.query;
     let body = JSON.parse(req.body.data);
     let request = {};
 
     request.IdSubjectBlock = Number(body.idsubjectblock);
     request.IdSubject = Number(body.idsubject);
     request.DateCreated = body.datecreated;
+    request.IdEduProg = Number(params.ideduprog);
     detailblock.addSubjectToDetailBlock(request)
         .then(data => {
             let response = {};
@@ -155,6 +157,7 @@ exports.addListTeacher = (req, res) => {
         obj.IdSubjectBlock = Number(row.idsubjectblock);
         obj.IdSubject = Number(row.idsubject);
         obj.IdUser = row.iduser.toString();
+        obj.IdMainTeacher = Number(row.idmainteacher);
         data.push(obj);
     });
     request.data = Array.from(data);
