@@ -468,7 +468,7 @@ ModelSurvey.getlistSurvey = (id_ctdt,id_user,result) => {
                                 })
                                
                                 let data = {
-                                    "survey-list" : item,
+                                    "surveyList" : item,
                                     "survey" : obj,
                                 }
                                 result(data)
