@@ -340,9 +340,8 @@ ModelSurvey.getTeacherWithSubject = (id, result) => {
 
 ModelSurvey.addSurveyData = (data, result) => {
     let listIdUser = data.id_giaovien;
-    console.log(data)
     listIdUser.forEach(item => {
-        sql.query(`insert into survey2(id_mon,id_giaovien,idSurveyList,status) values ('${data.id_mon}','${item}','${data.idSurveyList}','${data.status}')`,    (err, res) => {
+        sql.query(`insert into survey2(id_mon,id_giaovien,idSurveyList) values ('${data.id_mon}','${item}','${data.idSurveyList}')`,    (err, res) => {
         if (err) {
             console.log("Error add data in model survey : ", err);
             result(err)
@@ -365,7 +364,6 @@ ModelSurvey.getDataSurvey = (result) => {
 }
 
 ModelSurvey.getDataSurvey1 = (data,result) => {
-    console.log(data)
     sql.query(`select * from survey2 where idSurveyList=${data.data}`,(err,res)=>{
         if(err){
             console.log("Error get data from survey2 : ",err);
@@ -402,7 +400,6 @@ ModelSurvey.addData2 = (data, id_survey, result) => {
 }
 
 ModelSurvey.setStatus = (id, result) => {
-    console.log(id)
     sql.query(`Update survey2 set status = 0 where id = ${id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
@@ -570,6 +567,69 @@ ModelSurvey.getlistSurvey = (id_ctdt,id_user,result) => {
            
         }
     })
+    result("done")
+}
+
+ModelSurvey.updateStatusSurveyList = (currentDate,result) => {
+    // console.log(currentDate)
+    sql.query(`select id from surveyList where end_date < ${currentDate} and status <> 0`,(err,res) => {
+        if(err){
+            console.log("err : ", err);
+            result(err);
+        }else{
+            // console.log(res)
+            let listSurvey = res;
+            console.log(listSurvey)
+            if(listSurvey && listSurvey.length >0 ) {
+                listSurvey.forEach(item => {
+                    sql.query(`update surveyList set status = 0 where id = ${item.id} and status <> 0`,(err,res) => {
+                        if(err){
+                            console.log("err : " , err);
+                            result (err);
+                        }else{
+                            sql.query(`update survey2 set status = 0 where idSurveyList = ${item.id} and status <> 0`,(err,res) => {
+                                if(err){
+                                    console.log("err : " , err);
+                                    result(err);
+                                }
+                            })
+                        }
+                    })
+                })
+            }
+            
+        }
+    })
+
+    sql.query(`select id from surveyList where start_date = ${currentDate}`,(err,res) => {
+        if(err){
+            console.log("err" ,err);
+            result(err);
+        }else{
+            let listSurvey = res;
+            if(listSurvey && listSurvey.length >0){
+                listSurvey.forEach(item => {
+                    sql.query(`update surveyList set status = 1 where id = ${item.id} and status <> 1`, (err,res) => {
+                        if(err){
+                            console.log("err" ,err);
+                            result(err);
+                        }
+                        // else{
+                        //     sql.query(`update survey2 set status = 1 where idSurveyList = ${item.id}`,(err,res) => {
+                        //         if(err){
+                        //             console.log("err" ,err);
+                        //             result(err);
+                        //         }
+                        //     })
+                        // }
+                    })
+                })
+            }
+            
+        }
+    })
+
+    result("done");
 }
 
 module.exports = ModelSurvey;
