@@ -2806,6 +2806,130 @@ router.get("/checkstatus/:id", function(req, res) {
   });
 });
 
+router.post('/add-data-survey', function (req, res) {
+    if (req.headers &&
+        req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'JWT') {
+        jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
+            if (err) {
+                //res.sendStatus(403);
+                res.send("Unauthorized user!");
+            } else {
+                const data = req.body.data;
+                const id_survey = req.body.id_survey
+                ModelSurvey.addData(data, id_survey, (result) => {
+                    //res.send(result)
+                });
+            }
+        })
+    } else {
+        res.send("Invalid token!");
+    }
+})
+router.post('/save-survey-qa', function (req, res) {
+    if (req.headers &&
+        req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'JWT') {
+        jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
+            if (err) {
+                //res.sendStatus(403);
+                res.send("Unauthorized user!");
+            } else {
+                SurveyQAModel.save(req.body.data, (result) => {
+                    console.log(result)
+                    let response = { id: result };
+                    res.send(response)
+                });
+            }
+        })
+    } else {
+        res.send("Invalid token!");
+    }
+})
+
+router.post('/get-matrix-survey', function (req, res) {
+    // if (req.headers &&
+    //     req.headers.authorization &&
+    //     req.headers.authorization.split(' ')[0] === 'JWT') {
+    //     jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
+    //         if (err) {
+    //             //res.sendStatus(403);
+    //             res.send("Unauthorized user!");
+    //         } else {
+    //             ModelSurvey.getDataMatixSurvey(result => {
+    //                 res.send(result);
+    //             });
+    //         }
+    //     })
+    // } else {
+    //     res.send("Invalid token!");
+    // }
+    const idSurveyList = req.body.data;
+    
+    ModelSurvey.getDataMatixSurvey(idSurveyList,(result) => {
+        res.send(result);
+    });
+})
+
+router.post('/get-survey-itu', function (req, res) {
+    if (req.headers &&
+        req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'JWT') {
+        jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
+            if (err) {
+                //res.sendStatus(403);
+                res.send("Unauthorized user!");
+            } else {
+                ModelSurvey.getSurveyITU(req.body.data, (result) => {
+                    res.send(result);
+                })
+            }
+        })
+    } else {
+        res.send("Invalid token!");
+    }
+})
+
+router.get('/set-status/:id', function(req, res) {
+    if (req.headers &&
+        req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'JWT') {
+        jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
+            if (err) {
+                //res.sendStatus(403);
+                res.send("Unauthorized user!");
+            } else {
+                let id = req.params.id
+                ModelSurvey.setStatus(id, result => {
+                    res.send(result)
+                })
+            }
+        })
+    } else {
+        res.send("Invalid token!");
+    }   
+})
+
+router.get('/get-surveyqa/:id', function (req, res) {
+    if (req.headers &&
+        req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'JWT') {
+        jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
+            if (err) {
+                //res.sendStatus(403);
+                res.send("Unauthorized user!");
+            } else {
+                let id = req.params.id
+                ModelSurvey.getQA(id, (result) => {
+                    res.send(result);
+                })
+            }
+        })
+    } else {
+        res.send("Invalid token!");
+    }
+})
+
 router.get("/checkdate/:id", function(req, res) {
   let data = req.params.id;
   ModelSurvey.checkDate(data, result => {
@@ -2912,5 +3036,14 @@ router.post("/get-list-survey", function(req, res) {
     res.send("Invalid token!");
   }
 });
+router.post('/update-status-survey',function(req,res) {
+ 
+    let currentDate = req.body.data;
+    ModelSurvey.updateStatusSurveyList(currentDate, result => {
+        res.send(result)
+    })
+})
+
+
 
 module.exports = router;
