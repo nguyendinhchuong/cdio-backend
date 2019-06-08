@@ -71,15 +71,19 @@ exports.getBlockSubjects = async (req, res) => {
     const response = {};
     try {
         const params = req.query;
-        request.IdEduProg = +params.id;
+        request.IdEduProgram = +params.id;
         if (isNaN(+params.id)) {
             response.code = -1;
             response.message = "param isn't string";
             res.send(JSON.stringify(response));
         }
+        //request.IdEduProg = 67;
         await getdetailEdu(+params.id)
             .then(data => {
-                request.IdEduProg = +data.dataValues.Id;
+                console.log("--------------");
+                request.IdEduProgram = +data.dataValues.Id;
+                console.log(request);
+                
             })
             .catch(err => {
                 console.log(err);

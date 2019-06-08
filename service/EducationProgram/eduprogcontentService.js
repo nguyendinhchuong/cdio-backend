@@ -111,6 +111,10 @@ exports.addEduContent = async (request) => {
 }
 
 exports.getBlocksSubjects = request => {
+    console.log("+++++++++++");
+    console.log(request);
+    
+    
     return new Promise(async (res, rej) => {
         let listSubjects = [];
         await subjectService.getSubjectList().then(subjects => {
