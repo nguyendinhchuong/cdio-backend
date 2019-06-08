@@ -45,6 +45,7 @@ exports.addSubjectToDetailBlock = (request) => {
                             obj.IdSubject = request.IdSubject;
                             obj.IdEduProg = request.IdEduProg;
                             obj.DateCreated = request.DateCreated;
+                            obj.IdSubjectBlock = data.dataValuse.Id;
                             await db.subjecteduprog.create(obj)
                                 .then(() => {
                                     resolve(1);
@@ -213,8 +214,8 @@ exports.addListTeacher = (request) => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
             .then(async () => {
-                const promises = request.data.map(row => {
-                    db.detailblock.update({
+                const promises = request.data.map(async row => {
+                    await db.detailblock.update({
                         IdUser: row.IdUser,
                         IdMainTeacher: row.IdMainTeacher
                     }, {
@@ -223,18 +224,31 @@ exports.addListTeacher = (request) => {
                                 IdSubject: row.IdSubject
                             }
                         })
-                        .then(() => {
-                            resolve(1);
+                        .then(async () => {
+                            await db.subjecteduprog.update({
+                                IdUser: row.IdUser,
+                                IdMainTeacher: row.IdMainTeacher
+                            }, {
+                                    where: {
+                                        IdSubjectBlock: row.IdSubjectBlock,
+                                        IdSubject: row.IdSubject
+                                    }
+                                })
+                                .catch(err => {
+                                    reject(err);
+                                })
                         })
                         .catch(err => {
                             reject(err);
                         })
                 });
                 await Promise.all(promises);
-
+                resolve(1);
             })
             .catch(err => {
                 reject(err);
             })
     })
 }
+
+

@@ -16,7 +16,7 @@ exports.getEduContentByEduId = (request) => {
 
                 db.eduprogcontent.findAll({
                     where: {
-                        IdEduProgram: request.IdEduProg,
+                        IdEduProgram: request.IdEduProgram,
                     },
                 }).then(contents => {
                     contents.map(content => {
