@@ -3027,7 +3027,7 @@ router.post("/get-list-survey", function(req, res) {
           let id_user = req.body.id_user;
 
           ModelSurvey.getlistSurvey(id_ctdt, id_user, result => {
-            res.send(result);
+            res.end(JSON.stringify(result))
           });
         }
       }
