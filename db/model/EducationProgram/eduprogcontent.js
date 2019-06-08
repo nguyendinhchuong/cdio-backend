@@ -14,6 +14,14 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING
             
         },
+        Credit: {
+            type: Sequelize.INTEGER,
+            allowNull: true
+        },
+        Description: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
         Type: {
             type: Sequelize.BOOLEAN,
             allowNull: false

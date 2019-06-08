@@ -191,15 +191,22 @@ const insertContentsAndRelationship = (data, IdEduProgram) => {
 const insertContents = (row, IdEduProgram) => {
     try {
         const isTable = row.data.isTable;
+        const isFreeStudy = row.data.credit;
         const contentProg = {};
         contentProg.KeyRow = row.key;
         contentProg.NameRow = "";
         contentProg.Type = 1;
         contentProg.IdEduProgram = IdEduProgram;
         contentProg.DateCreated = null;
+        contentProg.Credit = 0;
+        contentProg.Description = "";
         if (!isTable) {
             contentProg.NameRow = row.data.name;
             contentProg.Type = 0;
+        }
+        if(isFreeStudy){
+            contentProg.Credit = +isFreeStudy;
+            contentProg.Description = row.data.description;
         }
         return db.eduprogcontent.create(contentProg);
     } catch (err) {
