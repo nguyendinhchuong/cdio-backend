@@ -126,31 +126,33 @@ const createPDFEduProgramData = async (ideduprog) => {
     let array_row1 = [];
     let array_row2 = [];
     let array_row3 = [];
+
+
+
     for (var i = 0; i < edupurposeData.length; i++) {
 
-        switch (edupurposeData[i].dataValues.KeyRow) {
+        switch (edupurposeData.dataValues.KeyRow) {
             //Level 1.x
             case '1.1.':
-                data.EduPurposeLevel1.KeyRowTitle1 = edupurposeData[i].dataValues.KeyRow;
-                data.EduPurposeLevel1.Title1 = edupurposeData[i].dataValues.NameRow;
+                data.EduPurposeLevel1.KeyRowTitle1 = edupurposeData.dataValues[i].KeyRow;
+                data.EduPurposeLevel1.Title1 = edupurposeData.dataValues[i].NameRow;
                 break;
             case '1.2.':
-                data.EduPurposeLevel1.KeyRowTitle2 = edupurposeData[i].dataValues.KeyRow;
-                data.EduPurposeLevel1.Title2 = edupurposeData[i].dataValues.NameRow;
+                data.EduPurposeLevel1.KeyRowTitle2 = edupurposeData.dataValues[i].KeyRow;
+                data.EduPurposeLevel1.Title2 = edupurposeData.dataValues[i].NameRow;
                 break;
             case '1.3.':
-                data.EduPurposeLevel1.KeyRowTitle3 = edupurposeData[i].dataValues.KeyRow;
-                data.EduPurposeLevel1.Title3 = edupurposeData[i].dataValues.NameRow;
+                data.EduPurposeLevel1.KeyRowTitle3 = edupurposeData.dataValues[i].KeyRow;
+                data.EduPurposeLevel1.Title3 = edupurposeData.dataValues[i].NameRow;
                 break;
             //
             case '1.1.1':
-                data.EduPurposeLevel2.KeyRowTitle1 = edupurposeData[i].dataValues.KeyRow;
-                data.EduPurposeLevel2.Title1 = edupurposeData[i].dataValues.NameRow;
+                data.EduPurposeLevel2.KeyRowTitle1 = edupurposeData.dataValues[i].KeyRow;
+                data.EduPurposeLevel2.Title1 = edupurposeData.dataValues[i].NameRow;
                 break;
 
-            case '1.2.1':
-                data.EduPurposeLevel2.KeyRowTitle2 = edupurposeData[i].dataValues.KeyRow;
-                data.EduPurposeLevel2.Title2 = edupurposeData[i].dataValues.NameRow;
+            case '1.1.':
+
                 break;
             case '1.2.1':
                 data.EduPurposeLevel2.KeyRowTitle3 = edupurposeData[i].dataValues.KeyRow;
@@ -161,6 +163,7 @@ const createPDFEduProgramData = async (ideduprog) => {
             default:
                 break;
         }
+
         if (edupurposeData[i].dataValues.KeyRow.indexOf('1.1.1.') >= 0) {
             array_row1.push(edupurposeData[i].dataValues.NameRow);
             data.EduPurposeLevel3.Row1 = Array.from(array_row1);
@@ -171,6 +174,7 @@ const createPDFEduProgramData = async (ideduprog) => {
             array_row3.push(edupurposeData[i].dataValues.NameRow);
             data.EduPurposeLevel3.Row3 = Array.from(array_row3);
         }
+
     }
 
 
