@@ -1,4 +1,5 @@
 const eduprogcontent = require('../../service/EducationProgram/eduprogcontentService');
+const db = require('../../models/index');
 
 exports.getEduProgContent = (req, res) => {
     let params = req.query;
@@ -65,20 +66,26 @@ exports.addEduProgContent = (req, res) => {
 }
 
 
-exports.getBlockSubjects = (req, res) => {
+exports.getBlockSubjects = async (req, res) => {
     const request = {};
     const response = {};
     try {
         const params = req.query;
         request.IdEduProg = +params.id;
-
         if (isNaN(+params.id)) {
             response.code = -1;
             response.message = "param isn't string";
             res.send(JSON.stringify(response));
         }
-
-        eduprogcontent.getBlocksSubjects(request)
+        await getdetailEdu(+params.id)
+            .then(data => {
+                request.IdEduProg = +data.dataValues.Id;
+            })
+            .catch(err => {
+                console.log(err);
+                throw err;
+            })
+        await eduprogcontent.getBlocksSubjects(request)
             .then(data => {
                 response.code = 1;
                 response.message = "success";
@@ -123,9 +130,16 @@ exports.getKnowledgeTable = (req, res) => {
             })
     } catch (err) {
         console.log("fail 2 ");
-        
+
         response.code = -1;
         response.message = "fail";
         res.send(JSON.stringify(response));
     }
+}
+
+const getdetailEdu = id => {
+    return db.detaileduprog.findOne({
+        where: { IdEduProgram: id },
+        attributes: ['Id']
+    })
 }
