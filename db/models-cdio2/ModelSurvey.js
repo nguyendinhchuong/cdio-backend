@@ -533,7 +533,7 @@ ModelSurvey.getSubjectWithId = (listId,result) => {
 
 ModelSurvey.getlistSurvey = (id_ctdt,id_user,result) => {
     
-    sql.query(`select * from surveyList where id_ctdt = ${id_ctdt}`,(err,res) => {
+    sql.query(`select * from surveyList where id_ctdt = ${id_ctdt} and status = 1`,(err,res) => {
         if(res!= null && res.length >0){
             let listIdSurveyList = [];
             let listSurveyList = res;
@@ -556,11 +556,11 @@ ModelSurvey.getlistSurvey = (id_ctdt,id_user,result) => {
                                         obj.push(element)
                                     }
                                 })
-                               
                                 let data = {
                                     "surveyList" : item,
                                     "survey" : obj,
                                 }
+                                
                                 result(data)
         
                             })
