@@ -530,7 +530,9 @@ ModelSurvey.getSubjectWithId = (listId,result) => {
     })
 }
 
+
 ModelSurvey.getlistSurvey = (id_ctdt,id_user,result) => {
+    
     sql.query(`select * from surveyList where id_ctdt = ${id_ctdt}`,(err,res) => {
         if(res!= null && res.length >0){
             let listIdSurveyList = [];
@@ -542,8 +544,10 @@ ModelSurvey.getlistSurvey = (id_ctdt,id_user,result) => {
             sql.query(`select * from survey2 where idSurveyList in (${listIdSurveyList}) and id_giaovien = ${id_user} and status = 1`,(err,res)=>{
                     if(res != null && res.length >0 ){
                         let listSurvey = res;
+                       
                         sql.query(`select * from subject`,(err,res ) => {
                             let subjectList = res;
+                            
                             listSurveyList.forEach(item => {
                                 let obj = [];
                                 listSurvey.forEach(element => {
@@ -561,14 +565,18 @@ ModelSurvey.getlistSurvey = (id_ctdt,id_user,result) => {
         
                             })
                         })
+                    }else{
+                        return []
                     }
                     
                    
                 })
            
+        }else{
+            return [];
         }
     })
-    result("done")
+
 }
 
 ModelSurvey.updateStatusSurveyList = (currentDate,result) => {
@@ -630,7 +638,6 @@ ModelSurvey.updateStatusSurveyList = (currentDate,result) => {
         }
     })
 
-    result("done");
 }
 
 module.exports = ModelSurvey;
