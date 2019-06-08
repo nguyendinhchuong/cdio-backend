@@ -2135,7 +2135,7 @@ router.post('/save-survey-qa', function (req, res) {
     }
 })
 
-router.get('/get-matrix-survey', function (req, res) {
+router.post('/get-matrix-survey', function (req, res) {
     // if (req.headers &&
     //     req.headers.authorization &&
     //     req.headers.authorization.split(' ')[0] === 'JWT') {
@@ -2152,7 +2152,9 @@ router.get('/get-matrix-survey', function (req, res) {
     // } else {
     //     res.send("Invalid token!");
     // }
-    ModelSurvey.getDataMatixSurvey(result => {
+    const idSurveyList = req.body.data;
+    
+    ModelSurvey.getDataMatixSurvey(idSurveyList,(result) => {
         res.send(result);
     });
 })
