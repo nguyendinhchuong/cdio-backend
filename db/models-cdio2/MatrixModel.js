@@ -156,7 +156,7 @@ MatrixModel.getCdrCDIO = (idCtdt)=>{
 MatrixModel.insertStandardMatrix = (resultRes,idCtdt)=>{
   return new Promise((resolve,reject)=>{
     resultRes.forEach((item,index)=>{
-      sql.query(`SELECT * FROM matrix WHERE thong_tin_chung_id = ${item.idSubject}`,(err,result)=>{
+      sql.query(`SELECT * FROM matrix WHERE thong_tin_chung_id = ${item.idSubject} AND idCtdt = ${idCtdt}`,(err,result)=>{
         if(err){
           console.log("err: ",err);
           return reject(err);
