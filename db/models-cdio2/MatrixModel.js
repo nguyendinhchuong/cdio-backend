@@ -153,7 +153,7 @@ MatrixModel.getCdrCDIO = (idCtdt)=>{
 
 
 
-MatrixModel.insertStandardMatrix = (resultRes)=>{
+MatrixModel.insertStandardMatrix = (resultRes,idCtdt)=>{
   return new Promise((resolve,reject)=>{
     resultRes.forEach((item,index)=>{
       sql.query(`SELECT * FROM matrix WHERE thong_tin_chung_id = ${item.idSubject}`,(err,result)=>{
@@ -163,8 +163,9 @@ MatrixModel.insertStandardMatrix = (resultRes)=>{
         }
         else if(result.length===0){
           console.log("insert matrix for idSubject ",item.idSubject);
-          sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do
-          where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = 23 and length(KeyRow) = 6`,(err,res)=>{
+          sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do, detaileduprogram dep 
+          where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = dep.IdOutcome 
+          and length(KeyRow) = 6 AND dep.IdEduProgram = ${idCtdt}`,(err,res)=>{
             if(err){
               console.log("err: ",err);
               return reject(err);

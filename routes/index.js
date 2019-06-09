@@ -2128,8 +2128,9 @@ router.post("/insert-standard-matrix", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           const data = req.body.data;
+          const idCtdt = req.body.idCtdt;
 
-          MatrixModel.insertStandardMatrix(data)
+          MatrixModel.insertStandardMatrix(data,idCtdt)
             .then(result => {
               return res.end(JSON.stringify(result));
             })
