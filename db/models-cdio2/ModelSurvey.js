@@ -298,7 +298,7 @@ ModelSurvey.getITU = (obj, result) => {
 }
 
 ModelSurvey.getQA = (id, result) => {    
-    sql.query(`select * from survey_qa where id = (select max(id) from survey_qa) and id_survey = ${id}`, (err, res) => {
+    sql.query(`select * from survey_qa where id = (select max(id) from survey_qa where id_survey = ${id}) and id_survey = ${id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);

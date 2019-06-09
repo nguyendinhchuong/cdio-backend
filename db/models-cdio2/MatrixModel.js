@@ -396,7 +396,7 @@ getSubjectId = (data) => {
   })
 }
 
-MatrixModel.addMatrix = (body,result)=>{
+MatrixModel.addMatrix = (body, idCtdt,result)=>{
   console.log(body)
   return new Promise((resolve,reject)=>{
     body.data.forEach((item,_)=>{
