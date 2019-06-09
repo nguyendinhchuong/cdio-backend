@@ -2196,8 +2196,9 @@ router.post("/get-standard-matrix", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           const data = req.body.data;
+          const idCtdt = req.body.idCtdt;
 
-          MatrixModel.getStandardMatrix(data)
+          MatrixModel.getStandardMatrix(data,idCtdt)
             .then(result => {
               return res.end(JSON.stringify(result));
             })
@@ -2253,11 +2254,11 @@ router.post("/get-benchmark-matrix", function(req, res) {
       config.jwtSecret,
       (err, authData) => {
         if (err) {
-          //res.sendStatus(403);
           res.send("Unauthorized user!");
         } else {
           const data = req.body.data;
-          MatrixModel.getBenchmarkMatrix(data)
+          const idCtdt = req.body.idCtdt
+          MatrixModel.getBenchmarkMatrix(data,idCtdt)
             .then(result => {
               return res.end(JSON.stringify(result));
             })

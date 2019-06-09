@@ -156,7 +156,7 @@ MatrixModel.getCdrCDIO = (idCtdt)=>{
 MatrixModel.insertStandardMatrix = (resultRes,idCtdt)=>{
   return new Promise((resolve,reject)=>{
     resultRes.forEach((item,index)=>{
-      sql.query(`SELECT * FROM matrix WHERE thong_tin_chung_id = ${item.idSubject}`,(err,result)=>{
+      sql.query(`SELECT * FROM matrix WHERE thong_tin_chung_id = ${item.idSubject} AND idCtdt = ${idCtdt}`,(err,result)=>{
         if(err){
           console.log("err: ",err);
           return reject(err);
@@ -172,7 +172,7 @@ MatrixModel.insertStandardMatrix = (resultRes,idCtdt)=>{
             }
             for(let i=0;i<res.length;i++){
 
-              sql.query(`INSERT INTO matrix(muc_do,thong_tin_chung_id,chuan_dau_ra_cdio_id) VALUES('${item.itu[i]}',${item.idSubject},${res[i].Id})`,(err,res)=>{
+              sql.query(`INSERT INTO matrix(muc_do,thong_tin_chung_id,chuan_dau_ra_cdio_id,idCtdt) VALUES('${item.itu[i]}',${item.idSubject},${res[i].Id},${idCtdt})`,(err,res)=>{
                 if(err){
                   console.log("err: ",err);
                   return reject(err);
@@ -192,10 +192,10 @@ MatrixModel.insertStandardMatrix = (resultRes,idCtdt)=>{
 }
 
 
-MatrixModel.getStandardMatrix = (listSubject)=>{
+MatrixModel.getStandardMatrix = (listSubject,idCtdt)=>{
   return new Promise((resolve,reject)=>{
     sql.query(`SELECT mt.id,mt.muc_do,mt.thong_tin_chung_id,mt.chuan_dau_ra_cdio_id FROM matrix mt,thong_tin_chung ttc
-    WHERE mt.thong_tin_chung_id = ttc.id AND ttc.del_flag = 0 AND ttc.id in (${listSubject})`, (err, matrix) => {
+    WHERE mt.thong_tin_chung_id = ttc.id AND ttc.del_flag = 0 AND mt.idCtdt = ${idCtdt} AND ttc.id in (${listSubject})`, (err, matrix) => {
         if (err) {
           console.log("error:", err);
            return reject(err);
@@ -220,9 +220,9 @@ MatrixModel.updateStandardMatrix = (body,result)=>{
 
 
 
-MatrixModel.getBenchmarkMatrix = (listSubject)=>{
+MatrixModel.getBenchmarkMatrix = (listSubject,idCtdt)=>{
   return new Promise((resolve,reject)=>{
-      getAmountITUForBenchMark(listSubject).then(res=>{
+      getAmountITUForBenchMark(listSubject,idCtdt).then(res=>{
         if(res.length===0) resolve([]);
 
         let data = {
@@ -254,10 +254,10 @@ MatrixModel.getBenchmarkMatrix = (listSubject)=>{
   })
 }
 
-convert = (listSubject)=>{
+convert = (listSubject,idCtdt)=>{
   return new Promise((resolve,reject)=>{
         
-    MatrixModel.getStandardMatrix(listSubject).then(standardMatrix=>{
+    MatrixModel.getStandardMatrix(listSubject,idCtdt).then(standardMatrix=>{
       if(standardMatrix.length===0) resolve([]);
       
       let mapSubject = new Map();
@@ -300,13 +300,13 @@ convert = (listSubject)=>{
 }
 
 
-getAmountITUForBenchMark = (listSubject)=>{
+getAmountITUForBenchMark = (listSubject,idCtdt)=>{
   return new Promise((resolve,reject)=>{
 
-    convert(listSubject).then(realityMatrix=>{
+    convert(listSubject,idCtdt).then(realityMatrix=>{
       if(realityMatrix.length===0) resolve([]);
 
-        MatrixModel.getCdrCDIO().then(res=>{
+        MatrixModel.getCdrCDIO(idCtdt).then(res=>{
           let data = [];
           res.forEach((cdrCDIO,index)=>{
             let temp = {
