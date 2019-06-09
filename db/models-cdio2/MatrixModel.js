@@ -442,15 +442,15 @@ MatrixModel.addMatrix = (body, idCtdt,result)=>{
             })
           }
           else {
-            sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do, detaileduprogram dep
-            where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = dep.IdOutcome 
-            and length(KeyRow) = 6 AND dep.IdEduProgram = ${idCtdt}`,(err,res)=>{
+            sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do, detaileduprogram dep 
+            where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = dep.IdOutcome and length(KeyRow) = 6 
+            AND dep.IdEduProgram = ${idCtdt}`,(err,res)=>{
               if(err){
                 console.log("err: ",err);
                 return reject(err);
               }
               for(let i=0;i<res.length;i++){
-                item.ITU.forEach(el => {
+                item.itu.forEach(el => {
                   // el.id = el.id.replace(/\./g, "-")
                   el.id += '.'
                   sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do, detaileduprogram dep
@@ -475,7 +475,7 @@ MatrixModel.addMatrix = (body, idCtdt,result)=>{
                       muc_do = muc_do.substr(1);
                     }
                     if (res.length > 0) {
-                      sql.query(`INSERT INTO matrix(muc_do,thong_tin_chung_id,chuan_dau_ra_cdio_id) VALUES('${muc_do}',${res1[0].Id},${res[0].Id})`,(err,res)=>{
+                      sql.query(`INSERT INTO matrix(muc_do,thong_tin_chung_id,chuan_dau_ra_cdio_id,idCtdt) VALUES('${muc_do}',${res1[0].Id},${res[0].Id},${idCtdt})`,(err,res)=>{
                         if(err){
                           console.log("err: ",err);
                           return reject(err);
