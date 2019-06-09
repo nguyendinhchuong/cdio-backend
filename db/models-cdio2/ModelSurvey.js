@@ -60,10 +60,11 @@ ModelSurvey.addData = (data, id_survey, result) => {
     }
 }
 
-ModelSurvey.collectData = (result) => {
+ModelSurvey.collectData = (idCtdt,result) => {
     try {
         let data = [];
-        query(`SELECT KeyRow,NameRow FROM detailoutcomestandard where idOutcomeStandard = 23 `)
+        query(`SELECT KeyRow,NameRow FROM detailoutcomestandard do, detaileduprogram dep where do.idOutcomeStandard = dep.IdOutcome 
+        and length(KeyRow) = 6 AND dep.IdEduProgram = ${idCtdt} `)
             .then(res => {
                 res.forEach(element => {
                     const obj = {
