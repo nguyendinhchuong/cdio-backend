@@ -49,9 +49,10 @@ ModelSurvey.addData = (data, id_survey, result) => {
 
             query(`INSERT INTO survey_itu  (bullet, value, mo_ta, id_survey)  VALUES
             ('${element.key}', '${resultValue}','${element.description}',${id_survey})`)
-                .then(res => {
-                    console.log(res);
-                })
+            .then (res => {
+                console.log(res);
+                result(res)
+            })
         });
 
     } catch (e) {
@@ -297,7 +298,7 @@ ModelSurvey.getITU = (obj, result) => {
 }
 
 ModelSurvey.getQA = (id, result) => {    
-    sql.query(`SELECT * from survey_qa where id_survey = ${id}`, (err, res) => {
+    sql.query(`select * from survey_qa where id = (select max(id) from survey_qa) and id_survey = ${id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -404,8 +405,10 @@ ModelSurvey.addData2 = (data, id_survey, result) => {
     }
 }
 
-ModelSurvey.setStatus = (id, result) => {
-    sql.query(`Update survey2 set status = 0 where id = ${id}`, (err, res) => {
+ModelSurvey.setStatus = (data, result) => {
+    console.log(data);
+    
+    sql.query(`Update survey2 set status = ${data.status} where id = ${data.id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -420,7 +423,7 @@ ModelSurvey.setStatus = (id, result) => {
 }
 
 ModelSurvey.checkStatus = (id, result) => {
-    sql.query(`SELECT idSurveyList, status FROM survey2 where id = ${id}`, (err, res) => {
+    sql.query(`SELECT idSurveyList, status, id_mon FROM survey2 where id = ${id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -512,10 +515,23 @@ ModelSurvey.getSurveyList = (result) => {
     })
 }
 
-ModelSurvey.getSurveyWithIdSurveyList = (id, result) => {
-    sql.query(`select * from survey2 where idSurveyList = ${id}`, (err, res) => {
-        if (err) {
-            console.log("err: ", err);
+ModelSurvey.getSubjectName = (id, result) => {
+    sql.query(`select SubjectName from subject where Id = ${id}`,(err,res)=>{
+        if(err){
+            console.log("err: ",err);
+            return result(err);
+        }else{
+            console.log(res);
+            
+            return result(res);
+        }
+    })
+}
+
+ModelSurvey.getSurveyWithIdSurveyList = (id,result)=>{
+    sql.query(`select * from survey2 where idSurveyList = ${id}`,(err,res) => {
+        if(err){
+            console.log("err: ",err );
             return result(err);
         } else {
             return result(res);

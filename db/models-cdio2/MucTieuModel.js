@@ -9,7 +9,7 @@ var MucTieuModel = (muc_tieu, mo_ta, cdr) => {
 MucTieuModel.save = (data, result) => {
   // sql.query(`update muc_tieu_mon_hoc set del_flag = 1 where thong_tin_chung_id = ${data.id}`);
   data.body.forEach(element => {
-    console.log(element.id)
+    console.log("save3data", element)
     if (element.id === -1 && element.del_flag === 0) {
       sql.query(`insert into muc_tieu_mon_hoc(muc_tieu, mo_ta, thong_tin_chung_id) values ('${element.objectName}', '${element.description}', ${data.id})`,
       (err, res) => {
@@ -22,13 +22,14 @@ MucTieuModel.save = (data, result) => {
           element.standActs.forEach(element2 => {
             // element2 = element2.replace(/\./g, "-")
             element2 += '.'
-            sql.query(`select * from detailoutcomestandard where KeyRow = '${element2}' and IdOutcomeStandard = 23`,
+            sql.query(`select do.Id from detailoutcomestandard do, detaileduprogram dep where KeyRow = '${element2}' and do.IdOutcomeStandard = dep.IdOutcome 
+            AND dep.IdEduProgram = ${data.idCtdt}`,
               (err, res) => {
                 if (err) {
                   console.log("error:", err);
                   result(err)
                 } else {
-                  let cdrId = res[0].Id 
+                  let cdrId = res[0].Id
                   sql.query(`insert into mtmh_has_cdrcdio values (${mtmhId}, ${cdrId})`,
                           (err, res) => {
                             if (err) {
@@ -53,7 +54,8 @@ MucTieuModel.save = (data, result) => {
             element.standActs.forEach(element2 => {
               // element2 = element2.replace(/\./g, "-")
               element2 += '.'
-              sql.query(`select * from detailoutcomestandard where KeyRow = '${element2}' and IdOutcomeStandard = 23`,
+              sql.query(`select do.Id from detailoutcomestandard do, detaileduprogram dep where KeyRow = '${element2}' and do.IdOutcomeStandard = dep.IdOutcome 
+              AND dep.IdEduProgram = ${data.idCtdt}`,
                 (err, res) => {
                   if (err) {
                     console.log("error:", err);
@@ -102,9 +104,10 @@ MucTieuModel.getMTMH_HAS_CDR = (data, result) => {
     })
 }
 
-MucTieuModel.getCDR = (result) => {
-  sql.query(`select do.Id,do.KeyRow from chuan_dau_ra_cdio cdr,detailoutcomestandard do
-  where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = 23 and length(KeyRow) = 6`,
+MucTieuModel.getCDR = (idCtdt, result) => {
+  sql.query(`select do.Id,do.KeyRow from chuan_dau_ra_cdio cdr,detailoutcomestandard do, detaileduprogram dep
+  where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = dep.IdOutcome 
+  and length(KeyRow) = 6 AND dep.IdEduProgram = ${idCtdt}`,
     (err, res3) => {
       if (err) {
         result(err);
@@ -114,15 +117,18 @@ MucTieuModel.getCDR = (result) => {
 }
 
 MucTieuModel.get = (data, result) => {
-  console.log(data)
-  sql.query(`SELECT mt.muc_tieu, mt.mo_ta, detailoutcomestandard.KeyRow, mt.del_flag, mt.id FROM muc_tieu_mon_hoc as mt
+  console.log("get3data",data)
+  sql.query(
+  `SELECT mt.muc_tieu, mt.mo_ta, detailoutcomestandard.KeyRow, mt.del_flag, mt.id FROM muc_tieu_mon_hoc as mt
   join mtmh_has_cdrcdio
   on mt.id = mtmh_has_cdrcdio.muc_tieu_mon_hoc_id
   join chuan_dau_ra_cdio
   on mtmh_has_cdrcdio.chuan_dau_ra_cdio_id = chuan_dau_ra_cdio.id
   join detailoutcomestandard
   on mtmh_has_cdrcdio.chuan_dau_ra_cdio_id = detailoutcomestandard.Id
-  where mt.thong_tin_chung_id = ${data.id} and mt.del_flag = 0 and chuan_dau_ra_cdio.del_flag = 0 and detailoutcomestandard.IdOutcomeStandard = 23`,
+  join detaileduprogram
+  on detailoutcomestandard.IdOutcomeStandard = detaileduprogram.IdOutcome
+  where mt.thong_tin_chung_id = ${data.id} and mt.del_flag = 0 and chuan_dau_ra_cdio.del_flag = 0 and detaileduprogram.IdEduProgram = ${data.idCtdt}`,
     (err, res) => {
       if (err) {
         result(err)

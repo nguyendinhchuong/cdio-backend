@@ -387,7 +387,11 @@ router.post("/test", function(req, res) {
   }
 });
 
-router.get("/get-data-3/:id", (req, res) => {
+router.post("/get-data-3", (req, res) => {
+  let data = {
+    id: req.body.data.id,
+    idCtdt: req.body.data.id_ctdt
+  }
   if (
     req.headers &&
     req.headers.authorization &&
@@ -401,8 +405,7 @@ router.get("/get-data-3/:id", (req, res) => {
           //res.sendStatus(403);
           res.send("Unauthorized user!");
         } else {
-          let id = req.params;
-          MucTieuModel.get(id, resData => {
+          MucTieuModel.get(data, resData => {
             res.send(resData);
           });
         }
@@ -465,7 +468,8 @@ router.post("/get-mtmh-cdr-3", (req, res) => {
   }
 });
 
-router.get("/get-cdr-3", (req, res) => {
+router.get("/get-cdr-3/:id", (req, res) => {
+  let idCtdt = req.params.id
   if (
     req.headers &&
     req.headers.authorization &&
@@ -479,7 +483,7 @@ router.get("/get-cdr-3", (req, res) => {
           //res.sendStatus(403);
           res.send("Unauthorized user!");
         } else {
-          MucTieuModel.getCDR(resData => {
+          MucTieuModel.getCDR(idCtdt, resData => {
             resData.forEach(element2 => {
               element2.KeyRow = element2.KeyRow.slice(
                 0,
@@ -511,9 +515,11 @@ router.post("/save-data-3", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           let body = req.body.data;
+          console.log(req.body)
           let data = {
             body: body,
-            id: req.body.id
+            id: req.body.id,
+            idCtdt: req.body.id_ctdt
           };
           MucTieuModel.save(data, function(err) {
             if (err) {
@@ -2238,18 +2244,18 @@ router.post("/update-standard-matrix", function(req, res) {
 });
 
 router.post("/get-benchmark-matrix", function(req, res) {
-  // if (
-  //   req.headers &&
-  //   req.headers.authorization &&
-  //   req.headers.authorization.split(" ")[0] === "JWT"
-  // ) {
-  //   jwt.verify(
-  //     req.headers.authorization.split(" ")[1],
-  //     config.jwtSecret,
-  //     (err, authData) => {
-  //       if (err) {
-  //         res.send("Unauthorized user!");
-  //       } else {
+  if (
+    req.headers &&
+    req.headers.authorization &&
+    req.headers.authorization.split(" ")[0] === "JWT"
+  ) {
+    jwt.verify(
+      req.headers.authorization.split(" ")[1],
+      config.jwtSecret,
+      (err, authData) => {
+        if (err) {
+          res.send("Unauthorized user!");
+        } else {
           const data = req.body.data;
           const idCtdt = req.body.idCtdt
           MatrixModel.getBenchmarkMatrix(data,idCtdt)
@@ -2259,12 +2265,12 @@ router.post("/get-benchmark-matrix", function(req, res) {
             .catch(err => {
               return res.end(JSON.stringify(err));
             });
-  //       }
-  //     }
-  //   );
-  // } else {
-  //   res.send("Invalid token!");
-  // }
+        }
+      }
+    );
+  } else {
+    res.send("Invalid token!");
+  }
 });
 
 router.post("/save-log", function(req, res) {
@@ -2548,7 +2554,8 @@ router.post("/get-standard-output-5", function(req, res) {
   }
 });
 
-router.get("/get-data-survey", function(req, res) {
+router.get("/get-data-survey/:id", function(req, res) {
+  let id = req.params.id;
   if (
     req.headers &&
     req.headers.authorization &&
@@ -2562,7 +2569,7 @@ router.get("/get-data-survey", function(req, res) {
           //res.sendStatus(403);
           res.send("Unauthorized user!");
         } else {
-          ModelSurvey.collectData(result => {
+          ModelSurvey.collectData(id, result => {
             res.send(result);
           });
         }
@@ -2822,7 +2829,7 @@ router.post('/add-data-survey', function (req, res) {
                 const data = req.body.data;
                 const id_survey = req.body.id_survey
                 ModelSurvey.addData(data, id_survey, (result) => {
-                    //res.send(result)
+                    res.send("1");
                 });
             }
         })
@@ -2894,7 +2901,14 @@ router.post('/get-survey-itu', function (req, res) {
     }
 })
 
-router.get('/set-status/:id', function(req, res) {
+router.post('/set-status', function(req, res) {
+    let data = req.body.data
+    ModelSurvey.setStatus(data, result => {
+        res.send(result)
+    })
+})
+
+router.get('/get-surveyqa/:id', function (req, res) {
     if (req.headers &&
         req.headers.authorization &&
         req.headers.authorization.split(' ')[0] === 'JWT') {
@@ -3046,6 +3060,15 @@ router.post('/update-status-survey',function(req,res) {
     ModelSurvey.updateStatusSurveyList(currentDate, result => {
         res.send(result)
     })
+})
+
+router.post('/get-subjectname', function(req, res) {
+  let id = req.body.id;
+  ModelSurvey.getSubjectName(id, result => {
+    if (result !== 'done') {
+      res.send(result[0])
+    } else res.send(result)
+  })
 })
 
 

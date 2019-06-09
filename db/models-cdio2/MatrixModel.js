@@ -156,7 +156,7 @@ MatrixModel.getCdrCDIO = (idCtdt)=>{
 MatrixModel.insertStandardMatrix = (resultRes,idCtdt)=>{
   return new Promise((resolve,reject)=>{
     resultRes.forEach((item,index)=>{
-      sql.query(`SELECT * FROM matrix WHERE thong_tin_chung_id = ${item.idSubject}`,(err,result)=>{
+      sql.query(`SELECT * FROM matrix WHERE thong_tin_chung_id = ${item.idSubject} AND idCtdt = ${idCtdt}`,(err,result)=>{
         if(err){
           console.log("err: ",err);
           return reject(err);
@@ -407,8 +407,9 @@ MatrixModel.addMatrix = (body,result)=>{
               console.log('in');
               // el.id = el.id.replace(/\./g, "-")
               el.id += '.'
-              sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do
-              where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = 23 and length(KeyRow) = 6 and KeyRow = '${el.id}'`, (err, res) =>{
+              sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do, detaileduprogram dep
+              where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = dep.IdOutcome 
+              and length(KeyRow) = 6 AND dep.IdEduProgram = ${idCtdt} and KeyRow = '${el.id}'`, (err, res) =>{
                 let muc_do = "-";
                 if (el.data.cdr.includes('I')) {
                   muc_do = 'I'
@@ -441,8 +442,9 @@ MatrixModel.addMatrix = (body,result)=>{
             })
           }
           else {
-            sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do
-            where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = 23 and length(KeyRow) = 6`,(err,res)=>{
+            sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do, detaileduprogram dep
+            where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = dep.IdOutcome 
+            and length(KeyRow) = 6 AND dep.IdEduProgram = ${idCtdt}`,(err,res)=>{
               if(err){
                 console.log("err: ",err);
                 return reject(err);
@@ -451,8 +453,9 @@ MatrixModel.addMatrix = (body,result)=>{
                 item.ITU.forEach(el => {
                   // el.id = el.id.replace(/\./g, "-")
                   el.id += '.'
-                  sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do
-                  where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = 23 and length(KeyRow) = 6 and KeyRow = '${el.id}'`, (err, res) =>{
+                  sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do, detaileduprogram dep
+                  where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = dep.IdOutcome 
+                  and length(KeyRow) = 6 AND dep.IdEduProgram = ${idCtdt} and KeyRow = '${el.id}'`, (err, res) =>{
                     let muc_do = "-";
                     if (el.data.cdr.includes('I')) {
                       muc_do = 'I'
