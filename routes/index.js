@@ -2756,7 +2756,8 @@ router.post("/add-to-edit-matrix", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           let data = req.body;
-          MatrixModel.addMatrix(data, result => {
+          let idCtdt = req.body.idCtdt
+          MatrixModel.addMatrix(data, idCtdt, result => {
             return res.end(result);
           });
         }
