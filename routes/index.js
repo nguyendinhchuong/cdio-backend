@@ -2106,7 +2106,7 @@ router.post('/add-data-survey', function (req, res) {
                 const data = req.body.data;
                 const id_survey = req.body.id_survey
                 ModelSurvey.addData(data, id_survey, (result) => {
-                    //res.send(result)
+                    res.send("1");
                 });
             }
         })
@@ -2176,11 +2176,9 @@ router.post('/get-survey-itu', function (req, res) {
     }
 })
 
-router.get('/set-status/:id', function(req, res) {
-    let id = req.params.id
-    console.log(id);
-    
-    ModelSurvey.setStatus(id, result => {
+router.post('/set-status', function(req, res) {
+    let data = req.body.data
+    ModelSurvey.setStatus(data, result => {
         res.send(result)
     })
 })
@@ -2341,6 +2339,15 @@ router.post('/add-survey-list',function(req,res){
 router.get('/getidqa/:id', function(req, res) {
     let id = req.params.id;
     ModelSurvey.getIDQA(id, result => {
+      if (result !== 'done') {
+        res.send(result[0])
+      } else res.send(result)
+    })
+  })
+
+  router.post('/get-subjectname', function(req, res) {
+    let id = req.body.id;
+    ModelSurvey.getSubjectName(id, result => {
       if (result !== 'done') {
         res.send(result[0])
       } else res.send(result)

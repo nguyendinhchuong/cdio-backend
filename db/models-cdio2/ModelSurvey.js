@@ -52,6 +52,7 @@ ModelSurvey.addData = (data, id_survey, result) => {
             ('${element.key}', '${resultValue}','${element.description}',${id_survey})`)
             .then (res => {
                 console.log(res);
+                result(res)
             })
         });
         
@@ -204,7 +205,7 @@ ModelSurvey.getITU = (obj, result) => {
 }
 
 ModelSurvey.getQA = (id, result) => {    
-    sql.query(`SELECT * from survey_qa where id_survey = ${id}`, (err, res) => {
+    sql.query(`select * from survey_qa where id = (select max(id) from survey_qa) and id_survey = ${id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -313,9 +314,10 @@ ModelSurvey.addData2 = (data, id_survey, result) => {
     }
 }
 
-ModelSurvey.setStatus = (id, result) => {
-    console.log(id)
-    sql.query(`Update survey2 set status = 0 where id = ${id}`, (err, res) => {
+ModelSurvey.setStatus = (data, result) => {
+    console.log(data);
+    
+    sql.query(`Update survey2 set status = ${data.status} where id = ${data.id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -330,7 +332,7 @@ ModelSurvey.setStatus = (id, result) => {
 }
 
 ModelSurvey.checkStatus = (id, result) => {
-    sql.query(`SELECT idSurveyList, status FROM survey2 where id = ${id}`, (err, res) => {
+    sql.query(`SELECT idSurveyList, status, id_mon FROM survey2 where id = ${id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
@@ -417,6 +419,19 @@ ModelSurvey.getSurveyList = (result) => {
             console.log("err: ",err);
             return result(err);
         }else{
+            return result(res);
+        }
+    })
+}
+
+ModelSurvey.getSubjectName = (id, result) => {
+    sql.query(`select SubjectName from subject where Id = ${id}`,(err,res)=>{
+        if(err){
+            console.log("err: ",err);
+            return result(err);
+        }else{
+            console.log(res);
+            
             return result(res);
         }
     })
