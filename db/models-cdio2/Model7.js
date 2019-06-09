@@ -124,11 +124,14 @@ Model7.getStandardOutput = (id,result)=>{
               console.log("err: ",err);
               return result(err,null);
             }
-            let temp = {
-              "muc_tieu": muctieu.muc_tieu,
-              "cdr":listCdr,
+            if(listCdr.length > 0){
+              let temp = {
+                "muc_tieu": muctieu.muc_tieu,
+                "cdr":listCdr,
+              }
+              standardOutput.push(temp);
             }
-            standardOutput.push(temp);
+            
             if (index === listMT.length - 1) return result(null,standardOutput);
 
           })
