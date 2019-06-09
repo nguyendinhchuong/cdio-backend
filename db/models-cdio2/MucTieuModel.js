@@ -9,7 +9,7 @@ var MucTieuModel = (muc_tieu, mo_ta, cdr) => {
 MucTieuModel.save = (data, result) => {
   // sql.query(`update muc_tieu_mon_hoc set del_flag = 1 where thong_tin_chung_id = ${data.id}`);
   data.body.forEach(element => {
-    console.log(element.id)
+    console.log("save3data", element)
     if (element.id === -1 && element.del_flag === 0) {
       sql.query(`insert into muc_tieu_mon_hoc(muc_tieu, mo_ta, thong_tin_chung_id) values ('${element.objectName}', '${element.description}', ${data.id})`,
       (err, res) => {
@@ -54,7 +54,7 @@ MucTieuModel.save = (data, result) => {
             element.standActs.forEach(element2 => {
               // element2 = element2.replace(/\./g, "-")
               element2 += '.'
-              sql.query(`select * from detailoutcomestandard do, detaileduprogram dep where KeyRow = '${element2}' and do.IdOutcomeStandard = dep.IdOutcome 
+              sql.query(`select do.Id from detailoutcomestandard do, detaileduprogram dep where KeyRow = '${element2}' and do.IdOutcomeStandard = dep.IdOutcome 
               AND dep.IdEduProgram = ${data.idCtdt}`,
                 (err, res) => {
                   if (err) {
