@@ -6,21 +6,27 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true,
             autoIncrement: true
         },
-        IdSubject:{
+        IdSubject: {
             type: Sequelize.INTEGER,
             allowNull: false
         },
-        IdEduProg:{
+        IdEduProg: {
             type: Sequelize.INTEGER,
             allowNull: false
         },
-        DateCreated:{
+        DateCreated: {
             type: Sequelize.DATE,
             allowNull: false
         },
-    },{
-        freezeTableName: true,
-        timestamps: false
-    })
+        IdUser: {
+            type: Sequelize.STRING
+        },
+        IdMainTeacher: {
+            type: Sequelize.INTEGER
+        }
+    }, {
+            freezeTableName: true,
+            timestamps: false
+        })
     return subjecteduprog;
 }

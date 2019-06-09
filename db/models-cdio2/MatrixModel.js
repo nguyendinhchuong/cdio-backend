@@ -9,7 +9,7 @@ close = () => {
   sql.end();
 };
 
-MatrixModel.getRealityMatrix = (listIdSubject) => {
+MatrixModel.getRealityMatrix = (listIdSubject,idCtdt) => {
   return new Promise((resolve, reject) => {
     var resultRes = [];
     let str = listIdSubject.toString();
@@ -30,7 +30,7 @@ MatrixModel.getRealityMatrix = (listIdSubject) => {
               itu: []
             };
 
-            selectCDR(subject.Id).then(
+            selectCDR(subject.Id,idCtdt).then(
               res => {
                 itemRes.itu = res;  
                 resultRes.push(itemRes);
@@ -53,10 +53,11 @@ MatrixModel.getRealityMatrix = (listIdSubject) => {
   });
 };
 
-selectCDR = idTTC => {
+selectCDR = (idTTC,idCtdt) => {
   return new Promise((resolve, reject) => {
-    sql.query(`select do.Id,do.KeyRow from chuan_dau_ra_cdio cdr,detailoutcomestandard do
-    where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = 23 and length(KeyRow) = 6 `, async (err, listCdrCDIO) => {
+    sql.query(`select do.Id,do.KeyRow from chuan_dau_ra_cdio cdr,detailoutcomestandard do, detaileduprogram dep
+    where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = dep.IdOutcome and length(KeyRow) = 6 
+    AND dep.IdEduProgram = ${idCtdt}`, async (err, listCdrCDIO) => {
       if (err) {
         console.log("error:", err);
         return reject(err);
@@ -125,10 +126,12 @@ selectITU = (subject_id, cdrCDIO_id) => {
 };
 
 
-MatrixModel.getCdrCDIO = ()=>{
+MatrixModel.getCdrCDIO = (idCtdt)=>{
     return new Promise((resolve,reject)=>{
-        sql.query(`select do.Id,do.KeyRow from chuan_dau_ra_cdio cdr,detailoutcomestandard do
-        where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = 23 and length(KeyRow) = 6`, (err, listCdrCDIO) => {
+        sql.query(`select do.Id,do.KeyRow 
+        from chuan_dau_ra_cdio cdr,detailoutcomestandard do, detaileduprogram dep 
+        where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = dep.IdOutcome 
+        and length(KeyRow) = 6 AND dep.IdEduProgram = ${idCtdt}`, (err, listCdrCDIO) => {
             if (err) {
               console.log("error:", err);
                return reject(err);
