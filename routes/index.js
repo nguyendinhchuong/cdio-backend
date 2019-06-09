@@ -2190,8 +2190,9 @@ router.post("/get-standard-matrix", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           const data = req.body.data;
+          const idCtdt = req.body.idCtdt;
 
-          MatrixModel.getStandardMatrix(data)
+          MatrixModel.getStandardMatrix(data,idCtdt)
             .then(result => {
               return res.end(JSON.stringify(result));
             })
@@ -2237,33 +2238,33 @@ router.post("/update-standard-matrix", function(req, res) {
 });
 
 router.post("/get-benchmark-matrix", function(req, res) {
-  if (
-    req.headers &&
-    req.headers.authorization &&
-    req.headers.authorization.split(" ")[0] === "JWT"
-  ) {
-    jwt.verify(
-      req.headers.authorization.split(" ")[1],
-      config.jwtSecret,
-      (err, authData) => {
-        if (err) {
-          //res.sendStatus(403);
-          res.send("Unauthorized user!");
-        } else {
+  // if (
+  //   req.headers &&
+  //   req.headers.authorization &&
+  //   req.headers.authorization.split(" ")[0] === "JWT"
+  // ) {
+  //   jwt.verify(
+  //     req.headers.authorization.split(" ")[1],
+  //     config.jwtSecret,
+  //     (err, authData) => {
+  //       if (err) {
+  //         res.send("Unauthorized user!");
+  //       } else {
           const data = req.body.data;
-          MatrixModel.getBenchmarkMatrix(data)
+          const idCtdt = req.body.idCtdt
+          MatrixModel.getBenchmarkMatrix(data,idCtdt)
             .then(result => {
               return res.end(JSON.stringify(result));
             })
             .catch(err => {
               return res.end(JSON.stringify(err));
             });
-        }
-      }
-    );
-  } else {
-    res.send("Invalid token!");
-  }
+  //       }
+  //     }
+  //   );
+  // } else {
+  //   res.send("Invalid token!");
+  // }
 });
 
 router.post("/save-log", function(req, res) {
