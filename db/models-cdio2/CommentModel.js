@@ -9,15 +9,15 @@ var CommentModel = (id, noi_dung, nguoi_gui, thoi_gian, log_id) => {
 }
 
 CommentModel.get = (result) => {
-    sql.query(`select * from binh_luan`, 
+    sql.query(` SELECT * 
+                FROM binh_luan`, 
         (err, res) => {
-        if (err) {
-            console.log(err);
-            result(err)
-        }     
-        console.log(res);
-        result(res)
-  })
+            if (err) {
+                console.log(err);
+                result(err)
+            }     
+            result(res);
+    })
 }
 
 CommentModel.add = (body,result) => {
@@ -25,18 +25,15 @@ CommentModel.add = (body,result) => {
     let nguoi_gui = body.nguoi_gui;
     let thoi_gian = body.thoi_gian;
     let log_id = body.log_id;
-    console.log(content);
-    console.log(nguoi_gui);
-    console.log(thoi_gian);
-    console.log(log_id);
-    sql.query(`insert into binh_luan (noi_dung,nguoi_gui,thoi_gian,log_id)
-                values ( '${content}','${nguoi_gui}',${thoi_gian},${log_id}) `, 
+   
+    sql.query(` INSERT INTO binh_luan (noi_dung,nguoi_gui,thoi_gian,log_id)
+                VALUES ('${content}','${nguoi_gui}',${thoi_gian},${log_id}) `, 
         (err, res) => {
         if (err) {
             console.log(err);
             result(err)
         }     
         result(res)
-  })
+    })
 }
 module.exports = CommentModel;

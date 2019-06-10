@@ -2350,7 +2350,7 @@ router.get("/get-comment", function(req, res) {
   }
 });
 
-router.post("/add-comment-2", function(req, res) {
+router.post("/add-comment", function(req, res) {
   if (
     req.headers &&
     req.headers.authorization &&
