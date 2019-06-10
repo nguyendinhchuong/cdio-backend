@@ -561,7 +561,7 @@ ModelSurvey.getlistSurvey = (id_ctdt,id_user,result) => {
                 listIdSurveyList.push(item.id);
             })
 
-            sql.query(`select * from survey2 where idSurveyList in (${listIdSurveyList}) and id_giaovien = ${id_user} and status = 1`,(err,res)=>{
+            sql.query(`select * from survey2 where idSurveyList in (${listIdSurveyList}) and id_giaovien = ${id_user}`,(err,res)=>{
                     if(res != null && res.length >0 ){
                         let listSurvey = res;
                        
