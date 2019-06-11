@@ -148,23 +148,24 @@ exports.updateTeachPlanBlock = (request) => {
                     .then(async data => {
                         if (data.count === 0) {
                             console.log(data.count);
-                            request.data.map(semester => {
+                            await request.data.map(async semester => {
                                 let block_obj = {};
                                 block_obj.IdDetailEdu = request.IdDetailEdu;
                                 block_obj.Semester = semester.semester;
-                                db.teachplanblock.create(block_obj)
+                                await db.teachplanblock.create(block_obj)
                                     .then(async data => {
+                                        console.log(data);
                                         let bulkDetail = [];
-                                        let promises = semester.subjects.map(subject => {
+                                        let promises = semester.subjects.map(async subject => {
                                             let detail_obj = {};
                                             detail_obj.IdTeachPlan = data.dataValues.Id;
                                             detail_obj.IdSubject = subject.Id;
                                             detail_obj.Note = subject.Note;
                                             detail_obj.Optional = (subject.option === 'BB') ? 0 : 1;
-                                            bulkDetail.push(detail_obj);
+                                            await bulkDetail.push(detail_obj);
                                         });
                                         await Promise.all(promises);
-                                        db.detailteachplanblock.bulkCreate(bulkDetail, { returning: true })
+                                        await db.detailteachplanblock.bulkCreate(bulkDetail, { returning: true })
                                             .then(data => {
                                                 console.log(data.dataValues.Id);
                                             })
@@ -175,7 +176,8 @@ exports.updateTeachPlanBlock = (request) => {
                                     .catch(err => {
                                         reject(err);
                                     })
-                            })
+                            });
+                            resolve(1);
                         } else if (request.data.length >= data.count) {
                             console.log("length >= count: " + data.count);
                             request.data.map(semester => {
