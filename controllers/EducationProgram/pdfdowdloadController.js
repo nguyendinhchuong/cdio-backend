@@ -31,7 +31,7 @@ const createPDFEduProgramData = async (ideduprog) => {
     const educontentData = await educontent.getEduContentByEduId(request);
 
     console.log(educontentData);
-    
+
 
     //Edu Info
     data.EduName = eduprogData[0].EduName;
@@ -131,34 +131,40 @@ const createPDFEduProgramData = async (ideduprog) => {
 
     for (var i = 0; i < edupurposeData.length; i++) {
 
-        switch (edupurposeData.dataValues.KeyRow) {
+        switch (edupurposeData[i].dataValues.KeyRow) {
             //Level 1.x
             case '1.1.':
-                data.EduPurposeLevel1.KeyRowTitle1 = edupurposeData.dataValues[i].KeyRow;
-                data.EduPurposeLevel1.Title1 = edupurposeData.dataValues[i].NameRow;
+                data.EduPurposeLevel1.KeyRowTitle1 = edupurposeData[i].dataValues.KeyRow;
+                data.EduPurposeLevel1.Title1 = edupurposeData[i].dataValues.NameRow;
                 break;
             case '1.2.':
-                data.EduPurposeLevel1.KeyRowTitle2 = edupurposeData.dataValues[i].KeyRow;
-                data.EduPurposeLevel1.Title2 = edupurposeData.dataValues[i].NameRow;
+                data.EduPurposeLevel1.KeyRowTitle2 = edupurposeData[i].dataValues.KeyRow;
+                data.EduPurposeLevel1.Title2 = edupurposeData[i].dataValues.NameRow;
                 break;
             case '1.3.':
-                data.EduPurposeLevel1.KeyRowTitle3 = edupurposeData.dataValues[i].KeyRow;
-                data.EduPurposeLevel1.Title3 = edupurposeData.dataValues[i].NameRow;
+                data.EduPurposeLevel1.KeyRowTitle3 = edupurposeData[i].dataValues.KeyRow;
+                data.EduPurposeLevel1.Title3 = edupurposeData[i].dataValues.NameRow;
                 break;
             //
             case '1.1.1':
-                data.EduPurposeLevel2.KeyRowTitle1 = edupurposeData.dataValues[i].KeyRow;
-                data.EduPurposeLevel2.Title1 = edupurposeData.dataValues[i].NameRow;
+                data.EduPurposeLevel2.KeyRowTitle1 = edupurposeData[i].dataValues.KeyRow;
+                data.EduPurposeLevel2.Title1 = edupurposeData[i].dataValues.NameRow;
+                console.log("1.1. "+data.EduPurposeLevel1.Title1);
+                console.log("1.1.1 " + data.EduPurposeLevel2.Title1);
                 break;
 
-            case '1.1.':
-
-                break;
             case '1.2.1':
+                data.EduPurposeLevel2.KeyRowTitle2 = edupurposeData[i].dataValues.KeyRow;
+                data.EduPurposeLevel2.Title2 = edupurposeData[i].dataValues.NameRow;
+                console.log("1.2. "+data.EduPurposeLevel1.Title2);
+                console.log("1.2.1 " + data.EduPurposeLevel2.Title2);
+                break;
+
+            case '1.3.1':
                 data.EduPurposeLevel2.KeyRowTitle3 = edupurposeData[i].dataValues.KeyRow;
                 data.EduPurposeLevel2.Title3 = edupurposeData[i].dataValues.NameRow;
+                console.log("1.3.1 " + data.EduPurposeLevel2.Title3);
                 break;
-
 
             default:
                 break;
@@ -177,6 +183,9 @@ const createPDFEduProgramData = async (ideduprog) => {
 
     }
 
+    console.log("1.1. "+data.EduPurposeLevel1.Title1);
+    console.log("1.2. "+data.EduPurposeLevel1.Title2);
+    console.log("1.3. "+data.EduPurposeLevel1.Title3);
 
     data.EduTime = detaileduData.dataValues.EduTime;
     data.EnrollmentTarget = detaileduData.dataValues.EnrollmentTarget;
@@ -246,7 +255,7 @@ const createPDF = async (data, file_template) => {
 exports.getData = async (req, res) => {
     let params = req.query;
     const data = await createPDFEduProgramData(Number(params.ideduprog));
-    const path = await createPDF(data, 'index.html');
+    const path = await createPDF(data, 'test.html');
     const file = `${path}`;
     res.download(file, err => {
         if (err) {

@@ -21,7 +21,7 @@ module.exports = (sequelize, Sequelize) => {
         IdUser:{
             type: Sequelize.STRING
         },
-        IDMainTeacher:{
+        IdMainTeacher:{
             type: Sequelize.INTEGER
         }
     },{

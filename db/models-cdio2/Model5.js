@@ -58,7 +58,9 @@ collectData = (objResult) => {
 
 collectDataPromise = (objResult) => {
     return new Promise((resolve, reject) => {
-        query(`SELECT hoat_dong FROM khlt_has_hdd JOIN hoat_dong_day on hoat_dong_day_id = id WHERE ke_hoach_ly_thuyet_id = '${objResult.key}' `)
+        query(` SELECT hoat_dong 
+                FROM khlt_has_hdd JOIN hoat_dong_day on hoat_dong_day_id = id 
+                WHERE ke_hoach_ly_thuyet_id = '${objResult.key}' `)
             .then(res => {
                 res.map(async value => {
                     await objResult.teachingActs.push(value.hoat_dong);
@@ -68,7 +70,9 @@ collectDataPromise = (objResult) => {
                 console.log(err);
             })
             .then(() => {
-                query(`SELECT chuan_dau_ra FROM khlt_has_cdrmh JOIN chuan_dau_ra_mon_hoc on chuan_dau_ra_mon_hoc_id = id WHERE ke_hoach_ly_thuyet_id = '${objResult.key}' `)
+                query(` SELECT chuan_dau_ra 
+                        FROM khlt_has_cdrmh JOIN chuan_dau_ra_mon_hoc on chuan_dau_ra_mon_hoc_id = id 
+                        WHERE ke_hoach_ly_thuyet_id = '${objResult.key}' AND del_flag = 0 `)
                     .then(res => {
                         res.map(async value => {
                             await objResult.standardOutput.push(value.chuan_dau_ra);
@@ -79,7 +83,9 @@ collectDataPromise = (objResult) => {
                     })
             })
             .then(() => {
-                query(`SELECT ma FROM khlt_has_dg JOIN danh_gia on danh_gia_id = id  WHERE ke_hoach_ly_thuyet_id = '${objResult.key}'`)
+                query(` SELECT ma 
+                        FROM khlt_has_dg JOIN danh_gia on danh_gia_id = id  
+                        WHERE ke_hoach_ly_thuyet_id = '${objResult.key}' AND del_flag = 0`)
                     .then(res => {
                         res.map(async value => {
                             await objResult.evalActs.push(value.ma);

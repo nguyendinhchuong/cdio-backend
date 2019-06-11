@@ -111,9 +111,6 @@ exports.addEduContent = async (request) => {
 }
 
 exports.getBlocksSubjects = request => {
-    console.log("+++++++++++");
-    console.log(request);
-    
     
     return new Promise(async (res, rej) => {
         let listSubjects = [];
@@ -315,9 +312,15 @@ const convertDbToBlocksSubjects = (dataDb, subjects) => {
         const blocksSubjects = addSubjectsIntoBlock(block, listSubjectFull);
         return arr.concat(blocksSubjects);
     }, []);
-
+    let keyFreeStudy = "abc";
     const contentsBlocks = contentPro.reduce((arr, content) => {
-        if (content.Type) {
+        if(content.Credit){
+            keyFreeStudy = content.KeyRow ;
+        }
+        if(checkIsChild(content.KeyRow, keyFreeStudy)){
+            return arr;
+        }
+        else if (content.Type) {
             const contents = addBlocksIntoTableName(content, blocksSubjects);
             return arr.concat(contents);
         }
@@ -326,6 +329,10 @@ const convertDbToBlocksSubjects = (dataDb, subjects) => {
     // block into rowName
     return contentsBlocks;
 };
+
+const checkIsChild =(key, keyParent) =>{
+    return key.includes(keyParent);
+}
 
 const convertDbToRowContainTable = (dataDb, subjects) => {
     const contentPro = [...dataDb.eduContents];
@@ -337,9 +344,15 @@ const convertDbToRowContainTable = (dataDb, subjects) => {
         const blocksSubjects = addSubjectsIntoBlock(block, listSubjectFull);
         return arr.concat(blocksSubjects);
     }, []);
-
+    let keyFreeStudy = "abc";
     const contentsBlocks = contentPro.reduce((arr, content) => {
-        if (content.Type) {
+        if(content.Credit){
+            keyFreeStudy = content.KeyRow ;
+        }
+        if(checkIsChild(content.KeyRow, keyFreeStudy)){
+            return arr;
+        }
+        else if (content.Type) {
             const contents = addBlocksIntoTableName(content, blocksSubjects);
             let row = findRowParentOfTable(contentPro, content);
             row = {...row, children:[]};
