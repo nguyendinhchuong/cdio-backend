@@ -157,12 +157,14 @@ router.post("/exportfile", function(req, res, next) {
       });
       const page = await browser.newPage();
       let body = await req.body;
+      let data = JSON.parse(body.data);
+      let path = "./" + data.nameFile + Date.now() + ".pdf";
 
       //header
       let content = await compile("header", null);
       //body
-      for (let k of Object.keys(JSON.parse(body.data))) {
-        let value = JSON.parse(JSON.parse(body.data)[k]);
+      for (let k of Object.keys(JSON.parse(data.content))) {
+        let value = JSON.parse(JSON.parse(data.content)[k]);
         content += await compile("content", renderContenByNameTab(k, value));
       }
       //footer
@@ -175,7 +177,7 @@ router.post("/exportfile", function(req, res, next) {
       // })
       await page.emulateMedia("screen");
       await page.pdf({
-        path: "../mypdf.pdf", // edit path
+        path: path,
         format: "A4",
         printBackground: true
       });
