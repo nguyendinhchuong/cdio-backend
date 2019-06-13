@@ -199,6 +199,9 @@ Model5.add = (data, result) => {
                     for (const elemenet of standardOutput) {
                         query(`SELECT id FROM chuan_dau_ra_mon_hoc WHERE chuan_dau_ra = '${elemenet}' AND del_flag = 0 AND thong_tin_chung_id = '${thong_tin_chung_id}' `)
                         .then(res => {
+                            if (res.length == 0) {
+                                return;
+                            }
                             const index = res[0].id;
 
                             sql.query(`insert into khlt_has_cdrmh(ke_hoach_ly_thuyet_id,chuan_dau_ra_mon_hoc_id) 
@@ -216,6 +219,9 @@ Model5.add = (data, result) => {
                     for (const element of evalActs) {
                         query(`SELECT id FROM danh_gia WHERE ma = '${element}' AND del_flag = 0 AND thong_tin_chung_id = '${thong_tin_chung_id}'`)
                         .then(res => {
+                            if (res.length == 0) {
+                                return;
+                            }
                             const index = res[0].id;
 
                             sql.query(`insert into khlt_has_dg(ke_hoach_ly_thuyet_id,danh_gia_id) 
@@ -235,6 +241,24 @@ Model5.add = (data, result) => {
                     for (const element of teachingActs) {
                         query(`SELECT id FROM hoat_dong_day WHERE hoat_dong = '${element}' AND loai_hoat_dong = 'LT' `)
                         .then(res => {
+                            if (res.length == 0) {
+                                query(`INSERT INTO hoat_dong_day(hoat_dong,loai_hoat_dong,danh_muc)
+                                        VALUES ('${element}','LT',0)`)
+                                    .then(res => {
+                                        const index = res.insertId;
+
+                                        sql.query(`insert into khlt_has_hdd(ke_hoach_ly_thuyet_id,hoat_dong_day_id) 
+                                            values ('${ke_hoach_ly_thuyet_id}', '${index}')`,
+                                                (err, res) => {
+                                                    if (err) {
+                                                        console.log("error:", err);
+                                                        result(null, err)
+                                                    }
+                                                });
+                                    })
+
+                                return;
+                            }
                             const index = res[0].id;
                             
                             sql.query(`insert into khlt_has_hdd(ke_hoach_ly_thuyet_id,hoat_dong_day_id) 
@@ -244,7 +268,7 @@ Model5.add = (data, result) => {
                                             console.log("error:", err);
                                             result(null, err)
                                         }
-                                    })
+                                    });
                         });
                     }      
                 })
