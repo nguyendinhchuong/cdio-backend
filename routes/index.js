@@ -3079,6 +3079,13 @@ router.post('/get-subjectname', function(req, res) {
   })
 })
 
+router.get('/get-teachername/:id',function(req,res) {
+  let idSurveyList = req.params;
+  ModelSurvey.getTeacherName(idSurveyList,result => {
+    res.send(result)
+  })
+})
+
 
 
 module.exports = router;

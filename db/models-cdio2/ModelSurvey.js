@@ -549,6 +549,9 @@ ModelSurvey.getSurveyWithIdSurveyList = (id,result)=>{
 }
 
 ModelSurvey.getSubjectWithId = (listId,result) => {
+    if(listId.length === 0){
+        return [];
+    }
     sql.query(`select * from subject where Id in (${listId})`,(err,res) => {
         if(err){
             console.log("err: " , err);
@@ -671,4 +674,11 @@ ModelSurvey.updateStatusSurveyList = (currentDate,result) => {
 
 }
 
+ModelSurvey.getTeacherName = (id,result) => {
+    sql.query(`select survey2.id,survey2.id_mon,survey2.id_giaovien,user.name from survey2,user where survey2.idSurveyList = ${id.id} and survey2.id_giaovien = user.id`,(err,res) => {
+        if(res.length > 0){
+            result(res)
+        }
+    })
+}
 module.exports = ModelSurvey;
