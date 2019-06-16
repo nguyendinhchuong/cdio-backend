@@ -11,7 +11,7 @@ MucTieuModel.save = (data, result) => {
   data.body.forEach(element => {
     console.log("save3data", element)
     if (element.id === -1 && element.del_flag === 0) {
-      sql.query(`insert into muc_tieu_mon_hoc(muc_tieu, mo_ta, thong_tin_chung_id) values ('${element.objectName}', '${element.description}', ${data.id})`,
+      sql.query(`insert into muc_tieu_mon_hoc(muc_tieu, mo_ta, thong_tin_chung_id, idCtdt) values ('${element.objectName}', '${element.description}', ${data.id}, ${data.idCtdt})`,
       (err, res) => {
         if (err) {
           console.log("error:", err);
