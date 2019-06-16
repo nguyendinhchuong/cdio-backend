@@ -429,11 +429,20 @@ MatrixModel.addMatrix = (body, idCtdt,result)=>{
                   muc_do = muc_do.substr(1);
                 }
                 if (res.length > 0) {
-                  sql.query(`UPDATE matrix SET muc_do = '${muc_do}' WHERE thong_tin_chung_id = ${res1[0].Id} and chuan_dau_ra_cdio_id = ${res[0].Id}`, (err, res) => {
+                  sql.query(`UPDATE matrix SET muc_do = '${muc_do}' WHERE thong_tin_chung_id = ${res1[0].Id} and chuan_dau_ra_cdio_id = ${res[0].Id}`, (err, res5) => {
                   if (err) {
                     console.log("err: ", err);
                     return result(err);
                   }
+                  if (res5.affectedRows === 0) {
+                    sql.query(`INSERT INTO matrix(muc_do,thong_tin_chung_id,chuan_dau_ra_cdio_id,idCtdt) VALUES('${muc_do}',${res1[0].Id},${res[0].Id},${idCtdt})`,(err,res)=>{
+                      if(err){
+                        console.log("err: ",err);
+                        return reject(err);
+                      }
+                      return result('1');
+                    })
+                  } 
                   return result('1');
                 })
                 }
