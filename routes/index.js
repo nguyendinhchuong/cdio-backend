@@ -394,6 +394,7 @@ router.post("/get-data-3", (req, res) => {
     id: req.body.data.id,
     idCtdt: req.body.data.id_ctdt
   }
+  console.log(req.body);
   if (
     req.headers &&
     req.headers.authorization &&
@@ -1179,6 +1180,7 @@ router.post("/add-data-5", function(req, res) {
 });
 
 router.post("/collect-data-5", function(req, res) {
+ 
   if (
     req.headers &&
     req.headers.authorization &&
@@ -1192,7 +1194,7 @@ router.post("/collect-data-5", function(req, res) {
           //res.sendStatus(403);
           res.send("Unauthorized user!");
         } else {
-          Model5.collect(req.body.data, function(err, data) {
+          Model5.collect(req.body.data, req.body.ctdt, function(err, data) {
             if (err) {
               console.log(err);
             } else {
@@ -2544,8 +2546,9 @@ router.post("/get-standard-output-5", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           const dataID = req.body.data;
-
-          Model5.collectCDR(dataID, result => {
+          const idCtdt = req.body.idCtdt;
+          
+          Model5.collectCDR(dataID,idCtdt, result => {
             res.send(result);
           });
         }
