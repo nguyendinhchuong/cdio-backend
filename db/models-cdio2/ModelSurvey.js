@@ -173,7 +173,7 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, resp) => {
                                 })
                             });
                             if (kq.length === data.length) {
-                                console.log(data);
+                                resp(data);
                             }
                         });
                     })
