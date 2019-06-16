@@ -10,7 +10,7 @@ exports.getEduProgContent = (req, res) => {
         response.message = "fail";
         res.send(JSON.stringify(response));
     }
-    request.IdEduProgram = +params.id;
+    request.IdDetailEduProg = +params.id;
     eduprogcontent.getEduContentByEduId(request)
         .then(data => {
             let response = {};
