@@ -66,6 +66,7 @@ Model4.collectdata = (data, result) => {
     FROM chuan_dau_ra_mon_hoc
     JOIN muc_tieu_mon_hoc ON chuan_dau_ra_mon_hoc.muc_tieu_mon_hoc_id = muc_tieu_mon_hoc.id where chuan_dau_ra_mon_hoc.del_flag = 0
     && muc_tieu_mon_hoc.del_flag = 0
+    && muc_tieu_mon_hoc.idCtdt = ${data.idCtdt}
     && chuan_dau_ra_mon_hoc.thong_tin_chung_id = ${data.thong_tin_chung_id}`, (err, res) => {
         if (err) {
             console.log("error:", err);
@@ -162,7 +163,8 @@ Model4.editsubject = (data, result) => {
 // }
 
 Model4.collectmtmh = (data, result) => {
-    sql.query(`select id, muc_tieu from muc_tieu_mon_hoc where del_flag = 0 && thong_tin_chung_id = ${data.thong_tin_chung_id}`,
+    sql.query(`select id, muc_tieu from muc_tieu_mon_hoc where del_flag = 0 && thong_tin_chung_id = ${data.thong_tin_chung_id}
+                && idCtdt = ${data.idCtdt}`,
         (err, res) => {
             if (err) {
                 console.log("error:", err);
@@ -179,7 +181,9 @@ Model4.collectmtmhhascdrcdio = (data, result) => {
        JOIN muc_tieu_mon_hoc ON muc_tieu_mon_hoc.id = mtmh_has_cdrcdio.muc_tieu_mon_hoc_id
        JOIN chuan_dau_ra_cdio ON chuan_dau_ra_cdio.id = mtmh_has_cdrcdio .chuan_dau_ra_cdio_id
        JOIN detailoutcomestandard ON detailoutcomestandard.Id = mtmh_has_cdrcdio .chuan_dau_ra_cdio_id
-    WHERE chuan_dau_ra_cdio.del_flag = 0 && muc_tieu_mon_hoc.thong_tin_chung_id = ${data.thong_tin_chung_id} && muc_tieu_mon_hoc.del_flag = 0 ORDER by detailoutcomestandard.KeyRow`,
+    WHERE chuan_dau_ra_cdio.del_flag = 0 
+    && muc_tieu_mon_hoc.idCtdt = ${data.idCtdt}
+    && muc_tieu_mon_hoc.thong_tin_chung_id = ${data.thong_tin_chung_id} && muc_tieu_mon_hoc.del_flag = 0 ORDER by detailoutcomestandard.KeyRow`,
         (err, res) => {
             if (err) {
                 console.log("error:", err);

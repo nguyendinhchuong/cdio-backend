@@ -10,7 +10,7 @@ exports.getEduProgContent = (req, res) => {
         response.message = "fail";
         res.send(JSON.stringify(response));
     }
-    request.IdEduProgram = +params.id;
+    request.IdDetailEduProg = +params.id;
     eduprogcontent.getEduContentByEduId(request)
         .then(data => {
             let response = {};
@@ -81,7 +81,7 @@ exports.getBlockSubjects = async (req, res) => {
         await getdetailEdu(+params.id)
             .then(data => {
                 console.log("--------------");
-                request.IdEduProgram = +data.dataValues.Id;
+                request.IdDetailEduProg = +data.dataValues.Id;
                 console.log(request);
                 
             })

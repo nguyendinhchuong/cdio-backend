@@ -84,7 +84,9 @@ exports.updateDetailEduProg = (request) => {
                                 EduProcess: request.EduProcess,
                                 GraduatedCon: request.GraduatedCon,
                                 IdOutcome: request.IdOutcome,
-                                OSUsedNode: request.OSUsedNode
+                                OSUsedNode: request.OSUsedNode,
+                                EduTime: request.EduTime,
+                                EduWeight: request.EduWeight
                             }, {
                                     where: {
                                         IdEduProgram: request.IdEduProgram
