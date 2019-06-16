@@ -1266,7 +1266,7 @@ router.get("/get-data-9/:idSubject", function(req, res) {
   }
 });
 
-router.get("/get-data-6/:idSubject", function(req, res) {
+router.get("/get-data-6/:idSubject/:idCtdt", function(req, res) {
   if (
     req.headers &&
     req.headers.authorization &&
@@ -1281,7 +1281,8 @@ router.get("/get-data-6/:idSubject", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           let idSubject = req.params.idSubject;
-          Model6.get(idSubject)
+          let idCtdt = req.params.idCtdt;
+          Model6.get(idSubject, idCtdt)
             .then(result => {
               return res.end(JSON.stringify(result));
             })
@@ -1414,7 +1415,7 @@ router.get("/get-eval-acts-6/:idSubject", function(req, res) {
     res.send("Invalid token!");
   }
 });
-router.get("/get-standard-output-6/:idSubject", function(req, res) {
+router.get("/get-standard-output-6/:idSubject/:idCtdt", function(req, res) {
   if (
     req.headers &&
     req.headers.authorization &&
@@ -1429,7 +1430,8 @@ router.get("/get-standard-output-6/:idSubject", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           let idSubject = req.params.idSubject;
-          Model6.getStandardOutput(idSubject, function(err, result) {
+          let idCtdt = req.params.idCtdt;
+          Model6.getStandardOutput(idSubject, idCtdt, function(err, result) {
             if (err) {
               res.end("0");
             }

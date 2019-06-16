@@ -179,8 +179,10 @@ Model6.getEvalActs = (idSubject,result)=>{
     });
   }
   
-  Model6.getStandardOutput = (idSubject,result)=>{
-    sql.query(`SELECT id,muc_tieu FROM muc_tieu_mon_hoc WHERE thong_tin_chung_id = ${idSubject} AND del_flag = 0`,(err,listMT)=>{
+  Model6.getStandardOutput = (idSubject, idCtdt,result)=>{
+    sql.query(`SELECT id,muc_tieu FROM muc_tieu_mon_hoc WHERE thong_tin_chung_id = ${idSubject} 
+    AND idCtdt = ${idCtdt}
+    AND del_flag = 0`,(err,listMT)=>{
       if(err){
         console.log("err: ",err);
         return result(err,null);
@@ -211,7 +213,7 @@ Model6.getEvalActs = (idSubject,result)=>{
 
 
 
-  Model6.get = (idSubject)=>{
+  Model6.get = (idSubject, idCtdt)=>{
     return new Promise((resolve,reject)=>{
       sql.query(`select * from ke_hoach_thuc_hanh 
       where thong_tin_chung_id = ${idSubject} and del_flag = 0 ORDER BY tuan ASC`,(err,listKH)=>{
@@ -236,7 +238,7 @@ Model6.getEvalActs = (idSubject,result)=>{
           getTeachingActsByIdKHTH(khth.id).then(res=>{
             temp.teachingActs = res;
 
-            getStandardOutputByIdKHTH(khth.id).then(res=>{
+            getStandardOutputByIdKHTH(khth.id, idCtdt).then(res=>{
                temp.standardOutput = res;
 
                getEvalActsByIdKHTH(khth.id).then(res=>{
@@ -288,11 +290,16 @@ Model6.getEvalActs = (idSubject,result)=>{
     })
   }
 
-  getStandardOutputByIdKHTH = idKHTH=>{
+  getStandardOutputByIdKHTH = (idKHTH, idCtdt) =>{
     return new Promise((resolve,reject)=>{
       let standardOutput = [];
-      sql.query(`SELECT cdr.chuan_dau_ra FROM chuan_dau_ra_mon_hoc cdr,khth_has_cdrmh has
-      WHERE has.ke_hoach_thuc_hanh_id = ${idKHTH} AND cdr.id = has.chuan_dau_ra_mon_hoc_id AND cdr.del_flag = 0`,(err,result)=>{
+      sql.query(`SELECT cdr.chuan_dau_ra FROM chuan_dau_ra_mon_hoc cdr,khth_has_cdrmh has, muc_tieu_mon_hoc mt
+      WHERE has.ke_hoach_thuc_hanh_id = ${idKHTH} 
+      AND cdr.muc_tieu_mon_hoc_id = mt.id
+      AND mt.del_flag = 0
+      AND mt.idCtdt = ${idCtdt}
+      AND cdr.id = has.chuan_dau_ra_mon_hoc_id 
+      AND cdr.del_flag = 0`,(err,result)=>{
         if(err){
           console.log("err:", err);
           reject(err);
