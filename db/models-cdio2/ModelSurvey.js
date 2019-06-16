@@ -128,17 +128,18 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, resp) => {
 
     //version 2
     try {
-        query(` SELECT COUNT(*) as SL 
+        query(` SELECT *  
                 FROM ${TABLE_SURVEY} 
                 WHERE idSurveyList = ${idSurveyList} and status = ${STATUS}`
-        ).then(count => {
+        ).then(kq => {
             
             query(` SELECT id,id_mon,id_giaovien 
-                FROM ${TABLE_SURVEY} 
-                WHERE idSurveyList = ${idSurveyList}`
+                    FROM ${TABLE_SURVEY} 
+                    WHERE idSurveyList = ${idSurveyList}`
             ).then(result => {
                 let survey = [];
-
+                //console.log("sadsa");
+                //console.log(result);
                 result.forEach(record => {
                     const id_mon = record.id_mon;
                     const id_survey = record.id;
@@ -162,9 +163,17 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, resp) => {
                             
                         })
                         .then(() => {
-                            if (count[0].SL === survey.length) {
-                                
-                                resp(survey);
+                        
+                            let data = [];
+                            kq.forEach(mon => {
+                                survey.forEach(surveyEntity => {
+                                    if (mon.id_mon === surveyEntity.id_mon) {
+                                        data.push(surveyEntity);
+                                    }
+                                })
+                            });
+                            if (kq.length === data.length) {
+                                console.log(data);
                             }
                         });
                     })
@@ -298,7 +307,7 @@ ModelSurvey.getITU = (obj, result) => {
 }
 
 ModelSurvey.getQA = (id, result) => {    
-    sql.query(`select * from survey_qa where id = (select max(id) from survey_qa where id_survey = ${id}) and id_survey = ${id}`, (err, res) => {
+    sql.query(`select * from survey_qa where id = (select max(id) from survey_qa) and id_survey = ${id}`, (err, res) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
