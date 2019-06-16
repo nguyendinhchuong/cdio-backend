@@ -81,7 +81,7 @@ exports.getBlockSubjects = async (req, res) => {
         await getdetailEdu(+params.id)
             .then(data => {
                 console.log("--------------");
-                request.IdEduProgram = +data.dataValues.Id;
+                request.IdDetailEduProg = +data.dataValues.Id;
                 console.log(request);
                 
             })
