@@ -30,103 +30,34 @@ const createPDFEduProgramData = async (ideduprog) => {
     const teachplanblockData = await teachplanblock.getDetailTeachPlanBlock(request);
     const educontentData = await educontent.getEduContentByEduId(request);
 
-    console.log(educontentData);
+    for (var i = 0; i < educontentData.eduContents.length; i++) {
+        console.log(educontentData.eduContents[i].dataValues);
+    }
+    for (var i = 0; i < educontentData.subjectBlocks.length; i++) {
+        console.log(educontentData.subjectBlocks[i].dataValues);
+    }
+    for (var i = 0; i < educontentData.detailBlocks.length; i++) {
+        console.log(educontentData.detailBlocks[i].dataValues);
+    }
 
 
     //Edu Info
     data.EduName = eduprogData[0].EduName;
     data.LevelName = eduprogData[0].LevelName;
     data.MajorCode = eduprogData[0].MajorCode;
-    data.MajorName = eduprogData[0].MajorName;
+    data.MajorName = eduprogData[0].MajorName.toUpperCase();
     data.ProgramName = eduprogData[0].NameProgram;
     data.SchoolYear = eduprogData[0].SchoolYear;
 
     //Edu purpose
 
-    Object.defineProperties(data, {
-        'EduPurposeLevel1': {
-            value: Object,
-            writable: true
-        },
-        'EduPurposeLevel2': {
-            value: Object,
-            writable: true
-        },
-        'EduPurposeLevel3': {
-            value: Object,
-            writable: true
-        }
-    });
-    Object.defineProperties(data.EduPurposeLevel1, {
-        'KeyRowTitle1': {
-            value: true,
-            writable: true
-        },
-        'Title1': {
-            value: true,
-            writable: true
-        },
-        'KeyRowTitle2': {
-            value: true,
-            writable: true
-        },
-        'Title2': {
-            value: true,
-            writable: true
-        },
-        'KeyRowTitle3': {
-            value: true,
-            writable: true
-        },
-        'Title3': {
-            value: true,
-            writable: true
-        }
-    });
-    Object.defineProperties(data.EduPurposeLevel2, {
-        'KeyRowTitle1': {
-            value: true,
-            writable: true
-        },
-        'Title1': {
-            value: true,
-            writable: true
-        },
-        'KeyRowTitle2': {
-            value: true,
-            writable: true
-        },
-        'Title2': {
-            value: true,
-            writable: true
-        },
-        'KeyRowTitle3': {
-            value: true,
-            writable: true
-        },
-        'Title3': {
-            value: true,
-            writable: true
-        }
-    });
-    Object.defineProperties(data.EduPurposeLevel3, {
-        'Row1': {
-            value: Array,
-            writable: true
-        },
-        'Row2': {
-            value: Array,
-            writable: true
-        },
-        'Row3': {
-            value: Array,
-            writable: true
-        }
-    });
+
     let array_row1 = [];
     let array_row2 = [];
     let array_row3 = [];
-
+    data.EduPurposeLevel1 = {};
+    data.EduPurposeLevel2 = {};
+    data.EduPurposeLevel3 = {};
 
 
     for (var i = 0; i < edupurposeData.length; i++) {
@@ -149,21 +80,16 @@ const createPDFEduProgramData = async (ideduprog) => {
             case '1.1.1':
                 data.EduPurposeLevel2.KeyRowTitle1 = edupurposeData[i].dataValues.KeyRow;
                 data.EduPurposeLevel2.Title1 = edupurposeData[i].dataValues.NameRow;
-                console.log("1.1. "+data.EduPurposeLevel1.Title1);
-                console.log("1.1.1 " + data.EduPurposeLevel2.Title1);
                 break;
 
             case '1.2.1':
                 data.EduPurposeLevel2.KeyRowTitle2 = edupurposeData[i].dataValues.KeyRow;
                 data.EduPurposeLevel2.Title2 = edupurposeData[i].dataValues.NameRow;
-                console.log("1.2. "+data.EduPurposeLevel1.Title2);
-                console.log("1.2.1 " + data.EduPurposeLevel2.Title2);
                 break;
 
             case '1.3.1':
                 data.EduPurposeLevel2.KeyRowTitle3 = edupurposeData[i].dataValues.KeyRow;
                 data.EduPurposeLevel2.Title3 = edupurposeData[i].dataValues.NameRow;
-                console.log("1.3.1 " + data.EduPurposeLevel2.Title3);
                 break;
 
             default:
@@ -183,10 +109,7 @@ const createPDFEduProgramData = async (ideduprog) => {
 
     }
 
-    console.log("1.1. "+data.EduPurposeLevel1.Title1);
-    console.log("1.2. "+data.EduPurposeLevel1.Title2);
-    console.log("1.3. "+data.EduPurposeLevel1.Title3);
-
+    //Detail edu
     data.EduTime = detaileduData.dataValues.EduTime;
     data.EnrollmentTarget = detaileduData.dataValues.EnrollmentTarget;
     data.EduWeight = detaileduData.dataValues.EduWeight;
@@ -194,6 +117,41 @@ const createPDFEduProgramData = async (ideduprog) => {
     data.GraduatedCon = detaileduData.dataValues.GraduatedCon;
 
 
+    let EduCon_array1 = [];
+    let EduCon_array2 = [];
+
+    data.EduContentTitleLv1 = {};
+    data.EduContentTitleLv2 = {};
+    //Edu content
+    for (var i = 0; i < educontentData.eduContents.length; i++) {
+        switch (educontentData.eduContents[i].KeyRow) {
+            case '7.1':
+                data.EduContentTitleLv1.Key1 = educontentData.eduContents[i].KeyRow;
+                data.EduContentTitleLv1.Title1 = educontentData.eduContents[i].NameRow;
+                break;
+            case '7.2':
+                data.EduContentTitleLv1.Key2 = educontentData.eduContents[i].KeyRow;
+                data.EduContentTitleLv1.Title2 = educontentData.eduContents[i].NameRow;
+                break;
+            default:
+                break;
+        }
+        if (educontentData.eduContents[i].dataValues.KeyRow.indexOf('7.1.') >= 0 &&
+            !educontentData.eduContents[i].dataValues.Type) {
+            let obj = {};
+            obj.Key = educontentData.eduContents[i].dataValues.KeyRow;
+            obj.Content = educontentData.eduContents[i].dataValues.NameRow;
+            EduCon_array1.push(obj);
+            data.EduContentTitleLv2.Row1 = Array.from(EduCon_array1);
+        } else if (educontentData.eduContents[i].dataValues.KeyRow.indexOf('7.2.') >= 0 &&
+            !educontentData.eduContents[i].dataValues.Type) {
+            let obj = {};
+            obj.Key = educontentData.eduContents[i].dataValues.KeyRow;
+            obj.Content = educontentData.eduContents[i].dataValues.NameRow;
+            EduCon_array2.push(obj);
+            data.EduContentTitleLv2.Row2 = Array.from(EduCon_array2);
+        }
+    }
 
     handlebars.registerHelper("inc", function (value, options) {
         return parseInt(value) + 1;
@@ -255,13 +213,13 @@ const createPDF = async (data, file_template) => {
 exports.getData = async (req, res) => {
     let params = req.query;
     const data = await createPDFEduProgramData(Number(params.ideduprog));
-    const path = await createPDF(data, 'test.html');
-    const file = `${path}`;
-    res.download(file, err => {
-        if (err) {
-            throw err;
-        }
-    })
+    // const path = await createPDF(data, 'test.html');
+    // const file = `${path}`;
+    // res.download(file, err => {
+    //     if (err) {
+    //         throw err;
+    //     }
+    // })
 }
 
 exports.exportPDFCourseList = async (req, res) => {
