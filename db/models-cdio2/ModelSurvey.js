@@ -681,4 +681,21 @@ ModelSurvey.getTeacherName = (id,result) => {
         }
     })
 }
+
+ModelSurvey.closeSurvey = (id,result) => {
+    sql.query(`update surveyList set status = 0 where id = ${id}`,(err,res) => {
+        if(err){
+            console.log("err" , err);
+            result(err);
+        }
+    });
+
+    sql.query(`update survey2 set status = 0 where idSurveyList=${id}`,(err,res) => {
+        if(err) {
+            console.log("err",err);
+            result(err);
+        }
+    });
+    result("done")
+}
 module.exports = ModelSurvey;
