@@ -9,7 +9,7 @@ const detailedu = require('../../service/EducationProgram/detaileduprogService')
 const edupurpose = require('../../service/EducationProgram/edupurposeService');
 const educontent = require('../../service/EducationProgram/eduprogcontentService');
 const teachplanblock = require('../../service/EducationProgram/teachplanblockService');
-const detailOutcome = require('../../service/outcomeStandard/detailoutcomestandardService');
+const detailOutcome = require('../../service/OutcomeStandard/detailoutcomestandardService');
 
 
 //require for course list

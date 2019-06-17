@@ -3063,6 +3063,17 @@ router.get('/get-teachername/:id',function(req,res) {
   })
 })
 
+router.post('/close-survey',function(req,res){
+  let id = req.body.id;
+  ModelSurvey.closeSurvey(id,result => {
+    if(result === "done"){
+      res.send("1");
+    }else{
+      res.send("0")
+    }
+  })
+})
+
 
 
 module.exports = router;
