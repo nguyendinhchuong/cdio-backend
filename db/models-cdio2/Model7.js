@@ -109,8 +109,10 @@ Model7.getChuanDaura = (id,result) => {
 }
 
 
-Model7.getStandardOutput = (id,result)=>{
-    sql.query(`SELECT id,muc_tieu FROM muc_tieu_mon_hoc WHERE thong_tin_chung_id = ${id.id} AND del_flag = 0`,(err,listMT)=>{
+Model7.getStandardOutput = (id, idCtdt, result)=>{
+    sql.query(`SELECT id,muc_tieu FROM muc_tieu_mon_hoc WHERE thong_tin_chung_id = ${id.id} 
+    AND idCtdt = ${idCtdt}
+    AND del_flag = 0`,(err,listMT)=>{
       if(err){
         console.log("err: ",err);
         return result(err,null);
@@ -194,9 +196,16 @@ Model7.getCDRDanhGia = (body , result) => {
 }
 
 
-Model7.getCDR = (body,result) => {
+Model7.getCDR = (body, idCtdt, result) => {
   console.log("body"  + body)
-  sql.query(`select * from chuan_dau_ra_mon_hoc where id in (${body}) and del_flag = 0`,(err,response)=>{
+  console.log("ctdt"  + idCtdt)
+  sql.query(`select cdr.id, cdr.chuan_dau_ra, cdr.mo_ta, cdr.muc_do, cdr.muc_tieu_mon_hoc_id,
+  cdr.cdrmh_muc_do_hanh_dong_id, cdr.thong_tin_chung_id, cdr.del_flag
+  from chuan_dau_ra_mon_hoc cdr, muc_tieu_mon_hoc mt where cdr.id in (${body}) 
+  and cdr.del_flag = 0
+  and mt.del_flag = 0
+  and mt.id = cdr.muc_tieu_mon_hoc_id
+  and mt.idCtdt = ${idCtdt}`,(err,response)=>{
     if(err){
       console.log(err);
       return result(err,null);

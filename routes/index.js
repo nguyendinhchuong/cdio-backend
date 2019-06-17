@@ -1786,7 +1786,8 @@ router.post("/get-cdr-7", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           const body = req.body.data;
-          Model7.getCDR(body, function(err, result) {
+          const idCtdt = req.body.idCtdt;
+          Model7.getCDR(body, idCtdt, function(err, result) {
             if (err) {
               res.end("0");
             }
@@ -2064,7 +2065,7 @@ router.get("/get-tainguyenmonhoc1/:id", function(req, res) {
   }
 });
 
-router.get("/get-standardoutput-7/:id", function(req, res) {
+router.get("/get-standardoutput-7/:id/:idCtdt", function(req, res) {
   if (
     req.headers &&
     req.headers.authorization &&
@@ -2079,7 +2080,8 @@ router.get("/get-standardoutput-7/:id", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           let id = req.params;
-          Model7.getStandardOutput(id, function(err, result) {
+          let idCtdt = req.params.idCtdt;
+          Model7.getStandardOutput(id, idCtdt, function(err, result) {
             if (err) {
               res.end("0");
             }
