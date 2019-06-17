@@ -2642,28 +2642,6 @@ router.post("/save-survey-qa", function(req, res) {
   }
 });
 
-router.get("/get-matrix-survey", function(req, res) {
-  // if (req.headers &&
-  //     req.headers.authorization &&
-  //     req.headers.authorization.split(' ')[0] === 'JWT') {
-  //     jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
-  //         if (err) {
-  //             //res.sendStatus(403);
-  //             res.send("Unauthorized user!");
-  //         } else {
-  //             ModelSurvey.getDataMatixSurvey(result => {
-  //                 res.send(result);
-  //             });
-  //         }
-  //     })
-  // } else {
-  //     res.send("Invalid token!");
-  // }
-  ModelSurvey.getDataMatixSurvey(result => {
-    res.send(result);
-  });
-});
-
 router.post("/get-survey-itu", function(req, res) {
   if (
     req.headers &&
@@ -2869,27 +2847,24 @@ router.post('/save-survey-qa', function (req, res) {
 })
 
 router.post('/get-matrix-survey', function (req, res) {
-    // if (req.headers &&
-    //     req.headers.authorization &&
-    //     req.headers.authorization.split(' ')[0] === 'JWT') {
-    //     jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
-    //         if (err) {
-    //             //res.sendStatus(403);
-    //             res.send("Unauthorized user!");
-    //         } else {
-    //             ModelSurvey.getDataMatixSurvey(result => {
-    //                 res.send(result);
-    //             });
-    //         }
-    //     })
-    // } else {
-    //     res.send("Invalid token!");
-    // }
-    const idSurveyList = req.body.data;
-    
-    ModelSurvey.getDataMatixSurvey(idSurveyList,(result) => {
-        res.send(result);
-    });
+    if (req.headers &&
+        req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] === 'JWT') {
+        jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
+            if (err) {
+                //res.sendStatus(403);
+                res.send("Unauthorized user!");
+            } else {
+                const idSurveyList = req.body.data;
+      
+                ModelSurvey.getDataMatixSurvey(idSurveyList,(result) => {
+                    res.send(result);
+                });
+            }
+        })
+    } else {
+        res.send("Invalid token!");
+    }
 })
 
 router.post('/get-survey-itu', function (req, res) {
