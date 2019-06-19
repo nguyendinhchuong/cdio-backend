@@ -9,6 +9,7 @@ const detailedu = require('../../service/EducationProgram/detaileduprogService')
 const edupurpose = require('../../service/EducationProgram/edupurposeService');
 const educontent = require('../../service/EducationProgram/eduprogcontentService');
 const teachplanblock = require('../../service/EducationProgram/teachplanblockService');
+const detailOutcome = require('../../service/OutcomeStandard/detailoutcomestandardService');
 
 
 //require for course list
@@ -26,19 +27,22 @@ const createPDFEduProgramData = async (ideduprog) => {
 
     request.IdDetailEduProg = detaileduData.dataValues.Id;
     const edupurposeData = await edupurpose.getEduPurpose(request);
-
+    let outcome = await detailOutcome.getDetailOutcomeStandardForEdupro(detaileduData.dataValues.IdOutcome);
+    outcome = outcome.map(item =>{
+        return {...item, isOutcome: true};
+    })
     const teachplanblockData = await teachplanblock.getDetailTeachPlanBlock(request);
     const educontentData = await educontent.getEduContentByEduId(request);
 
-    for (var i = 0; i < educontentData.eduContents.length; i++) {
-        console.log(educontentData.eduContents[i].dataValues);
-    }
-    for (var i = 0; i < educontentData.subjectBlocks.length; i++) {
-        console.log(educontentData.subjectBlocks[i].dataValues);
-    }
-    for (var i = 0; i < educontentData.detailBlocks.length; i++) {
-        console.log(educontentData.detailBlocks[i].dataValues);
-    }
+    // for (var i = 0; i < educontentData.eduContents.length; i++) {
+    //     console.log(educontentData.eduContents[i].dataValues);
+    // }
+    // for (var i = 0; i < educontentData.subjectBlocks.length; i++) {
+    //     console.log(educontentData.subjectBlocks[i].dataValues);
+    // }
+    // for (var i = 0; i < educontentData.detailBlocks.length; i++) {
+    //     console.log(educontentData.detailBlocks[i].dataValues);
+    // }
 
 
     //Edu Info
@@ -52,62 +56,21 @@ const createPDFEduProgramData = async (ideduprog) => {
     //Edu purpose
 
 
-    let array_row1 = [];
-    let array_row2 = [];
-    let array_row3 = [];
     data.EduPurposeLevel1 = {};
     data.EduPurposeLevel2 = {};
     data.EduPurposeLevel3 = {};
+    data.fullEduPurpose = [];
 
 
     for (var i = 0; i < edupurposeData.length; i++) {
-
-        switch (edupurposeData[i].dataValues.KeyRow) {
-            //Level 1.x
-            case '1.1.':
-                data.EduPurposeLevel1.KeyRowTitle1 = edupurposeData[i].dataValues.KeyRow;
-                data.EduPurposeLevel1.Title1 = edupurposeData[i].dataValues.NameRow;
-                break;
-            case '1.2.':
-                data.EduPurposeLevel1.KeyRowTitle2 = edupurposeData[i].dataValues.KeyRow;
-                data.EduPurposeLevel1.Title2 = edupurposeData[i].dataValues.NameRow;
-                break;
-            case '1.3.':
-                data.EduPurposeLevel1.KeyRowTitle3 = edupurposeData[i].dataValues.KeyRow;
-                data.EduPurposeLevel1.Title3 = edupurposeData[i].dataValues.NameRow;
-                break;
-            //
-            case '1.1.1':
-                data.EduPurposeLevel2.KeyRowTitle1 = edupurposeData[i].dataValues.KeyRow;
-                data.EduPurposeLevel2.Title1 = edupurposeData[i].dataValues.NameRow;
-                break;
-
-            case '1.2.1':
-                data.EduPurposeLevel2.KeyRowTitle2 = edupurposeData[i].dataValues.KeyRow;
-                data.EduPurposeLevel2.Title2 = edupurposeData[i].dataValues.NameRow;
-                break;
-
-            case '1.3.1':
-                data.EduPurposeLevel2.KeyRowTitle3 = edupurposeData[i].dataValues.KeyRow;
-                data.EduPurposeLevel2.Title3 = edupurposeData[i].dataValues.NameRow;
-                break;
-
-            default:
-                break;
-        }
-
-        if (edupurposeData[i].dataValues.KeyRow.indexOf('1.1.1.') >= 0) {
-            array_row1.push(edupurposeData[i].dataValues.NameRow);
-            data.EduPurposeLevel3.Row1 = Array.from(array_row1);
-        } else if (edupurposeData[i].dataValues.KeyRow.indexOf('1.2.1.') >= 0) {
-            array_row2.push(edupurposeData[i].dataValues.NameRow);
-            data.EduPurposeLevel3.Row2 = Array.from(array_row2);
-        } else if (edupurposeData[i].dataValues.KeyRow.indexOf('1.3.1.') >= 0) {
-            array_row3.push(edupurposeData[i].dataValues.NameRow);
-            data.EduPurposeLevel3.Row3 = Array.from(array_row3);
-        }
-
+        data.fullEduPurpose.push(edupurposeData[i].dataValues);
     }
+    const indexUsedOS = data.fullEduPurpose.findIndex(item => item.OSUsed);
+    const purpose = mapToLastChild(data.fullEduPurpose);
+
+    data.fullEduPurpose = [...purpose.slice(0, indexUsedOS +1),...outcome,...purpose.slice(indexUsedOS+1,purpose.length)];
+    console.log(data.fullEduPurpose);
+    
 
     //Detail edu
     data.EduTime = detaileduData.dataValues.EduTime;
@@ -211,15 +174,24 @@ const createPDF = async (data, file_template) => {
     return pdfPath;
 }
 exports.getData = async (req, res) => {
-    let params = req.query;
-    const data = await createPDFEduProgramData(Number(params.ideduprog));
-    // const path = await createPDF(data, 'test.html');
-    // const file = `${path}`;
-    // res.download(file, err => {
-    //     if (err) {
-    //         throw err;
-    //     }
-    // })
+    console.log("------------EXPORT----------");
+    try {
+        let params = req.query;
+        const data = await createPDFEduProgramData(Number(params.ideduprog));
+        const path = await createPDF(data, 'test.html');
+        const file = `${path}`;
+        res.download(file, err => {
+            if (err) {
+                throw err;
+            }
+        })
+    }
+    catch (err) {
+        console.log("err export");
+        console.log(err);
+        throw err;
+    }
+
 }
 
 exports.exportPDFCourseList = async (req, res) => {
@@ -232,4 +204,38 @@ exports.exportPDFCourseList = async (req, res) => {
             throw err;
         }
     })
+}
+
+// support
+const mapToLastChild = arr =>{
+    return arr.map(row =>{
+        const num = +row.KeyRow.split('.')[1];
+        const level = arr.filter(item => {
+            const num2 = +item.KeyRow.split('.')[1];
+            return num === num2;
+        });
+        if(checkIsLastChild(level,row.KeyRow)){
+            return {...row, lastChild: true};
+        }
+        return {...row};
+    });
+}
+
+const checkIsLastChild = (arr, key) =>{
+    let max = 0 ;
+    arr.forEach(item=>{
+        const count = countNumber(item.KeyRow.split('.'));
+        max = count > max ? count : max ;
+    })
+    const flag = countNumber(key.split('.'))
+    return  max === flag ? true : false;
+}
+
+const countNumber = arr =>{
+    return arr.reduce((results,item)=>{
+         if(Number.isInteger(+item)){
+             return results + 1;
+         }
+         return results;
+    },0);
 }

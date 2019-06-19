@@ -1,4 +1,5 @@
 const db = require('../../models/index');
+const LEVEL_OUTCOME = 3;
 
 
 exports.getDetailOutcomeStandard = (data) => {
@@ -34,6 +35,36 @@ exports.getDetailOutcomeStandard = (data) => {
 
 }
 
+exports.getDetailOutcomeStandardForEdupro = (IdOutcomeStandard) => {
+    return new Promise((resolve, reject) => {
+        db.sequelize.authenticate()
+            .then(() => {
+                db.detailoutcomestandard.findAll({
+                    attributes: ['KeyRow', 'NameRow'],
+                    where: {
+                        IdOutcomeStandard: IdOutcomeStandard
+                    }
+                })
+                    .then(info => {
+                        let arr = info.reduce((results, row) => {
+                            const data = row.dataValues;
+                            const countNum = data.KeyRow.split('.').filter(item => item !== "").length;
+                            if (countNum <= LEVEL_OUTCOME) {
+                                return results.concat(data);
+                            }
+                            return results;
+                        }, []);
+                        resolve(arr);
+
+                    })
+                    .catch(err => {
+                        reject(err);
+                    })
+            });
+    })
+
+}
+
 exports.addDetailOutcomeStandard = (request) => {
     return new Promise((resolve, reject) => {
         db.sequelize.authenticate()
@@ -46,7 +77,7 @@ exports.addDetailOutcomeStandard = (request) => {
                             let general_info_array = [];
                             db.detailoutcomestandard.bulkCreate(request.data, { returning: true })
                                 .then(async data => {
-                                    
+
                                     let promises = data.map(row => {
                                         let obj = {};
                                         obj.id = row.dataValues.Id;
@@ -115,7 +146,7 @@ exports.addDetailOutcomeStandard = (request) => {
                                     let general_info_array = [];
                                     db.detailoutcomestandard.bulkCreate(request.data, { returning: true })
                                         .then(async data => {
-                                            
+
                                             let promises = data.map(row => {
                                                 let obj = {};
                                                 obj.id = row.dataValues.Id;

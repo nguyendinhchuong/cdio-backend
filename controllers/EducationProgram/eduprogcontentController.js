@@ -112,7 +112,7 @@ exports.getKnowledgeTable = (req, res) => {
     const response = {};
     try {
         const params = req.query;
-        request.IdEduProgram = +params.id;
+        request.IdDetailEduProg = +params.id;
 
         if (isNaN(+params.id)) {
             response.code = -1;
