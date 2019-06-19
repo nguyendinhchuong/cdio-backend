@@ -75,9 +75,8 @@ collectDataPromise = (objResult, idCtdt) => {
                         JOIN 
                         (chuan_dau_ra_mon_hoc JOIN muc_tieu_mon_hoc ON muc_tieu_mon_hoc.id = chuan_dau_ra_mon_hoc.muc_tieu_mon_hoc_id AND muc_tieu_mon_hoc.del_flag = 0 AND chuan_dau_ra_mon_hoc.del_flag = 0) 
                         ON chuan_dau_ra_mon_hoc_id = chuan_dau_ra_mon_hoc.id 
-                        WHERE ke_hoach_ly_thuyet_id = ${objResult.id}`)
+                        WHERE ke_hoach_ly_thuyet_id = ${objResult.id} and idCtdt = ${idCtdt}`)
                     .then(res => {
-            
                         res.map(async value => {
                             await objResult.standardOutput.push(value.chuan_dau_ra);
                         });
@@ -109,12 +108,12 @@ Model5.collect = (dataID, idCtdt, respone) => {
 
     query(` SELECT count(*) as sl 
             FROM ke_hoach_ly_thuyet 
-            WHERE del_flag = 0 and thong_tin_chung_id = '${id}'`).
+            WHERE del_flag = 0 and thong_tin_chung_id = '${id}' and id_ctdt = ${idCtdt}`).
         then(res => {
             let sl = res[0].sl
             query(` SELECT * 
                     FROM ke_hoach_ly_thuyet 
-                    WHERE del_flag = 0 and thong_tin_chung_id = '${id}'`)
+                    WHERE del_flag = 0 and thong_tin_chung_id = '${id}' and id_ctdt = ${idCtdt}`)
                 .then(res => {
                     if (res.length != 0) {
 
