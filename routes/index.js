@@ -1447,35 +1447,6 @@ router.get("/get-standard-output-6/:idSubject/:idCtdt", function(req, res) {
   }
 });
 
-router.get("/get-danhgia/:id", function(req, res) {
-  if (
-    req.headers &&
-    req.headers.authorization &&
-    req.headers.authorization.split(" ")[0] === "JWT"
-  ) {
-    jwt.verify(
-      req.headers.authorization.split(" ")[1],
-      config.jwtSecret,
-      (err, authData) => {
-        if (err) {
-          //res.sendStatus(403);
-          res.send("Unauthorized user!");
-        } else {
-          let id = req.params;
-          Model7.getDanhGia(id, function(err, result) {
-            if (err) {
-              res.end("0");
-            }
-            res.end(JSON.stringify(result));
-          });
-        }
-      }
-    );
-  } else {
-    res.send("Invalid token!");
-  }
-});
-
 router.get("/get-chuandaura/:id", function(req, res) {
   if (
     req.headers &&
@@ -1704,94 +1675,6 @@ router.post("/delete-chude", function(req, res) {
             } else {
               res.send(data);
             }
-          });
-        }
-      }
-    );
-  } else {
-    res.send("Invalid token!");
-  }
-});
-
-router.get("/get-danhgia/:id", function(req, res) {
-  if (
-    req.headers &&
-    req.headers.authorization &&
-    req.headers.authorization.split(" ")[0] === "JWT"
-  ) {
-    jwt.verify(
-      req.headers.authorization.split(" ")[1],
-      config.jwtSecret,
-      (err, authData) => {
-        if (err) {
-          //res.sendStatus(403);
-          res.send("Unauthorized user!");
-        } else {
-          let id = req.params;
-          Model7.getDanhGia(id, function(err, result) {
-            if (err) {
-              res.end("0");
-            }
-            res.end(JSON.stringify(result));
-          });
-        }
-      }
-    );
-  } else {
-    res.send("Invalid token!");
-  }
-});
-
-router.post("/get-cdrdanhgia", function(req, res) {
-  if (
-    req.headers &&
-    req.headers.authorization &&
-    req.headers.authorization.split(" ")[0] === "JWT"
-  ) {
-    jwt.verify(
-      req.headers.authorization.split(" ")[1],
-      config.jwtSecret,
-      (err, authData) => {
-        if (err) {
-          //res.sendStatus(403);
-          res.send("Unauthorized user!");
-        } else {
-          const body = req.body.data;
-          Model7.getCDRDanhGia(body, function(err, result) {
-            if (err) {
-              res.end("0");
-            }
-            res.end(JSON.stringify(result));
-          });
-        }
-      }
-    );
-  } else {
-    res.send("Invalid token!");
-  }
-});
-
-router.post("/get-cdr-7", function(req, res) {
-  if (
-    req.headers &&
-    req.headers.authorization &&
-    req.headers.authorization.split(" ")[0] === "JWT"
-  ) {
-    jwt.verify(
-      req.headers.authorization.split(" ")[1],
-      config.jwtSecret,
-      (err, authData) => {
-        if (err) {
-          //res.sendStatus(403);
-          res.send("Unauthorized user!");
-        } else {
-          const body = req.body.data;
-          const idCtdt = req.body.idCtdt;
-          Model7.getCDR(body, idCtdt, function(err, result) {
-            if (err) {
-              res.end("0");
-            }
-            res.end(JSON.stringify(result));
           });
         }
       }
@@ -3074,6 +2957,36 @@ router.post('/close-survey',function(req,res){
   })
 })
 
+router.get("/get-data-7/:idSubject/:idCtdt", function(req, res) {
+  if (
+    req.headers &&
+    req.headers.authorization &&
+    req.headers.authorization.split(" ")[0] === "JWT"
+  ) {
+    jwt.verify(
+      req.headers.authorization.split(" ")[1],
+      config.jwtSecret,
+      (err, authData) => {
+        if (err) {
+          //res.sendStatus(403);
+          res.send("Unauthorized user!");
+        } else {
+          let idSubject = req.params.idSubject;
+          let idCtdt = req.params.idCtdt;
 
+          Model7.get(idSubject, idCtdt)
+            .then(result => {
+              return res.end(JSON.stringify(result));
+            })
+            .catch(err => {
+              return res.end(JSON.stringify(err));
+            });
+        }
+      }
+    );
+  } else {
+    res.send("Invalid token!");
+  }
+});
 
 module.exports = router;
