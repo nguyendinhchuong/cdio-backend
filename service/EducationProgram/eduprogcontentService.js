@@ -154,12 +154,14 @@ exports.getRowsContainTable = async request => {
     }).catch(err => {
         return Promise.reject(err);
     })
+    
     await this.getEduContentByEduId(request).then(data => {
         const results = {
             eduContents: data.eduContents.map(item => item.dataValues),
             subjectBlocks: data.subjectBlocks.map(item => item.dataValues),
             detailBlocks: data.detailBlocks.map(item => item.dataValues)
         };
+
         convert = convertDbToRowContainTable(results, listSubject);
     }).catch(err => {
         return Promise.reject(err);

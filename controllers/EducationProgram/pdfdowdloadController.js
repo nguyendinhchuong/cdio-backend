@@ -27,8 +27,10 @@ const createPDFEduProgramData = async (ideduprog) => {
 
     request.IdDetailEduProg = detaileduData.dataValues.Id;
     const edupurposeData = await edupurpose.getEduPurpose(request);
-    const outcome = await detailOutcome.getDetailOutcomeStandardForEdupro(detaileduData.dataValues.IdOutcome);
-
+    let outcome = await detailOutcome.getDetailOutcomeStandardForEdupro(detaileduData.dataValues.IdOutcome);
+    outcome = outcome.map(item =>{
+        return {...item, isOutcome: true};
+    })
     const teachplanblockData = await teachplanblock.getDetailTeachPlanBlock(request);
     const educontentData = await educontent.getEduContentByEduId(request);
 
@@ -54,9 +56,6 @@ const createPDFEduProgramData = async (ideduprog) => {
     //Edu purpose
 
 
-    let array_row1 = [];
-    let array_row2 = [];
-    let array_row3 = [];
     data.EduPurposeLevel1 = {};
     data.EduPurposeLevel2 = {};
     data.EduPurposeLevel3 = {};
@@ -70,7 +69,7 @@ const createPDFEduProgramData = async (ideduprog) => {
     const purpose = mapToLastChild(data.fullEduPurpose);
 
     data.fullEduPurpose = [...purpose.slice(0, indexUsedOS +1),...outcome,...purpose.slice(indexUsedOS+1,purpose.length)];
-    console.log(data.fullEduPurpose );
+    console.log(data.fullEduPurpose);
     
 
     //Detail edu

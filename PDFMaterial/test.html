@@ -118,12 +118,32 @@
         </div>
         <br>
         {{#each fullEduPurpose}}
-        <div class="row">
-          <div class="col-sm-1 col-md-1 col-lg-1"></div>
-          <h5 class="font-weight-bold font-weight- col-sm-10 col-md-10 col-lg-10  ml-2 ">{{KeyRow}}<d class="ml-4">
-              {{NameRow}}</d>
-          </h5>
-        </div>
+        <!-- cdr -->
+        {{#if isOutcome}}
+          <div class="row">
+            <div class="col-sm-1 col-md-1 col-lg-1"></div>
+            <h5 class="font-weight-bold font-weight- col-sm-10 col-md-10 col-lg-10  ml-2 ">+<d class="ml-4">
+                {{NameRow}}</d>
+            </h5>
+          </div>
+        <!-- mục tiêu dao tạo -->
+        {{else}}
+          {{#if lastChild}}
+            <div class="row">
+              <div class="col-sm-1 col-md-1 col-lg-1"></div>
+              <h5 class="font-weight-bold font-weight- col-sm-10 col-md-10 col-lg-10  ml-2 ">*<d class="ml-4">
+                  {{NameRow}}</d>
+              </h5>
+            </div>
+          {{else}}
+            <div class="row">
+              <div class="col-sm-1 col-md-1 col-lg-1"></div>
+              <h5 class="font-weight-bold font-weight- col-sm-10 col-md-10 col-lg-10  ml-2 ">{{KeyRow}}<d class="ml-4">
+                  {{NameRow}}</d>
+              </h5>
+            </div>
+          {{/if}}
+        {{/if}}
         {{~/each}}
       </section>
 
