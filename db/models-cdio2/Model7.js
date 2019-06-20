@@ -209,8 +209,8 @@ Model7.save = (body, result) => {
 
   body.data.forEach((item, index) => {
     if (item.id === -1 && item.del_flag === 1) return; // bỏ qua trường hợp thêm mới xong xóa
-
-    Model7.insertOrUpdate(item, body.thong_tin_chung_id, body.idCtdt).then(idDanhgia => {
+    
+    insertOrUpdate7(item, body.thong_tin_chung_id, body.idCtdt).then(idDanhgia => {
       sql.query(`delete from cdrmh_has_dg  where danh_gia_id = ${idDanhgia}`, (err, res) => {
         if (err) {
           console.log("err: ", err);
@@ -244,6 +244,7 @@ Model7.save = (body, result) => {
 
 Model7.get = (idSubject, idCtdt) => {
   return new Promise((resolve, reject) => {
+    console.log(idSubject,idCtdt)
     sql.query(`select * from danh_gia  
       where thong_tin_chung_id = ${idSubject} and idCtdt = ${idCtdt} and del_flag = 0`, (err, listDanhGia) => {
         if (err) {
@@ -286,7 +287,7 @@ Model7.get = (idSubject, idCtdt) => {
 }
 
 
-Model7.insertOrUpdate = (item, idSubject, idCtdt) => {
+insertOrUpdate7 = (item, idSubject, idCtdt) => {
   return new Promise((resolve, reject) => {
     if (item.id === -1) {
       
