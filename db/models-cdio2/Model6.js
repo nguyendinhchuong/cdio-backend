@@ -5,18 +5,12 @@ var Model6 = (data) => {
 }
 Model6.add = (body, result) => {
 
-  // sql.query(`UPDATE ke_hoach_thuc_hanh SET del_flag = 1 WHERE thong_tin_chung_id = ${body.thong_tin_chung_id}`,(err,res)=>{
-  //   if(err){
-  //     console.log("err: ",err);
-  //     return result(err,null);
-  //   }
-  // })
   if(body.data.length===0) return result(null,"1");
 
     body.data.forEach((item,index)=> {
       if(item.id===-1 && item.del_flag===1) return; // bỏ qua trường hợp thêm mới xong xóa
 
-      insertOrUpdate(item,body.thong_tin_chung_id).then(idKHTH=>{
+      Model6.insertOrUpdate(item,body.thong_tin_chung_id,body.idCtdt).then(idKHTH=>{
         sql.query(`delete a,b,c from khth_has_cdrmh a,khth_has_dg b,khth_has_hdd c 
         where a.ke_hoach_thuc_hanh_id = b.ke_hoach_thuc_hanh_id
         and b.ke_hoach_thuc_hanh_id = c.ke_hoach_thuc_hanh_id 
@@ -72,64 +66,14 @@ Model6.add = (body, result) => {
         return result(err,null);
       })
 
-
-
-
-      //   sql.query(`insert into ke_hoach_thuc_hanh(tuan,chu_de,thong_tin_chung_id) values ('${item.week}','${item.titleName}',${body.thong_tin_chung_id})`, 
-      //   (err, res) => {
-      //     if (err) {
-      //         console.log("error:", err);
-      //         return result(err,null);
-      //     } else {
-      //         let id = res.insertId;
-
-      //         item.teachingActs.forEach((item,index)=>{
-      //           sql.query(`insert into khth_has_hdd(ke_hoach_thuc_hanh_id,hoat_dong_day_id) values (${id},${item})`, 
-      //           (err, res) => {
-      //             if (err) {
-      //                 console.log("error:", err);
-      //                 return result(err,null);
-
-      //             }
-      //             })
-                
-      //         })
-
-      //         item.standardOutput.forEach((item,index)=>{
-      //         sql.query(`insert into khth_has_cdrmh(ke_hoach_thuc_hanh_id,chuan_dau_ra_mon_hoc_id) values (${id},${item})`, 
-      //         (err, res) => {
-      //           if (err) {
-      //               console.log("error:", err);
-      //               return result(err,null);
-      //           }
-      //           })
-              
-      //       })
-
-      //       item.evalActs.forEach((item,index)=>{
-      //         sql.query(`insert into khth_has_dg(ke_hoach_thuc_hanh_id,danh_gia_id) values (${id},${item})`, 
-      //         (err, res) => {
-      //           if (err) {
-      //               console.log("error:", err);
-      //               return result(err,null);
-      //           }
-      //           })
-              
-      //       })
-
-      //       return result(null,res);
-            
-      //     }
-      // })
-           
     });
     
 }
 
-insertOrUpdate = (item,idSubject)=>{
+Model6.insertOrUpdate = (item,idSubject,idCtdt)=>{
   return new Promise((resolve,reject)=>{
     if(item.id===-1){
-      sql.query(`insert into ke_hoach_thuc_hanh(tuan,chu_de,thong_tin_chung_id) values (${item.week},'${item.titleName}',${idSubject})`, 
+      sql.query(`insert into ke_hoach_thuc_hanh(tuan,chu_de,thong_tin_chung_id,idCtdt) values (${item.week},'${item.titleName}',${idSubject},${idCtdt})`, 
       (err, res) => {
         if (err) {
             console.log("error:", err);
@@ -168,8 +112,11 @@ Model6.getTeachingActs = (result)=>{
   })
 }
 
-Model6.getEvalActs = (idSubject,result)=>{
-    sql.query(`SELECT id,ma FROM danh_gia WHERE thong_tin_chung_id = ${idSubject} AND del_flag = 0`,(err,res)=>{
+Model6.getEvalActs = (idSubject,idCtdt,result)=>{
+    sql.query(`SELECT id,ma FROM danh_gia 
+    WHERE thong_tin_chung_id = ${idSubject}
+    AND idCtdt = ${idCtdt}
+    AND del_flag = 0`,(err,res)=>{
       if(err){
         console.log("err: ",err);
         return result(err,null);
@@ -188,6 +135,8 @@ Model6.getEvalActs = (idSubject,result)=>{
         return result(err,null);
       }
       else{
+        if(listMT.length===0) return result(null,[]);
+
         let standardOutput = [];
         listMT.forEach((muctieu,index)=>{
           sql.query(`SELECT id,chuan_dau_ra FROM chuan_dau_ra_mon_hoc
@@ -216,7 +165,9 @@ Model6.getEvalActs = (idSubject,result)=>{
   Model6.get = (idSubject, idCtdt)=>{
     return new Promise((resolve,reject)=>{
       sql.query(`select * from ke_hoach_thuc_hanh 
-      where thong_tin_chung_id = ${idSubject} and del_flag = 0 ORDER BY tuan ASC`,(err,listKH)=>{
+      where thong_tin_chung_id = ${idSubject}
+      and idCtdt = ${idCtdt} 
+      and del_flag = 0 ORDER BY tuan ASC`,(err,listKH)=>{
         if(err){
           console.log("err: ",err);
           reject(err);
@@ -238,7 +189,7 @@ Model6.getEvalActs = (idSubject,result)=>{
           getTeachingActsByIdKHTH(khth.id).then(res=>{
             temp.teachingActs = res;
 
-            getStandardOutputByIdKHTH(khth.id, idCtdt).then(res=>{
+            getStandardOutputByIdKHTH(khth.id).then(res=>{
                temp.standardOutput = res;
 
                getEvalActsByIdKHTH(khth.id).then(res=>{
@@ -290,14 +241,13 @@ Model6.getEvalActs = (idSubject,result)=>{
     })
   }
 
-  getStandardOutputByIdKHTH = (idKHTH, idCtdt) =>{
+  getStandardOutputByIdKHTH = (idKHTH) =>{
     return new Promise((resolve,reject)=>{
       let standardOutput = [];
       sql.query(`SELECT cdr.chuan_dau_ra FROM chuan_dau_ra_mon_hoc cdr,khth_has_cdrmh has, muc_tieu_mon_hoc mt
       WHERE has.ke_hoach_thuc_hanh_id = ${idKHTH} 
       AND cdr.muc_tieu_mon_hoc_id = mt.id
       AND mt.del_flag = 0
-      AND mt.idCtdt = ${idCtdt}
       AND cdr.id = has.chuan_dau_ra_mon_hoc_id 
       AND cdr.del_flag = 0`,(err,result)=>{
         if(err){

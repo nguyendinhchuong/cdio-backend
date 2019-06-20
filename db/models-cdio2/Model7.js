@@ -210,7 +210,7 @@ Model7.save = (body, result) => {
   body.data.forEach((item, index) => {
     if (item.id === -1 && item.del_flag === 1) return; // bỏ qua trường hợp thêm mới xong xóa
 
-    insertOrUpdate(item, body.thong_tin_chung_id, body.idCtdt).then(idDanhgia => {
+    Model7.insertOrUpdate(item, body.thong_tin_chung_id, body.idCtdt).then(idDanhgia => {
       sql.query(`delete from cdrmh_has_dg  where danh_gia_id = ${idDanhgia}`, (err, res) => {
         if (err) {
           console.log("err: ", err);
@@ -286,7 +286,7 @@ Model7.get = (idSubject, idCtdt) => {
 }
 
 
-insertOrUpdate = (item, idSubject, idCtdt) => {
+Model7.insertOrUpdate = (item, idSubject, idCtdt) => {
   return new Promise((resolve, reject) => {
     if (item.id === -1) {
       
