@@ -14,7 +14,7 @@ LogModel.save = (data, result) => {
     // if (element.noi_dung.length > 150) {
     //   temp = temp.slice(0,150) + "..."
     // }      
-    sql.query(`insert into log(nguoi_gui, thoi_gian, noi_dung, muc_de_cuong, thong_tin_chung_id) values ('${element.ten}', ${element.timestamp}, '${temp}', '${element.muc_de_cuong}', ${element.thong_tin_chung_id})`,
+    sql.query(`insert into log(nguoi_gui, thoi_gian, noi_dung, muc_de_cuong, thong_tin_chung_id, idCtdt) values ('${element.ten}', ${element.timestamp}, '${temp}', '${element.muc_de_cuong}', ${element.thong_tin_chung_id}, ${element.id_ctdt})`,
       (err, res) => {
         if (err) {
           console.log("error:", err);
@@ -27,7 +27,7 @@ LogModel.save = (data, result) => {
 }
 
 LogModel.get = (data, result) => {
-  sql.query(`select * from log where muc_de_cuong = '${data.contentTab}' and thong_tin_chung_id = '${data.subjectid}'`, 
+  sql.query(`select * from log where muc_de_cuong = '${data.contentTab}' and thong_tin_chung_id = '${data.subjectid}' and idCtdt=${data.id_ctdt}`, 
     (err, res) => {
       if (err) {
         console.log(err);
