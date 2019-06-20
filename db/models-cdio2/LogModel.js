@@ -27,7 +27,12 @@ LogModel.save = (data, result) => {
 }
 
 LogModel.get = (data, result) => {
-  sql.query(`select * from log where muc_de_cuong = '${data.contentTab}' and thong_tin_chung_id = '${data.subjectid}' and idCtdt=${data.id_ctdt}`, 
+  let especialContentTab = ['mo-ta-mon-hoc','tai-nguyen-mon-hoc','quy-dinh-chung']
+  let optionQuery = "";
+  if(!especialContentTab.includes(data.contentTab)){
+    optionQuery = ` and idCtdt=${data.id_ctdt}`
+  }
+  sql.query(`select * from log where muc_de_cuong = '${data.contentTab}' and thong_tin_chung_id = '${data.subjectid}' ` + optionQuery, 
     (err, res) => {
       if (err) {
         console.log(err);
