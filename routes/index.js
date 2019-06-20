@@ -1389,7 +1389,7 @@ router.get("/get-teachingacts-6", function(req, res) {
   }
 });
 
-router.get("/get-eval-acts-6/:idSubject", function(req, res) {
+router.get("/get-eval-acts-6/:idSubject/:idCtdt", function(req, res) {
   if (
     req.headers &&
     req.headers.authorization &&
@@ -1404,7 +1404,8 @@ router.get("/get-eval-acts-6/:idSubject", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           let idSubject = req.params.idSubject;
-          Model6.getEvalActs(idSubject, function(err, result) {
+          let idCtdt = req.params.idCtdt;
+          Model6.getEvalActs(idSubject,idCtdt, function(err, result) {
             if (err) {
               res.end("0");
             }
