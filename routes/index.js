@@ -2408,7 +2408,9 @@ router.post("/get-evalact-5", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           const dataID = req.body.data;
-          Model5.collectDG(dataID, result => {
+          const idCtdt = req.body.idCtdt;
+
+          Model5.collectDG(dataID, idCtdt, result => {
             res.send(result);
           });
         }
@@ -2436,7 +2438,7 @@ router.post("/get-standard-output-5", function(req, res) {
           const dataID = req.body.data;
           const idCtdt = req.body.idCtdt;
           
-          Model5.collectCDR(dataID,idCtdt, result => {
+          Model5.collectCDR(dataID, idCtdt, result => {
             res.send(result);
           });
         }

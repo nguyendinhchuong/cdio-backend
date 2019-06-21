@@ -75,7 +75,7 @@ collectDataPromise = (objResult, idCtdt) => {
                         JOIN 
                         (chuan_dau_ra_mon_hoc JOIN muc_tieu_mon_hoc ON muc_tieu_mon_hoc.id = chuan_dau_ra_mon_hoc.muc_tieu_mon_hoc_id AND muc_tieu_mon_hoc.del_flag = 0 AND chuan_dau_ra_mon_hoc.del_flag = 0) 
                         ON chuan_dau_ra_mon_hoc_id = chuan_dau_ra_mon_hoc.id 
-                        WHERE ke_hoach_ly_thuyet_id = ${objResult.id} and idCtdt = ${idCtdt}`)
+                        WHERE ke_hoach_ly_thuyet_id = ${objResult.id} AND idCtdt = ${idCtdt}`)
                     .then(res => {
                         res.map(async value => {
                             await objResult.standardOutput.push(value.chuan_dau_ra);
@@ -88,7 +88,7 @@ collectDataPromise = (objResult, idCtdt) => {
             .then(() => {
                 query(` SELECT ma 
                         FROM khlt_has_dg JOIN danh_gia on danh_gia_id = id  
-                        WHERE ke_hoach_ly_thuyet_id = '${objResult.id}' AND del_flag = 0`)
+                        WHERE ke_hoach_ly_thuyet_id = '${objResult.id}' AND idCtdt = ${idCtdt} AND del_flag = 0`)
                     .then(res => {
                         res.map(async value => {
                             await objResult.evalActs.push(value.ma);
@@ -108,12 +108,12 @@ Model5.collect = (dataID, idCtdt, respone) => {
 
     query(` SELECT count(*) as sl 
             FROM ke_hoach_ly_thuyet 
-            WHERE del_flag = 0 and thong_tin_chung_id = '${id}' and id_ctdt = ${idCtdt}`).
+            WHERE del_flag = 0 and thong_tin_chung_id = '${id}' and idCtdt = ${idCtdt}`).
         then(res => {
             let sl = res[0].sl
             query(` SELECT * 
                     FROM ke_hoach_ly_thuyet 
-                    WHERE del_flag = 0 and thong_tin_chung_id = '${id}' and id_ctdt = ${idCtdt}`)
+                    WHERE del_flag = 0 and thong_tin_chung_id = '${id}' and idCtdt = ${idCtdt}`)
                 .then(res => {
                     if (res.length != 0) {
 
@@ -136,9 +136,9 @@ Model5.collectHDD = (result) => {
         })
 }
 
-Model5.collectDG = (dataID, result) => {
+Model5.collectDG = (dataID, idCtdt, result) => {
     const id = dataID;
-    query(`SELECT ma FROM danh_gia WHERE del_flag = 0 and thong_tin_chung_id = ${id} `)
+    query(`SELECT ma FROM danh_gia WHERE del_flag = 0 and thong_tin_chung_id = ${id} AND idCtdt = ${idCtdt}`)
         .then(res => {
             result(res);
         })
