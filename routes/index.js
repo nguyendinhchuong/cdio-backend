@@ -1341,7 +1341,6 @@ router.post("/add-teachingacts-6", function(req, res) {
       config.jwtSecret,
       (err, authData) => {
         if (err) {
-          //res.sendStatus(403);
           res.send("Unauthorized user!");
         } else {
           const data = req.body;
