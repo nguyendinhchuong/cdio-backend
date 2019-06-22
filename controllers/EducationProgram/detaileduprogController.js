@@ -69,6 +69,8 @@ exports.updateDetailEduProg = (req, res) => {
     request.DateEdited = body.dateedited;
     request.IdOutcome = Number(body.idoutcome);
     request.OSUsedNode = body.osusednode;
+    request.EduTime = Number(body.edutime);
+    request.EduWeight = body.eduweight;
 
     detaileduprogram.updateDetailEduProg(request)
         .then(data => {
