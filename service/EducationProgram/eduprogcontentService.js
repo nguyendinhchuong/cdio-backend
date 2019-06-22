@@ -183,7 +183,6 @@ const insertContentsAndRelationship = (data, IdEduProgram, subjectUsers) => {
                     blocks.map(subjects => {
                         insertSubjectBlocks(subjects, content.Id).then(block => {
                             subjects.map(subject => {
-                                console.log('-- insert detail block ' + block.Id);
                                 insertDetailBlock(subject, block.Id, subjectUsers);
                             })
 
@@ -246,17 +245,22 @@ const insertSubjectBlocks = (blocks, idContent) => {
 }
 
 const insertDetailBlock = (subject, idBlock, subjectUsers) => {
+    console.log('-- insert detail block ' + idBlock);
     try {
         const detailBlock = {};
         const subjectMap = subjectUsers.find(item => item.IdSubject === subject.Id);
+        
         detailBlock.IdSubjectBlock = idBlock;
         detailBlock.IdSubject = subject.Id;
         detailBlock.DateCreated = subject.DateCreated;
-        detailBlock.IdUser = subjectMap.IdUser;
-        detailBlock.IdMainTeacher = subjectMap.IdMainTeacher;
-
+        detailBlock.IdUser = subjectMap ? subjectMap.IdUser : null;
+        detailBlock.IdMainTeacher = subjectMap ? subjectMap.IdMainTeacher : null;
+        
         return db.detailblock.create(detailBlock)
     } catch (err) {
+        console.log('err insert detail block');
+        console.log(err);
+        
         return err;
     }
 

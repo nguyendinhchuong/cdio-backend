@@ -1163,8 +1163,9 @@ router.post("/add-data-5", function(req, res) {
           //res.sendStatus(403);
           res.send("Unauthorized user!");
         } else {
-          let data = req.body.data;
-          Model5.add(data, function(err) {
+          const data = req.body.data;
+          const ctdt = req.body.ctdt;
+          Model5.add(data, ctdt, function(err) {
             if (err == null) {
               res.end("1");
             } else {
@@ -1340,7 +1341,6 @@ router.post("/add-teachingacts-6", function(req, res) {
       config.jwtSecret,
       (err, authData) => {
         if (err) {
-          //res.sendStatus(403);
           res.send("Unauthorized user!");
         } else {
           const data = req.body;

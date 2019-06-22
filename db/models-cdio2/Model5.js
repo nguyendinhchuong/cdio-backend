@@ -3,6 +3,7 @@ var sql = require('../db');
 var Model5 = (data) => {
     this.data = data;
 }
+
 query = (string_sql, args) => {
     return new Promise((resolve, reject) => {
         sql.query(string_sql, args, (err, rows) => {
@@ -29,6 +30,7 @@ loopCollectData = (res, data, idCtdt, sl) => {
                 evalActs: [],
                 subjectId: ''
             }
+
             objResult.id = ele.id;
             objResult.titleName = ele.ten_chu_de;
             objResult.subjectId = ele.thong_tin_chung_id;
@@ -153,12 +155,13 @@ Model5.collectCDR = (idSubject, idCtdt, result) => {
                 return result(err, null);
             } else {
                 let standardOutput = [];
-
+                
                 listMT.forEach((muctieu, index) => {
-                    sql.query(`SELECT id,chuan_dau_ra FROM chuan_dau_ra_mon_hoc
-                    WHERE muc_tieu_mon_hoc_id = ${muctieu.id} AND del_flag = 0`,
+                    sql.query(` SELECT id,chuan_dau_ra 
+                                FROM chuan_dau_ra_mon_hoc
+                                WHERE muc_tieu_mon_hoc_id = ${muctieu.id} AND thong_tin_chung_id = ${idSubject} AND del_flag = 0`,
                         (err, listCdr) => {
-
+                            
                             if (err) {
                                 console.log("err: ", err);
                                 return result(err, null);
@@ -182,9 +185,9 @@ Model5.collectCDR = (idSubject, idCtdt, result) => {
         });
 }
 
-Model5.add = (data, result) => {
-
-    data.forEach(function (value, index) {
+Model5.add = (data, idCtdt, result) => {
+    
+    data.forEach(function (value) {
         let id = value.id;
         let stt = '1'; // hardcode
         let titleName = value.titleName;
@@ -199,14 +202,20 @@ Model5.add = (data, result) => {
                 return;
             }
 
-            query(`insert into ke_hoach_ly_thuyet(stt, ten_chu_de, thong_tin_chung_id, del_flag) 
-                values ('${stt}', '${titleName}', '${thong_tin_chung_id}', '${del_flag}')`)
+            query(` INSERT INTO ke_hoach_ly_thuyet
+                    (stt, ten_chu_de, thong_tin_chung_id, idCtdt, del_flag) 
+                    VALUES ('${stt}', '${titleName}', '${thong_tin_chung_id}', ${idCtdt}, '${del_flag}')`)
                 .then((res) => {
                     const ke_hoach_ly_thuyet_id = res.insertId;
+
                     // // BUS 1
                     for (const elemenet of standardOutput) {
-                        query(`SELECT id FROM chuan_dau_ra_mon_hoc WHERE chuan_dau_ra = '${elemenet}' AND del_flag = 0 AND thong_tin_chung_id = '${thong_tin_chung_id}' `)
+                        query(` SELECT chuan_dau_ra_mon_hoc.id 
+                                FROM ( chuan_dau_ra_mon_hoc JOIN muc_tieu_mon_hoc 
+                                        ON muc_tieu_mon_hoc.id = chuan_dau_ra_mon_hoc.muc_tieu_mon_hoc_id AND muc_tieu_mon_hoc.del_flag = 0 AND chuan_dau_ra_mon_hoc.del_flag = 0 )
+                                WHERE chuan_dau_ra = '${elemenet}' AND chuan_dau_ra_mon_hoc.thong_tin_chung_id = '${thong_tin_chung_id}' AND idCtdt = ${idCtdt} `)
                             .then(res => {
+                               
                                 if (res.length == 0) {
                                     return;
                                 }
@@ -225,33 +234,39 @@ Model5.add = (data, result) => {
 
                     // BUS 2
                     for (const element of evalActs) {
-                        query(`SELECT id FROM danh_gia WHERE ma = '${element}' AND del_flag = 0 AND thong_tin_chung_id = '${thong_tin_chung_id}'`)
+                        query(` SELECT id 
+                                FROM danh_gia 
+                                WHERE ma = '${element}' AND del_flag = 0 AND thong_tin_chung_id = '${thong_tin_chung_id}' AND idCtdt = ${idCtdt} `)
                             .then(res => {
                                 if (res.length == 0) {
                                     return;
                                 }
+                                
                                 const index = res[0].id;
 
                                 sql.query(`insert into khlt_has_dg(ke_hoach_ly_thuyet_id,danh_gia_id) 
-                            values ('${ke_hoach_ly_thuyet_id}', '${index}')`,
-                                    (err, res) => {
-                                        if (err) {
-                                            console.log("error:", err);
-                                            result(null, err)
-                                        } else {
-                                            result(null, res);
-                                        }
-                                    });
+                                            values ('${ke_hoach_ly_thuyet_id}', '${index}')`,
+                                            (err, res) => {
+                                                if (err) {
+                                                    console.log("error:", err);
+                                                    result(null, err)
+                                                } else {
+                                                    result(null, res);
+                                                }
+                                });
                             });
                     }
 
                     // BUS 3
                     for (const element of teachingActs) {
-                        query(`SELECT id FROM hoat_dong_day WHERE hoat_dong = '${element}' AND loai_hoat_dong = 'LT' `)
+                        query(` SELECT id 
+                                FROM hoat_dong_day 
+                                WHERE hoat_dong = '${element}' AND loai_hoat_dong = 'LT' `)
                             .then(res => {
                                 if (res.length == 0) {
-                                    query(`INSERT INTO hoat_dong_day(hoat_dong,loai_hoat_dong,danh_muc)
-                                        VALUES ('${element}','LT',0)`)
+                                    query(` INSERT INTO 
+                                            hoat_dong_day(hoat_dong,loai_hoat_dong,danh_muc)
+                                            VALUES ('${element}','LT',0)`)
                                         .then(res => {
                                             const index = res.insertId;
 
@@ -304,8 +319,10 @@ Model5.add = (data, result) => {
 
             // BUS 1 
             for (const elemenet of standardOutput) {
-
-                query(`SELECT id FROM chuan_dau_ra_mon_hoc WHERE chuan_dau_ra = '${elemenet}' AND del_flag = 0 AND thong_tin_chung_id = '${thong_tin_chung_id}' `)
+                query(` SELECT chuan_dau_ra_mon_hoc.id 
+                        FROM ( chuan_dau_ra_mon_hoc JOIN muc_tieu_mon_hoc 
+                                ON muc_tieu_mon_hoc.id = chuan_dau_ra_mon_hoc.muc_tieu_mon_hoc_id AND muc_tieu_mon_hoc.del_flag = 0 AND chuan_dau_ra_mon_hoc.del_flag = 0 )
+                        WHERE chuan_dau_ra = '${elemenet}' AND chuan_dau_ra_mon_hoc.thong_tin_chung_id = '${thong_tin_chung_id}' AND idCtdt = ${idCtdt} `)
                     .then(res => {
                         const index = res[0].id;
 
@@ -319,7 +336,9 @@ Model5.add = (data, result) => {
 
             //BUS 2 
             for (const element of evalActs) {
-                query(`SELECT id FROM danh_gia WHERE ma = '${element}' AND del_flag = 0 AND thong_tin_chung_id = '${thong_tin_chung_id}'`)
+                query(` SELECT id 
+                        FROM danh_gia 
+                        WHERE ma = '${element}' AND del_flag = 0 AND thong_tin_chung_id = '${thong_tin_chung_id}' AND idCtdt = ${idCtdt} `)
                     .then(res => {
                         const index = res[0].id;
 
@@ -334,6 +353,26 @@ Model5.add = (data, result) => {
             for (const element of teachingActs) {
                 query(`SELECT id FROM hoat_dong_day WHERE hoat_dong = '${element}' AND loai_hoat_dong = 'LT' `)
                     .then(res => {
+                        if (res.length == 0) {
+                            query(` INSERT INTO 
+                                    hoat_dong_day(hoat_dong,loai_hoat_dong,danh_muc)
+                                    VALUES ('${element}','LT',0)`)
+                            .then(res => {
+                                const index = res.insertId;
+
+                                sql.query(` INSERT INTO 
+                                            khlt_has_hdd(ke_hoach_ly_thuyet_id,hoat_dong_day_id) 
+                                            VALUES ('${id}', '${index}')`,
+                                    (err, res) => {
+                                        if (err) {
+                                            console.log("error:", err);
+                                            result(null, err)
+                                        }
+                                    });
+                            })
+                            return;
+                        }
+
                         const index = res[0].id;
 
                         query(`DELETE FROM  khlt_has_hdd WHERE ke_hoach_ly_thuyet_id = '${id}'`)
