@@ -347,21 +347,35 @@ Model4.deleteTeacherReview = (data, result) => {
 
 Model4.addTeacherReview = (data, result) => {
     let valuesString = "";
+    let delString = "";
     for(let i = 0;i < data.idTeacher.length;i++) {
+        delString += `(${data.idTeacher[i]},${data.idTTC})`
         valuesString += `(${data.idTeacher[i]},${data.idTTC},'${data.dateRange[0]}','${data.dateRange[1]}')`;
         if(i !== data.idTeacher.length - 1) {
             valuesString += ",";
         }
+
     }
-        sql.query(`insert into teacher_review_subject values ${valuesString}`,
-        (err, res) => {
-            if (err) {
-                console.log("error:", err);
-                result(null, err)
-            } else {
-                result(null, res);
-            }
-        })
+    sql.query(`delete from teacher_review_subject where (idTeacher, idTTC) in (${delString})`,
+    (err, res) => {
+        if(err) {
+            console.log("error:", err);
+            result(null, err)
+        }
+        else {
+            sql.query(`insert into teacher_review_subject values ${valuesString}`,
+            (err1, res1) => {
+                if (err1) {
+                    console.log("error:", err1);
+                    result(null, err1)
+                } else {
+                    result(null, res1);
+                }
+            })
+        }
+        
+    })
+        
 }
 
 Model4.getTeacherSubject = (data, result) => {
