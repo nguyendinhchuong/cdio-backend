@@ -41,7 +41,9 @@ exports.addMajor = (req, res) => {
     let body = JSON.parse(req.body.data);
     let request = {};
     request.MajorName = body.majorname;
-
+    request.MajorCode = body.majorcode;
+    request.MajorEngName = body.majorengname;
+    request.IdFaculty = Number(body.idfaculty);
     major.addMajor(request)
         .then(data => {
             let response = {};
