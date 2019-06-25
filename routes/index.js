@@ -158,7 +158,8 @@ router.post("/exportfile", function(req, res, next) {
       const page = await browser.newPage();
       let body = await req.body;
       let data = JSON.parse(body.data);
-      let path = "./" + data.nameFile + Date.now() + ".pdf";
+      let nameFile = data.nameFile + Date.now() + ".pdf";
+      let path = "./" + nameFile;
 
       //header
       let content = await compile("header", null);
@@ -189,16 +190,16 @@ router.post("/exportfile", function(req, res, next) {
           // res.header('content-type', 'application/pdf');
        // process headers
     
-       var file = fs.createReadStream('Đường lối cách mạng của ĐCSVN1561442824468.pdf');
-       var stat = fs.statSync('Đường lối cách mạng của ĐCSVN1561442824468.pdf');
+       var file = fs.createReadStream(nameFile);
+       var stat = fs.statSync(nameFile);
        res.setHeader('Content-Length', stat.size);
        res.setHeader('Content-Type', 'application/pdf');
       //  file.pipe(res);
-      res.sendFile('Đường lối cách mạng của ĐCSVN1561442824468.pdf',{root:'../cdio-backend'},function(err) {
+      res.sendFile(nameFile,{root:'../cdio-backend'},function(err) {
           if(err) {
             console.log(err)
           } else {
-            console.log("sadsad")
+            console.log("Export file successful !!! ")
           }
       })
       //res.end("1");
