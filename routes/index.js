@@ -589,32 +589,39 @@ router.post("/collect-data-4", function(req, res) {
 });
 
 router.get("/collect-cdrmdhd-4", function(req, res) {
-  if (
-    req.headers &&
-    req.headers.authorization &&
-    req.headers.authorization.split(" ")[0] === "JWT"
-  ) {
-    jwt.verify(
-      req.headers.authorization.split(" ")[1],
-      config.jwtSecret,
-      (err, authData) => {
-        if (err) {
-          //res.sendStatus(403);
-          res.send("Unauthorized user!");
-        } else {
-          Model4.collectcdrmdhd(function(err, data) {
-            if (err) {
-              console.log(err);
-            } else {
-              res.send(data);
-            }
-          });
-        }
-      }
-    );
-  } else {
-    res.send("Invalid token!");
-  }
+  // if (
+  //   req.headers &&
+  //   req.headers.authorization &&
+  //   req.headers.authorization.split(" ")[0] === "JWT"
+  // ) {
+  //   jwt.verify(
+  //     req.headers.authorization.split(" ")[1],
+  //     config.jwtSecret,
+  //     (err, authData) => {
+  //       if (err) {
+  //         //res.sendStatus(403);
+  //         res.send("Unauthorized user!");
+  //       } else {
+  //         Model4.collectcdrmdhd(function(err, data) {
+  //           if (err) {
+  //             console.log(err);
+  //           } else {
+  //             res.send(data);
+  //           }
+  //         });
+  //       }
+  //     }
+  //   );
+  // } else {
+  //   res.send("Invalid token!");
+  // }
+  Model4.collectcdrmdhd(function(err, data) {
+              if (err) {
+                console.log(err);
+              } else {
+                res.send(data);
+              }
+            });
 });
 
 router.post("/save-data-4", function(req, res) {
@@ -1556,31 +1563,37 @@ router.post("/add-chude", function(req, res) {
 });
 
 router.get("/get-chude", function(req, res) {
-  if (
-    req.headers &&
-    req.headers.authorization &&
-    req.headers.authorization.split(" ")[0] === "JWT"
-  ) {
-    jwt.verify(
-      req.headers.authorization.split(" ")[1],
-      config.jwtSecret,
-      (err, authData) => {
-        if (err) {
-          //res.sendStatus(403);
-          res.send("Unauthorized user!");
-        } else {
-          Model7.getChude(function(err, result) {
-            if (err) {
-              res.end("0");
-            }
-            res.end(JSON.stringify(result));
-          });
-        }
-      }
-    );
-  } else {
-    res.send("Invalid token!");
-  }
+  // if (
+  //   req.headers &&
+  //   req.headers.authorization &&
+  //   req.headers.authorization.split(" ")[0] === "JWT"
+  // ) {
+  //   jwt.verify(
+  //     req.headers.authorization.split(" ")[1],
+  //     config.jwtSecret,
+  //     (err, authData) => {
+  //       if (err) {
+  //         //res.sendStatus(403);
+  //         res.send("Unauthorized user!");
+  //       } else {
+  //         Model7.getChude(function(err, result) {
+  //           if (err) {
+  //             res.end("0");
+  //           }
+  //           res.end(JSON.stringify(result));
+  //         });
+  //       }
+  //     }
+  //   );
+  // } else {
+  //   res.send("Invalid token!");
+  // }
+  Model7.getChude(function(err, result) {
+              if (err) {
+                res.end("0");
+              }
+              res.end(JSON.stringify(result));
+            });
 });
 
 router.post("/update-chude", function(req, res) {
@@ -1705,31 +1718,37 @@ router.post("/delete-chude", function(req, res) {
 });
 
 router.get("/get-loaitainguyen", function(req, res) {
-  if (
-    req.headers &&
-    req.headers.authorization &&
-    req.headers.authorization.split(" ")[0] === "JWT"
-  ) {
-    jwt.verify(
-      req.headers.authorization.split(" ")[1],
-      config.jwtSecret,
-      (err, authData) => {
-        if (err) {
-          //res.sendStatus(403);
-          res.send("Unauthorized user!");
-        } else {
-          Model8.getLoaiTaiNguyen(function(err, result) {
-            if (err) {
-              res.end("0");
-            }
-            res.end(JSON.stringify(result));
-          });
-        }
-      }
-    );
-  } else {
-    res.send("Invalid token!");
-  }
+  // if (
+  //   req.headers &&
+  //   req.headers.authorization &&
+  //   req.headers.authorization.split(" ")[0] === "JWT"
+  // ) {
+  //   jwt.verify(
+  //     req.headers.authorization.split(" ")[1],
+  //     config.jwtSecret,
+  //     (err, authData) => {
+  //       if (err) {
+  //         //res.sendStatus(403);
+  //         res.send("Unauthorized user!");
+  //       } else {
+  //         Model8.getLoaiTaiNguyen(function(err, result) {
+  //           if (err) {
+  //             res.end("0");
+  //           }
+  //           res.end(JSON.stringify(result));
+  //         });
+  //       }
+  //     }
+  //   );
+  // } else {
+  //   res.send("Invalid token!");
+  // }
+  Model8.getLoaiTaiNguyen(function(err, result) {
+              if (err) {
+                res.end("0");
+              }
+              res.end(JSON.stringify(result));
+            });
 });
 
 router.get("/get-loaitainguyen1", function(req, res) {
