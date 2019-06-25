@@ -182,8 +182,26 @@ router.post("/exportfile", function(req, res, next) {
         printBackground: true
       });
       await browser.close();
-
-      res.end("1");
+    
+          // console.log('converted to base64');
+          // res.header("Access-Control-Allow-Origin", "*");
+          // res.header("Access-Control-Allow-Headers", "X-Requested-With");
+          // res.header('content-type', 'application/pdf');
+       // process headers
+    
+       var file = fs.createReadStream('Đường lối cách mạng của ĐCSVN1561442824468.pdf');
+       var stat = fs.statSync('Đường lối cách mạng của ĐCSVN1561442824468.pdf');
+       res.setHeader('Content-Length', stat.size);
+       res.setHeader('Content-Type', 'application/pdf');
+      //  file.pipe(res);
+      res.sendFile('Đường lối cách mạng của ĐCSVN1561442824468.pdf',{root:'../cdio-backend'},function(err) {
+          if(err) {
+            console.log(err)
+          } else {
+            console.log("sadsad")
+          }
+      })
+      //res.end("1");
     } catch (e) {
       console.log("error", e);
     }
@@ -2294,28 +2312,34 @@ router.post("/add-hdd", function(req, res) {
   }
 });
 router.get("/get-danhmuc-hdd", function(req, res) {
-  if (
-    req.headers &&
-    req.headers.authorization &&
-    req.headers.authorization.split(" ")[0] === "JWT"
-  ) {
-    jwt.verify(
-      req.headers.authorization.split(" ")[1],
-      config.jwtSecret,
-      (err, authData) => {
-        if (err) {
-          //res.sendStatus(403);
-          res.send("Unauthorized user!");
-        } else {
-          DanhMucModel.get(result => {
-            res.send(result);
-          });
-        }
-      }
-    );
-  } else {
-    res.send("Invalid token!");
-  }
+  // if (
+  //   req.headers &&
+  //   req.headers.authorization &&
+  //   req.headers.authorization.split(" ")[0] === "JWT"
+  // ) {
+  //   jwt.verify(
+  //     req.headers.authorization.split(" ")[1],
+  //     config.jwtSecret,
+  //     (err, authData) => {
+        
+  //       // if (err) {
+  //       //   //res.sendStatus(403);
+  //       //   res.send("Unauthorized user!");
+  //       // } else {
+  //       //   DanhMucModel.get(result => {
+  //       //     res.send(result);
+  //       //   });
+  //       // }
+  //     }
+  //   );
+  // } else {
+  //   res.send("Invalid token!");
+  // }
+    console.log("sadsa")
+    DanhMucModel.get(result => {
+      console.log(result)
+      res.send(result);
+    });
 });
 router.post("/delete-hdd", function(req, res) {
   if (
