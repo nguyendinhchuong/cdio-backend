@@ -353,6 +353,7 @@ Model4.addTeacherReview = (data, result) => {
         valuesString += `(${data.idTeacher[i]},${data.idTTC},'${data.dateRange[0]}','${data.dateRange[1]}')`;
         if(i !== data.idTeacher.length - 1) {
             valuesString += ",";
+            delString += ",";
         }
 
     }
