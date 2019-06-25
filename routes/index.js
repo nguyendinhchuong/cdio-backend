@@ -2321,25 +2321,22 @@ router.get("/get-danhmuc-hdd", function(req, res) {
   //     req.headers.authorization.split(" ")[1],
   //     config.jwtSecret,
   //     (err, authData) => {
-        
-  //       // if (err) {
-  //       //   //res.sendStatus(403);
-  //       //   res.send("Unauthorized user!");
-  //       // } else {
-  //       //   DanhMucModel.get(result => {
-  //       //     res.send(result);
-  //       //   });
-  //       // }
+  //       if (err) {
+  //         //res.sendStatus(403);
+  //         res.send("Unauthorized user!");
+  //       } else {
+  //         DanhMucModel.get(result => {
+  //           res.send(result);
+  //         });
+  //       }
   //     }
   //   );
   // } else {
   //   res.send("Invalid token!");
   // }
-    console.log("sadsa")
-    DanhMucModel.get(result => {
-      console.log(result)
-      res.send(result);
-    });
+  DanhMucModel.get(result => {
+              res.send(result);
+            });
 });
 router.post("/delete-hdd", function(req, res) {
   if (
