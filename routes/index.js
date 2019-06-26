@@ -2533,7 +2533,12 @@ router.post("/add-data-survey", function(req, res) {
           const data = req.body.data;
           const id_survey = req.body.id_survey;
           ModelSurvey.addData(data, id_survey, result => {
-            //res.send(result)
+            if(result.length > 0) {
+              res.send("1");
+            } else {
+              res.send("0");
+            }
+            
           });
         }
       }

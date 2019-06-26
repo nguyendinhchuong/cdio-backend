@@ -54,7 +54,7 @@ ModelSurvey.addData = (data, id_survey, result) => {
             query(`INSERT INTO survey_itu  (bullet, value, mo_ta, id_survey)  VALUES
             ('${element.key}', '${resultValue}','${element.description}',${id_survey})`)
             .then (res => {
-                console.log(res);
+                console.log("res", res);
                 result(res)
             })
         });
