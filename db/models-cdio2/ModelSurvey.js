@@ -627,14 +627,15 @@ ModelSurvey.updateStatusSurveyList = (currentDate,result) => {
                         if(err){
                             console.log("err : " , err);
                             result (err);
-                        }else{
-                            sql.query(`update survey2 set status = 0 where idSurveyList = ${item.id} and status <> 0`,(err,res) => {
-                                if(err){
-                                    console.log("err : " , err);
-                                    result(err);
-                                }
-                            })
                         }
+                        // else{
+                        //     sql.query(`update survey2 set status = 0 where idSurveyList = ${item.id} and status <> 0`,(err,res) => {
+                        //         if(err){
+                        //             console.log("err : " , err);
+                        //             result(err);
+                        //         }
+                        //     })
+                        // }
                     })
                 })
             }
@@ -690,12 +691,12 @@ ModelSurvey.closeSurvey = (id,result) => {
         }
     });
 
-    sql.query(`update survey2 set status = 0 where idSurveyList=${id}`,(err,res) => {
-        if(err) {
-            console.log("err",err);
-            result(err);
-        }
-    });
+    // sql.query(`update survey2 set status = 0 where idSurveyList=${id}`,(err,res) => {
+    //     if(err) {
+    //         console.log("err",err);
+    //         result(err);
+    //     }
+    // });
     result("done")
 }
 module.exports = ModelSurvey;
