@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const PORT = 30001;
+const PORT = 3001;
 
 var indexRouter = require('./routes/index');
 
