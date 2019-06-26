@@ -303,7 +303,7 @@ insertOrUpdate7 = (item, idSubject, idCtdt) => {
         })
     }
     else {
-      sql.query(`update danh_gia set ten = '${item.tenthanhphan}', mo_ta = ${item.mota},ti_le = ${item.tile},del_flag = ${item.del_flag}
+      sql.query(`update danh_gia set ten = '${item.tenthanhphan}', mo_ta = '${item.mota}',ti_le = ${item.tile},del_flag = ${item.del_flag}
      where id = ${item.id} `,
         (err, res) => {
           if (err) {
