@@ -105,7 +105,7 @@ function handleValueITU(listSurvey) {
     });
 
     let data = [];
-
+   
     myMap.forEach((value, key) => {
         let temp = new Data(
             value.cdr,
@@ -119,6 +119,7 @@ function handleValueITU(listSurvey) {
 
         data.push(new itu(key, temp));
     });
+
     return data;
 }
 
@@ -415,7 +416,6 @@ ModelSurvey.addData2 = (data, id_survey, result) => {
 }
 
 ModelSurvey.setStatus = (data, result) => {
-    console.log(data);
     
     sql.query(`Update survey2 set status = ${data.status} where id = ${data.id}`, (err, res) => {
         if (err) {
@@ -620,7 +620,7 @@ ModelSurvey.updateStatusSurveyList = (currentDate,result) => {
         }else{
             // console.log(res)
             let listSurvey = res;
-            console.log(listSurvey)
+           
             if(listSurvey && listSurvey.length >0 ) {
                 listSurvey.forEach(item => {
                     sql.query(`update surveyList set status = 0 where id = ${item.id} and status <> 0`,(err,res) => {
