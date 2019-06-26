@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-
+const PORT = 30001;
 
 var indexRouter = require('./routes/index');
 
@@ -66,6 +66,6 @@ routeTeachPlanBlock(app);
 routePDFDownload(app);
 
 routeUser(app);
-app.listen(3001, () => {
-    console.log('Node server running @ http://localhost:3001')
+app.listen(PORT, () => {
+    console.log(`Node server running @ PORT : ${PORT}`)
 });
