@@ -47,7 +47,7 @@ ModelSurvey.addData = (data, id_survey, result) => {
                 resultValue += value + ',';
             });
 
-            if(resultValue[0] === '-') {
+            if(resultValue.includes('-')) {
                 resultValue = '-'
             }
 
@@ -62,6 +62,18 @@ ModelSurvey.addData = (data, id_survey, result) => {
     } catch (e) {
         console.log(e);
     }
+}
+
+ModelSurvey.checkID = (id, result) => {
+    sql.query(`SELECT id_survey FROM survey_itu where id_survey = ${id}`, (err, res) => {
+        if (err) {
+            console.log("err: ", err);
+            return result(err);
+        } else {            
+            return result(res);
+        }
+
+    })
 }
 
 ModelSurvey.collectData = (id_ctdt, result) => {

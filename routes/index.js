@@ -3033,4 +3033,34 @@ router.get("/get-data-7/:idSubject/:idCtdt", function(req, res) {
   }
 });
 
+router.get("/checkid/:id", function(req, res) {
+  if (
+    req.headers &&
+    req.headers.authorization &&
+    req.headers.authorization.split(" ")[0] === "JWT"
+  ) {
+    jwt.verify(
+      req.headers.authorization.split(" ")[1],
+      config.jwtSecret,
+      (err, authData) => {
+        if (err) {
+          //res.sendStatus(403);
+          res.send("Unauthorized user!");
+        } else {
+          let data = req.params.id;
+          ModelSurvey.checkID(data, result => {
+            if (result.length > 0) {
+              res.send('true');
+            } else {
+              res.send('false');
+            }
+          });
+        }
+      }
+    );
+  } else {
+    res.send("Invalid token!");
+  }
+});
+
 module.exports = router;
