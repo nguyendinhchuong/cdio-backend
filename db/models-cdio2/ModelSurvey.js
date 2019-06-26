@@ -1,5 +1,5 @@
 var sql = require('../db');
-
+const MatrixModel = require("./MatrixModel");
 var ModelSurvey = () => { }
 
 class Survey {
@@ -135,11 +135,12 @@ function handleValueITU(listSurvey) {
 
         data.push(new itu(key, temp));
     });
+    //console.log(data);
 
     return data;
 }
 
-ModelSurvey.getDataMatixSurvey = (idSurveyList, resp) => {
+ModelSurvey.getDataMatixSurvey = (idSurveyList, idCtdt, resp) => {
     const TABLE_SURVEY = "survey2";
     const STATUS = 0;
 
@@ -148,53 +149,95 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, resp) => {
         query(` SELECT *  
                 FROM ${TABLE_SURVEY} 
                 WHERE idSurveyList = ${idSurveyList} and status = ${STATUS}`
-        ).then(kq => {
+        ).then(kq1 => {
             
             query(` SELECT id,id_mon,id_giaovien 
                     FROM ${TABLE_SURVEY} 
                     WHERE idSurveyList = ${idSurveyList}`
-            ).then(result => {
+            ).then((result,index) => {
+                
                 let survey = [];
                 //console.log("sadsa");
                 //console.log(result);
-                result.forEach(record => {
-                    const id_mon = record.id_mon;
-                    const id_survey = record.id;
+                //const idCtdt = 15;
+                const fullCDR = MatrixModel.getCdrCDIO(idCtdt);
 
-                    query(` SELECT * 
-                        FROM survey_itu
-                        WHERE id_survey = ${id_survey}`
-                    ).then(listSurvey => {
-                        // return list suitable ITU Survey
-                        let data = handleValueITU(listSurvey);
-                        query(` SELECT SubjectName 
-                            FROM subject 
-                            WHERE Id = ${id_mon}`
-                        ).then(resultSubjectName => {
-                            const object = new Survey(
-                                id_mon,
-                                resultSubjectName[0].SubjectName,
-                                data
-                            );
-                            survey.push(object);
-                            
-                        })
-                        .then(() => {
-                        
-                            let data = [];
-                            kq.forEach(mon => {
-                                survey.forEach(surveyEntity => {
-                                    if (mon.id_mon === surveyEntity.id_mon) {
-                                        data.push(surveyEntity);
-                                    }
-                                })
-                            });
-                            if (kq.length === data.length) {
-                                resp(data);
-                            }
-                        });
+                fullCDR.then(kq => {
+                    let str = [];
+                    kq.forEach((item,_)=>{
+                        str.push(item.cdr);
                     })
-                })
+                    
+
+                    result.forEach(record => {
+                        const id_mon = record.id_mon;
+                        const id_survey = record.id;
+    
+                        query(` SELECT * 
+                            FROM survey_itu
+                            WHERE id_survey = ${id_survey}`
+                        ).then(listSurvey => {
+                            // return list suitable ITU Survey
+                            let data = handleValueITU(listSurvey); // change 
+                            let newData = [];
+                            
+                            str.forEach(strElement => {
+                                data.forEach(dataElement => {
+                                    let object ={
+                                        id : '-',
+                                        data : '-'
+                                    }
+
+                                    if (dataElement.id === strElement) {
+                                        object.id = dataElement.id;
+                                        object.data = dataElement.data;
+                                    }
+                                    newData.push(object);
+                                });
+                            })
+
+                           
+                            
+                            query(` SELECT SubjectName 
+                                FROM subject 
+                                WHERE Id = ${id_mon}`
+                            ).then(resultSubjectName => {
+                                const object = new Survey(
+                                    id_mon,
+                                    resultSubjectName[0].SubjectName,
+                                    newData
+                                );
+                                survey.push(    object);
+                                
+                            })
+                            .then(() => {
+                                //console.log(survey)
+                                let data = [];
+                                kq1.forEach((mon,index) => {
+                                    survey.forEach(surveyEntity => {
+                                        console.log("aaaa")
+                                        console.log(mon.id_mon,surveyEntity.id_mon)
+                                        if (mon.id_mon == surveyEntity.id_mon) {
+
+                                            //console.log(surveyEntity)
+                                            data.push(surveyEntity);
+                                        }
+                                        
+                                    })
+                                    if (kq1.length === data.length) {
+                                    resp(data);
+                                }
+                                });
+                                //console.log(kq.length)
+                                // if (kq.length === data.length) {
+                                //     resp(data);
+                                // }
+                            });
+                        })
+                    })
+                });
+                
+                
             })
         });
     } catch (e) {
@@ -217,7 +260,7 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, resp) => {
     //                         let subjectName = subject.SubjectName;
 
     //                         query(`SELECT survey.id, survey.value, survey.id_qa 
-    //                                 FROM survey 
+    //                                 FROM survey new
     //                                 WHERE '${id}' = id_mon`)
     //                             .then(res1 => {
 

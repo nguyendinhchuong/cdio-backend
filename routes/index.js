@@ -2787,16 +2787,18 @@ router.post('/get-matrix-survey', function (req, res) {
                 //res.sendStatus(403);
                 res.send("Unauthorized user!");
             } else {
-                const idSurveyList = req.body.data;
-      
-                ModelSurvey.getDataMatixSurvey(idSurveyList,(result) => {
-                    res.send(result);
-                });
+              const idSurveyList = req.body.data;
+              const idCtdt = req.body.idCtdt;
+                
+              ModelSurvey.getDataMatixSurvey(idSurveyList,idCtdt,(result) => {
+                  res.send(result);
+              });
             }
         })
     } else {
         res.send("Invalid token!");
     }
+   
 })
 
 router.post('/get-survey-itu', function (req, res) {
