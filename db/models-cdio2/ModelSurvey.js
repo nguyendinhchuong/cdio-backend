@@ -159,25 +159,22 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, idCtdt, resp) => {
             query(` SELECT id,id_mon,id_giaovien 
                     FROM ${TABLE_SURVEY} 
                     WHERE idSurveyList = ${idSurveyList}`
-            ).then((result,index) => {
-                
+            ).then(result => {
                 let survey = [];
-                //console.log("sadsa");
-                //console.log(result);
-                //const idCtdt = 15;
+                
                 const fullCDR = MatrixModel.getCdrCDIO(idCtdt);
-
+                
                 fullCDR.then(kq => {
                     let str = [];
+                    
                     kq.forEach((item,_)=>{
                         str.push(item.cdr);
                     })
-                    
-
+                   
                     result.forEach(record => {
                         const id_mon = record.id_mon;
                         const id_survey = record.id;
-    
+                        
                         query(` SELECT * 
                             FROM survey_itu
                             WHERE id_survey = ${id_survey}`
@@ -187,22 +184,23 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, idCtdt, resp) => {
                             let newData = [];
                             
                             str.forEach(strElement => {
-                                data.forEach(dataElement => {
-                                    let object ={
-                                        id : '-',
-                                        data : '-'
-                                    }
-
-                                    if (dataElement.id === strElement) {
-                                        object.id = dataElement.id;
-                                        object.data = dataElement.data;
-                                    }
-                                    newData.push(object);
-                                });
+                                let object = {
+                                    id : strElement,
+                                    data : '-'
+                                } 
+                                newData.push(object);
                             })
 
-                           
-                            
+                            newData.forEach(ele => {
+                                data.forEach(dataElement => {
+
+                                    if (dataElement.id === ele.od) {
+                                        ele.data = dataElement.data;
+                                    }
+                
+                                });
+                            });
+
                             query(` SELECT SubjectName 
                                 FROM subject 
                                 WHERE Id = ${id_mon}`
@@ -212,26 +210,21 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, idCtdt, resp) => {
                                     resultSubjectName[0].SubjectName,
                                     newData
                                 );
-                                survey.push(    object);
-                                
+                              
+                                survey.push(object);
                             })
                             .then(() => {
-                                //console.log(survey)
                                 let data = [];
-                                kq1.forEach((mon,index) => {
+                                kq1.forEach((mon) => {
                                     survey.forEach(surveyEntity => {
-                                        console.log("aaaa")
-                                        console.log(mon.id_mon,surveyEntity.id_mon)
-                                        if (mon.id_mon == surveyEntity.id_mon) {
-
-                                            //console.log(surveyEntity)
+                                        if (mon.id_mon === surveyEntity.id_mon) {
                                             data.push(surveyEntity);
                                         }
-                                        
-                                    })
+                                    });
+                                    
                                     if (kq1.length === data.length) {
-                                    resp(data);
-                                }
+                                        resp(data);
+                                    }
                                 });
                                 //console.log(kq.length)
                                 // if (kq.length === data.length) {
@@ -241,8 +234,6 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, idCtdt, resp) => {
                         })
                     })
                 });
-                
-                
             })
         });
     } catch (e) {
