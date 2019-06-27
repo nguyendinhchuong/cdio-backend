@@ -191,16 +191,17 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, idCtdt, resp) => {
                                 newData.push(object);
                             })
 
-                            newData.forEach(ele => {
+                            for (let ele of newData) {
                                 data.forEach(dataElement => {
-
-                                    if (dataElement.id === ele.od) {
+                                    
+                                    if (dataElement.id === ele.id) {
                                         ele.data = dataElement.data;
+                                       
                                     }
                 
                                 });
-                            });
-
+                            }
+                           
                             query(` SELECT SubjectName 
                                 FROM subject 
                                 WHERE Id = ${id_mon}`
@@ -215,6 +216,7 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, idCtdt, resp) => {
                             })
                             .then(() => {
                                 let data = [];
+
                                 kq1.forEach((mon) => {
                                     survey.forEach(surveyEntity => {
                                         if (mon.id_mon === surveyEntity.id_mon) {
