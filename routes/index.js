@@ -2533,12 +2533,7 @@ router.post("/add-data-survey", function(req, res) {
           const data = req.body.data;
           const id_survey = req.body.id_survey;
           ModelSurvey.addData(data, id_survey, result => {
-            if(result.length > 0) {
-              res.send("1");
-            } else {
-              res.send("0");
-            }
-            
+              res.send(result);
           });
         }
       }
@@ -2737,26 +2732,6 @@ router.get("/checkstatus/:id", function(req, res) {
   });
 });
 
-router.post('/add-data-survey', function (req, res) {
-    if (req.headers &&
-        req.headers.authorization &&
-        req.headers.authorization.split(' ')[0] === 'JWT') {
-        jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret, (err, authData) => {
-            if (err) {
-                //res.sendStatus(403);
-                res.send("Unauthorized user!");
-            } else {
-                const data = req.body.data;
-                const id_survey = req.body.id_survey
-                ModelSurvey.addData(data, id_survey, (result) => {
-                    res.send("1");
-                });
-            }
-        })
-    } else {
-        res.send("Invalid token!");
-    }
-})
 router.post('/save-survey-qa', function (req, res) {
     if (req.headers &&
         req.headers.authorization &&

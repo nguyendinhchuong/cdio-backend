@@ -397,37 +397,37 @@ getSubjectId = (data) => {
 }
 
 MatrixModel.addMatrix = (body, idCtdt,result)=>{
-  console.log(body)
   return new Promise((resolve,reject)=>{
     body.data.forEach((item,_)=>{
       getSubjectId(item.mon).then(res1 => {        
         checkExistTTCId(res1[0].Id).then(res => {
           if (res === true) {            
             item.itu.forEach(el => {
-              console.log('in');
               // el.id = el.id.replace(/\./g, "-")
               el.id += '.'
               sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do, detaileduprogram dep
               where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = dep.IdOutcome 
               and length(KeyRow) = 6 AND dep.IdEduProgram = ${idCtdt} and KeyRow = '${el.id}'`, (err, res) =>{
                 let muc_do = "-";
-                if (el.data.cdr.includes('I')) {
-                  muc_do = 'I'
-                  muc_do += ','
-                }
-                 if (el.data.cdr.includes('T')) {
-                  muc_do += 'T'
-                  muc_do += ','
-                }
-                 if (el.data.cdr.includes('U')) {
-                  muc_do += 'U'
-                }
-                if (muc_do[muc_do.length -1] === ",") {
-                  muc_do = muc_do.substr(0, muc_do.length-1)
-                }
-                if(muc_do.length > 1 && muc_do[0] === "-") {
-                  muc_do = muc_do.substr(1);
-                }
+                if (el.data !== '-') {
+                  if (el.data.cdr.includes('I')) {
+                    muc_do = 'I'
+                    muc_do += ','
+                  }
+                   if (el.data.cdr.includes('T')) {
+                    muc_do += 'T'
+                    muc_do += ','
+                  }
+                   if (el.data.cdr.includes('U')) {
+                    muc_do += 'U'
+                  }
+                  if (muc_do[muc_do.length -1] === ",") {
+                    muc_do = muc_do.substr(0, muc_do.length-1)
+                  }
+                  if(muc_do.length > 1 && muc_do[0] === "-") {
+                    muc_do = muc_do.substr(1);
+                  }
+                }             
                 if (res.length > 0) {
                   sql.query(`UPDATE matrix SET muc_do = '${muc_do}' WHERE thong_tin_chung_id = ${res1[0].Id} and chuan_dau_ra_cdio_id = ${res[0].Id}`, (err, res5) => {
                   if (err) {
@@ -466,23 +466,26 @@ MatrixModel.addMatrix = (body, idCtdt,result)=>{
                   where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = dep.IdOutcome 
                   and length(KeyRow) = 6 AND dep.IdEduProgram = ${idCtdt} and KeyRow = '${el.id}'`, (err, res) =>{
                     let muc_do = "-";
-                    if (el.data.cdr.includes('I')) {
-                      muc_do = 'I'
-                      muc_do += ','
+                    if (el.data !== '-') {
+                      if (el.data.cdr.includes('I')) {
+                        muc_do = 'I'
+                        muc_do += ','
+                      }
+                       if (el.data.cdr.includes('T')) {
+                        muc_do += 'T'
+                        muc_do += ','
+                      }
+                       if (el.data.cdr.includes('U')) {
+                        muc_do += 'U'
+                      }
+                      if (muc_do[muc_do.length -1] === ",") {
+                        muc_do = muc_do.substr(0, muc_do.length-1)
+                      }
+                      if(muc_do.length > 1 && muc_do[0] === "-") {
+                        muc_do = muc_do.substr(1);
+                      }
                     }
-                     if (el.data.cdr.includes('T')) {
-                      muc_do += 'T'
-                      muc_do += ','
-                    }
-                     if (el.data.cdr.includes('U')) {
-                      muc_do += 'U'
-                    }
-                    if (muc_do[muc_do.length -1] === ",") {
-                      muc_do = muc_do.substr(0, muc_do.length-1)
-                    }
-                    if(muc_do.length > 1 && muc_do[0] === "-") {
-                      muc_do = muc_do.substr(1);
-                    }
+                    
                     if (res.length > 0) {
                       sql.query(`INSERT INTO matrix(muc_do,thong_tin_chung_id,chuan_dau_ra_cdio_id,idCtdt) VALUES('${muc_do}',${res1[0].Id},${res[0].Id},${idCtdt})`,(err,res)=>{
                         if(err){

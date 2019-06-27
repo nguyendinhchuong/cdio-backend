@@ -55,7 +55,12 @@ ModelSurvey.addData = (data, id_survey, result) => {
             ('${element.key}', '${resultValue}','${element.description}',${id_survey})`)
             .then (res => {
                 console.log("res", res);
-                result(res)
+                if (res) {
+                    result("1")
+                } else {
+                    result("0")
+                }
+                
             })
         });
 
