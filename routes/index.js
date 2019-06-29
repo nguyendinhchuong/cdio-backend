@@ -1024,35 +1024,35 @@ router.post("/get-teacher-list", function(req, res) {
   }
 });
 
-router.post("/get-teacher-list-review", function(req, res) {
-  if (
-    req.headers &&
-    req.headers.authorization &&
-    req.headers.authorization.split(" ")[0] === "JWT"
-  ) {
-    jwt.verify(
-      req.headers.authorization.split(" ")[1],
-      config.jwtSecret,
-      (err, authData) => {
-        if (err) {
-          //res.sendStatus(403);
-          res.send("Unauthorized user!");
-        } else {
-          let data = req.body;
-          Model4.getTeacherListReview(data, function(err, data) {
-            if (err) {
-              console.log(err);
-            } else {
-              res.send(data);
-            }
-          });
-        }
-      }
-    );
-  } else {
-    res.send("Invalid token!");
-  }
-});
+// router.post("/get-teacher-list-review", function(req, res) {
+//   if (
+//     req.headers &&
+//     req.headers.authorization &&
+//     req.headers.authorization.split(" ")[0] === "JWT"
+//   ) {
+//     jwt.verify(
+//       req.headers.authorization.split(" ")[1],
+//       config.jwtSecret,
+//       (err, authData) => {
+//         if (err) {
+//           //res.sendStatus(403);
+//           res.send("Unauthorized user!");
+//         } else {
+//           let data = req.body;
+//           Model4.getTeacherListReview(data, function(err, data) {
+//             if (err) {
+//               console.log(err);
+//             } else {
+//               res.send(data);
+//             }
+//           });
+//         }
+//       }
+//     );
+//   } else {
+//     res.send("Invalid token!");
+//   }
+// });
 
 router.post("/delete-teacher-review", function(req, res) {
   if (
@@ -1174,6 +1174,35 @@ router.post("/get-teacher-review-subject", function(req, res) {
   }
 });
 
+router.post("/get-review-list", function(req, res) {
+  if (
+    req.headers &&
+    req.headers.authorization &&
+    req.headers.authorization.split(" ")[0] === "JWT"
+  ) {
+    jwt.verify(
+      req.headers.authorization.split(" ")[1],
+      config.jwtSecret,
+      (err, authData) => {
+        if (err) {
+          //res.sendStatus(403);
+          res.send("Unauthorized user!");
+        } else {
+          let data = req.body;
+          Model4.getReviewList(data, function(err, data) {
+            if (err) {
+              console.log(err);
+            } else {
+              res.send(data);
+            }
+          });
+        }
+      }
+    );
+  } else {
+    res.send("Invalid token!");
+  }
+});
 //
 router.post("/add-data-5", function(req, res) {
   if (

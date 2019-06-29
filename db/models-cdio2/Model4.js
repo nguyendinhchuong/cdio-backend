@@ -295,10 +295,7 @@ Model4.getTeacherList = (data, result) => {
     let date = new Date();
     let dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
     sql.query(`select user.id , user.name from cdio_db.user
-    where user.id not in (select teacher_review_subject.idTeacher from cdio_db.teacher_review_subject 
-        where teacher_review_subject.idTTC = ${data.thong_tin_chung_id}
-        && DATE(teacher_review_subject.end_Date) >= '${dateString}')
-     && user.id != ${data.idCurrentUser}
+    where user.id != ${data.idCurrentUser}
      && user.id not in (select user_has_role.idUser from cdio_db.user_has_role
         JOIN cdio_db.role ON user_has_role.idRole = role.id
         where role.role = "ADMIN")
@@ -315,26 +312,26 @@ Model4.getTeacherList = (data, result) => {
         })
 }
 
-Model4.getTeacherListReview = (data, result) => {
-    let date = new Date();
-    let dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-    sql.query(`select user.id , user.name, teacher_review_subject.start_Date, teacher_review_subject.end_Date from cdio_db.user
-    join teacher_review_subject on user.id = teacher_review_subject.idTeacher
-    where teacher_review_subject.idTTC = ${data.thong_tin_chung_id}
-    && DATE(teacher_review_subject.end_Date) >= '${dateString}'`,
-        (err, res) => {
-            if (err) {
-                console.log("error:", err);
-                result(null, err)
-            } else {
-                result(null, res);
-            }
-        })
-}
+// Model4.getTeacherListReview = (data, result) => {
+//     let date = new Date();
+//     let dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+//     sql.query(`select user.id , user.name, teacher_review_subject.start_Date, teacher_review_subject.end_Date from cdio_db.user
+//     join teacher_review_subject on user.id = teacher_review_subject.idTeacher
+//     where teacher_review_subject.idTTC = ${data.thong_tin_chung_id}
+//     && DATE(teacher_review_subject.end_Date) >= '${dateString}'`,
+//         (err, res) => {
+//             if (err) {
+//                 console.log("error:", err);
+//                 result(null, err)
+//             } else {
+//                 result(null, res);
+//             }
+//         })
+// }
 
 Model4.deleteTeacherReview = (data, result) => {
     let idString = "(" + data.keys.toString() + ")";
-        sql.query(`delete from teacher_review_subject where (idTeacher) IN ${idString} && idTTC = ${data.monhoc}`,
+        sql.query(`delete from teacher_review_subject where (idTTC) IN ${idString} && idCtdt = ${data.idCtdt}`,
         (err, res) => {
             if (err) {
                 console.log("error:", err);
@@ -349,15 +346,15 @@ Model4.addTeacherReview = (data, result) => {
     let valuesString = "";
     let delString = "";
     for(let i = 0;i < data.idTeacher.length;i++) {
-        delString += `(${data.idTeacher[i]},${data.idTTC})`
-        valuesString += `(${data.idTeacher[i]},${data.idTTC},'${data.dateRange[0]}','${data.dateRange[1]}')`;
+        delString += `(${data.idTeacher[i]},${data.idTTC},${data.idCtdt})`
+        valuesString += `(${data.idTeacher[i]},${data.idTTC},'${data.dateRange[0]}','${data.dateRange[1]}',${data.idCtdt})`;
         if(i !== data.idTeacher.length - 1) {
             valuesString += ",";
             delString += ",";
         }
 
     }
-    sql.query(`delete from teacher_review_subject where (idTeacher, idTTC) in (${delString})`,
+    sql.query(`delete from teacher_review_subject where (idTeacher, idTTC, idCtdt) in (${delString})`,
     (err, res) => {
         if(err) {
             console.log("error:", err);
@@ -379,6 +376,30 @@ Model4.addTeacherReview = (data, result) => {
         
 }
 
+Model4.getReviewList = (data, result) => {
+    let date = new Date();
+    let dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+    sql.query(`select teacher_review_subject.idTeacher,
+    teacher_review_subject.idTTC,
+    teacher_review_subject.start_Date,
+    teacher_review_subject.end_Date,
+    subject.SubjectName,
+    user.name
+    from cdio_db.teacher_review_subject, cdio_db.user, cdio_db.subject
+    where teacher_review_subject.idTeacher = user.id
+    && teacher_review_subject.idTTC = subject.Id
+    && teacher_review_subject.idCtdt = ${data.idCtdt}
+    && DATE(teacher_review_subject.end_Date) >= '${dateString}'`,
+        (err, res) => {
+            if (err) {
+                console.log("error:", err);
+                result(null, err)
+            } else {
+                result(null, res);
+            }
+        })
+}
+
 Model4.getTeacherSubject = (data, result) => {
     sql.query(`select teachersubject.IdSubject from cdio_db.teachersubject
     where teachersubject.IdUser = ${data.idUser}`,
@@ -397,6 +418,7 @@ Model4.getTeacherReviewSubject = (data, result) => {
     let dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
     sql.query(`select teacher_review_subject.idTTC from cdio_db.teacher_review_subject
     where teacher_review_subject.idTeacher = ${data.idUser}
+    && teacher_review_subject.idCtdt = ${data.idCtdt}
     && DATE(teacher_review_subject.start_Date) <= '${dateString}'
     && DATE(teacher_review_subject.end_Date) >= '${dateString}'`,
         (err, res) => {
