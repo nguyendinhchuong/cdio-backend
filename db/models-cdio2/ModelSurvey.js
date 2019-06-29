@@ -708,7 +708,7 @@ ModelSurvey.getlistSurvey = (id_ctdt, id_user, result) => {
 
 ModelSurvey.updateStatusSurveyList = (currentDate, result) => {
     // console.log(currentDate)
-    sql.query(`select id from surveyList where end_date < ${currentDate} and status === -1`, (err, res) => {
+    sql.query(`select id from surveyList where end_date < ${currentDate} and status = -1`, (err, res) => {
         if (err) {
             console.log("err : ", err);
             result(err);
