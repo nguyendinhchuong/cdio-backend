@@ -91,7 +91,6 @@ Model7.getChude = (result) => {
       return result(err, null);
     }
     else
-      //console.log("result: ",res);
       return result(null, res);
   });
 }
@@ -244,7 +243,6 @@ Model7.save = (body, result) => {
 
 Model7.get = (idSubject, idCtdt) => {
   return new Promise((resolve, reject) => {
-    console.log(idSubject,idCtdt)
     sql.query(`select * from danh_gia  
       where thong_tin_chung_id = ${idSubject} and idCtdt = ${idCtdt} and del_flag = 0`, (err, listDanhGia) => {
         if (err) {

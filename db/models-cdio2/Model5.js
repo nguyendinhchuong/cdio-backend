@@ -15,7 +15,6 @@ query = (string_sql, args) => {
 }
 
 close = () => {
-    console.log("close resource");
     sql.end();
 }
 
@@ -299,7 +298,6 @@ Model5.add = (data, idCtdt, result) => {
                     console.log(err);
                 })
                 .finally(() => {
-                    console.log("Finish");
                 });
 
         } else { // update 
@@ -309,7 +307,6 @@ Model5.add = (data, idCtdt, result) => {
                     console.log(err);
                 })
                 .finally(() => {
-                    console.log("Finish");
                 });
 
             query(`UPDATE ke_hoach_ly_thuyet SET del_flag = '${del_flag}' WHERE id = '${id}'`)
