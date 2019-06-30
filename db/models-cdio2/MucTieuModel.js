@@ -7,9 +7,7 @@ var MucTieuModel = (muc_tieu, mo_ta, cdr) => {
 }
 
 MucTieuModel.save = (data, result) => {
-  // sql.query(`update muc_tieu_mon_hoc set del_flag = 1 where thong_tin_chung_id = ${data.id}`);
   data.body.forEach(element => {
-    console.log("save3data", element)
     if (element.id === -1 && element.del_flag === 0) {
       sql.query(`insert into muc_tieu_mon_hoc(muc_tieu, mo_ta, thong_tin_chung_id, idCtdt) values ('${element.objectName}', '${element.description}', ${data.id}, ${data.idCtdt})`,
       (err, res) => {
@@ -20,7 +18,6 @@ MucTieuModel.save = (data, result) => {
           let mtmhId = res.insertId;
 
           element.standActs.forEach(element2 => {
-            // element2 = element2.replace(/\./g, "-")
             element2 += '.'
             sql.query(`select do.Id from detailoutcomestandard do, detaileduprogram dep where KeyRow = '${element2}' and do.IdOutcomeStandard = dep.IdOutcome 
             AND dep.IdEduProgram = ${data.idCtdt}`,
@@ -52,7 +49,6 @@ MucTieuModel.save = (data, result) => {
         } else {
           sql.query(`delete FROM mtmh_has_cdrcdio where muc_tieu_mon_hoc_id=${element.id};`,(err, res) => {
             element.standActs.forEach(element2 => {
-              // element2 = element2.replace(/\./g, "-")
               element2 += '.'
               sql.query(`select do.Id from detailoutcomestandard do, detaileduprogram dep where KeyRow = '${element2}' and do.IdOutcomeStandard = dep.IdOutcome 
               AND dep.IdEduProgram = ${data.idCtdt}`,
@@ -117,7 +113,6 @@ MucTieuModel.getCDR = (idCtdt, result) => {
 }
 
 MucTieuModel.get = (data, result) => {
-  console.log("get3data",data)
   sql.query(
   `SELECT mt.muc_tieu, mt.mo_ta, detailoutcomestandard.KeyRow, mt.del_flag, mt.id FROM muc_tieu_mon_hoc as mt
   join mtmh_has_cdrcdio

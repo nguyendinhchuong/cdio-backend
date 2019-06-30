@@ -3,7 +3,6 @@ var DanhMucModel = () => {
 
 }
 DanhMucModel.add = (body, result) => {
-    console.log(body)
     let keyItem = parseInt(body.keyItem);
     let value = body.value;
 

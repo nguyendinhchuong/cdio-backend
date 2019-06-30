@@ -35,7 +35,6 @@ query = (string_sql, args) => {
 }
 
 close = () => {
-    console.log("close resource");
     sql.end();
 }
 
@@ -55,7 +54,6 @@ ModelSurvey.addData = (data, id_survey, result) => {
             query(`INSERT INTO survey_itu  (bullet, value, mo_ta, id_survey)  VALUES
             ('${element.key}', '${resultValue}','${element.description}',${id_survey})`)
                 .then(res => {
-                    console.log("res", res);
                     if (res) {
                         result("1")
                     } else {
@@ -141,7 +139,6 @@ function handleValueITU(listSurvey) {
 
         data.push(new itu(key, temp));
     });
-    // //console.log(data);
 
     return data;
 }
@@ -248,7 +245,6 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, idCtdt, resp) => {
                                             resultSubjectName[0].SubjectName,
                                             newData
                                         );
-                                        console.log(object)
                                         survey.push(object);
                             }).then(() => {
                                 let data = [];
@@ -256,14 +252,11 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, idCtdt, resp) => {
                                 kq1.forEach((mon) => {
                                    
                                     survey.forEach(surveyEntity => {
-                                        //console.log(surveyEntity)
                                         if (mon.id_mon === surveyEntity.id_mon
                                             ) {
-                                            //console.log(surveyEntity)
                                                 data.push(surveyEntity);
                                         }
                                     });
-                                    //console.log(data)
                                     if (kq1.length === data.length) {
                                         resp(data);
                                     }
@@ -279,85 +272,6 @@ ModelSurvey.getDataMatixSurvey = (idSurveyList, idCtdt, resp) => {
     } catch (e) {
         console.log(e);
     }
-
-    // version 1 
-    // try {
-    //     query("SELECT COUNT(*) as SL FROM subject ")
-    //         .then(count => {
-    //             query(`SELECT subject.Id, subject.SubjectCode, subject.SubjectName
-    //                         FROM subject
-    //                         JOIN thong_tin_chung ON subject.Id = thong_tin_chung.id
-    //                         WHERE thong_tin_chung.del_flag = 0`)
-    //                 .then(res => {
-    //                     let survey = [];
-
-    //                     res.forEach(subject => {
-    //                         let id = subject.Id;
-    //                         let subjectName = subject.SubjectName;
-
-    //                         query(`SELECT survey.id, survey.value, survey.id_qa 
-    //                                 FROM survey new
-    //                                 WHERE '${id}' = id_mon`)
-    //                             .then(res1 => {
-
-    //                                 let myMap = new Map();
-
-    //                                 res1.forEach(record => {
-    //                                     const level3 = getLevel3(record.id);
-    //                                     const value = getValueITU(record.value);
-    //                                     const id_qa = record.id_qa;
-
-    //                                     const data = convertData(value, id_qa);
-
-    //                                     if (myMap.has(level3)) { // same key , update value 
-    //                                         let oldData = myMap.get(level3);
-    //                                         let newData = appendData(oldData, data);
-
-    //                                         myMap.set(level3, newData)
-    //                                     } else {
-    //                                         myMap.set(level3, data);
-    //                                     }
-
-    //                                 });
-
-    //                                 let data = [];
-
-    //                                 myMap.forEach((value, key) => {
-    //                                     let temp = new Data(
-    //                                         value.cdr,
-    //                                         value.id
-    //                                     );
-
-    //                                     if (temp.cdr == '' && temp.id == '') {
-    //                                         temp.cdr = '-';
-    //                                         temp.id = '-';
-    //                                     }
-
-    //                                     data.push(new itu(key, temp));
-    //                                 });
-
-    //                                 const object = new Survey(
-    //                                     id,
-    //                                     subjectName,
-    //                                     'Nam',
-    //                                     data
-    //                                 );
-
-    //                                 survey.push(object);
-    //                             })
-    //                             .then(() => {
-    //                                 if (count[0].SL === survey.length) {
-    //                                     console.log(survey);
-    //                                     //result(survey);
-    //                                 }
-    //                             });
-    //                     });
-
-    //                 });
-    //         });
-    // } catch (e) {
-    //     console.log(e);
-    // }
 }
 
 getLevel3 = (id) => {
@@ -407,9 +321,7 @@ ModelSurvey.getQA = (id, result) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
-        } else
-            console.log("qa", res);
-
+        }
         return result(res);
     })
 }
@@ -419,8 +331,7 @@ ModelSurvey.getSurveyITU = (id, result) => {
         if (err) {
             console.log("err: ", err);
             return result(err);
-        } else
-            console.log('itu:', res)
+        }
         return result(res);
     })
 }
@@ -501,7 +412,6 @@ ModelSurvey.addData2 = (data, id_survey, result) => {
             query(`INSERT INTO survey2  (id, value, mo_ta, id_survey)  VALUES
             ('${element.key}', '${resultValue}','${element.description}','${id_survey}')`)
                 .then(res => {
-                    console.log(res);
                 })
         });
 
@@ -625,8 +535,6 @@ ModelSurvey.getSubjectName = (id, result) => {
             console.log("err: ", err);
             return result(err);
         } else {
-            console.log(res);
-
             return result(res);
         }
     })
@@ -707,13 +615,11 @@ ModelSurvey.getlistSurvey = (id_ctdt, id_user, result) => {
 }
 
 ModelSurvey.updateStatusSurveyList = (currentDate, result) => {
-    // console.log(currentDate)
     sql.query(`select id from surveyList where end_date < ${currentDate} and status = -1`, (err, res) => {
         if (err) {
             console.log("err : ", err);
             result(err);
         } else {
-            // console.log(res)
             let listSurvey = res;
 
             if (listSurvey && listSurvey.length > 0) {
@@ -723,14 +629,6 @@ ModelSurvey.updateStatusSurveyList = (currentDate, result) => {
                             console.log("err : ", err);
                             result(err);
                         }
-                        // else{
-                        //     sql.query(`update survey2 set status = 0 where idSurveyList = ${item.id} and status <> 0`,(err,res) => {
-                        //         if(err){
-                        //             console.log("err : " , err);
-                        //             result(err);
-                        //         }
-                        //     })
-                        // }
                     })
                 })
             }
@@ -751,14 +649,6 @@ ModelSurvey.updateStatusSurveyList = (currentDate, result) => {
                             console.log("err", err);
                             result(err);
                         }
-                        // else{
-                        //     sql.query(`update survey2 set status = 1 where idSurveyList = ${item.id}`,(err,res) => {
-                        //         if(err){
-                        //             console.log("err" ,err);
-                        //             result(err);
-                        //         }
-                        //     })
-                        // }
                     })
                 })
             }
@@ -785,13 +675,6 @@ ModelSurvey.closeSurvey = (id, result) => {
             result(err);
         }
     });
-
-    // sql.query(`update survey2 set status = 0 where idSurveyList=${id}`,(err,res) => {
-    //     if(err) {
-    //         console.log("err",err);
-    //         result(err);
-    //     }
-    // });
     result("done")
 }
 module.exports = ModelSurvey;

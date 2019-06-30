@@ -1,7 +1,6 @@
 var sql = require('../db');
 
 const compareUser = (user, result) => {
-    console.log(user.username);
     sql.query(
         `select * from user where username='${user.username}'`,
         (err, res) => {
