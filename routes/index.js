@@ -2786,7 +2786,8 @@ router.post("/get-survey-itu", function(req, res) {
 router.post("/add-survey-list", function(req, res) {
   let data = req.body;
   ModelSurvey.addSurveyList(data, result => {
-    res.send("1");
+    console.log(result)
+    res.end(JSON.stringify(result));
   });
 });
 
