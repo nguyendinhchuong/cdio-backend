@@ -112,7 +112,6 @@ Model6.getTeachingActs = result => {
         console.log("err: ", err);
         return result(err, null);
       }
-      //console.log("result: ",res);
       else return result(null, res);
     }
   );
@@ -325,7 +324,6 @@ Model6.addTeachingAct = (data, result) => {
                 indexKHTH: act.indexKHTH
               };
               response.push(temp);
-              console.log("res if: ", response);
 
               if (response.length === data.length) result(null, response);
             }
@@ -337,7 +335,6 @@ Model6.addTeachingAct = (data, result) => {
             indexKHTH: act.indexKHTH
           };
           response.push(temp);
-          console.log("res else: ", response);
 
           if (response.length === data.length) result(null, response);
         }

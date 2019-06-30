@@ -5,7 +5,6 @@ var MatrixModel = data => {
 };
 
 close = () => {
-  console.log("close resource");
   sql.end();
 };
 
@@ -162,7 +161,6 @@ MatrixModel.insertStandardMatrix = (resultRes,idCtdt)=>{
           return reject(err);
         }
         else if(result.length===0){
-          console.log("insert matrix for idSubject ",item.idSubject);
           sql.query(`select do.Id from chuan_dau_ra_cdio cdr,detailoutcomestandard do, detaileduprogram dep 
           where cdr.del_flag = 0 and cdr.id = do.Id and do.IdOutcomeStandard = dep.IdOutcome 
           and length(KeyRow) = 6 AND dep.IdEduProgram = ${idCtdt}`,(err,res)=>{

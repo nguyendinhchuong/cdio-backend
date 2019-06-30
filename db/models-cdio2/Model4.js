@@ -150,18 +150,6 @@ Model4.editsubject = (data, result) => {
         })
 }
 
-// Model4.collectsubjectid = (data, result) => {
-//     sql.query(`select id from thong_tin_chung where ma_so = ${data.ma_so} && ten_mon_hoc_tv = ${data.ten_mon_hoc_tv} && del_flag = 0`,
-//         (err, res) => {
-//             if (err) {
-//                 console.log("error:", err);
-//                 result(null, err)
-//             } else {
-//                 result(null, res);
-//             }
-//         })
-// }
-
 Model4.collectmtmh = (data, result) => {
     sql.query(`select id, muc_tieu from muc_tieu_mon_hoc where del_flag = 0 && thong_tin_chung_id = ${data.thong_tin_chung_id}
                 && idCtdt = ${data.idCtdt}`,
@@ -196,7 +184,6 @@ Model4.collectmtmhhascdrcdio = (data, result) => {
 
 Model4.collectmucdomtmhhascdrcdio = (data, result) => {
     var arr = [];
-    //console.log(data.length)
     for(let i = 0;i < data.length;i++) {
         sql.query(`SELECT 
         GROUP_CONCAT(chuan_dau_ra_mon_hoc.muc_do SEPARATOR ',') as muc_do
@@ -208,8 +195,7 @@ Model4.collectmucdomtmhhascdrcdio = (data, result) => {
                 console.log("error:", err);
                 result(null, err)
             } else {
-                //console.log(res)
-                //console.log(i)
+                
                 if(res.length > 0) {
                     arr.push({
                         "id": data[i].id,
@@ -307,23 +293,6 @@ Model4.getTeacherList = (result) => {
             }
         })
 }
-
-// Model4.getTeacherListReview = (data, result) => {
-//     let date = new Date();
-//     let dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-//     sql.query(`select user.id , user.name, teacher_review_subject.start_Date, teacher_review_subject.end_Date from cdio_db.user
-//     join teacher_review_subject on user.id = teacher_review_subject.idTeacher
-//     where teacher_review_subject.idTTC = ${data.thong_tin_chung_id}
-//     && DATE(teacher_review_subject.end_Date) >= '${dateString}'`,
-//         (err, res) => {
-//             if (err) {
-//                 console.log("error:", err);
-//                 result(null, err)
-//             } else {
-//                 result(null, res);
-//             }
-//         })
-// }
 
 Model4.deleteTeacherReview = (data, result) => {
     let idString = "(" + data.keys.toString() + ")";

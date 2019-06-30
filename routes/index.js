@@ -169,13 +169,7 @@ router.post("/exportfile", function(req, res, next) {
         content += await compile("content", renderContenByNameTab(k, value));
       }
       //footer
-      // if (JSON.parse(body.data)['Thông tin chung'] !== undefined) {
-      // content += await compile('footer',renderContenByNameTab('Thông tin chung',JSON.parse(JSON.parse(body.data)['Thông tin chung'])));
-      // }
       await page.setContent(content);
-      // page.content().then(data => {
-      //   console.log(data);
-      // })
       await page.emulateMedia("screen");
       await page.pdf({
         path: path,
@@ -183,13 +177,6 @@ router.post("/exportfile", function(req, res, next) {
         printBackground: true
       });
       await browser.close();
-    
-          // console.log('converted to base64');
-          // res.header("Access-Control-Allow-Origin", "*");
-          // res.header("Access-Control-Allow-Headers", "X-Requested-With");
-          // res.header('content-type', 'application/pdf');
-       // process headers
-    
        var file = fs.createReadStream(nameFile);
        var stat = fs.statSync(nameFile);
        res.setHeader('Content-Length', stat.size);
@@ -198,11 +185,8 @@ router.post("/exportfile", function(req, res, next) {
       res.sendFile(nameFile,{root:'../cdio-backend'},function(err) {
           if(err) {
             console.log(err)
-          } else {
-            console.log("Export file successful !!! ")
-          }
+          } 
       })
-      //res.end("1");
     } catch (e) {
       console.log("error", e);
     }
@@ -235,33 +219,6 @@ router.get("/collect-data/:id", function(req, res) {
   }
 });
 
-// router.post('/update-data/:id', function (req, res) {
-//   let id = req.params
-//   let description = req.body;
-//   ThongTinChungModel.add(id, description, function (err, description) {
-//     if (err) {
-//       console.log(err);
-//     } else {
-//       res.send("SUCCESS");
-//     }
-//   })
-
-//   // jwt.verify(req.headers.token, 'secretkey', (err, authData) => {
-//   //   if (err) {
-//   //     res.sendStatus(403);
-//   //   } else {
-//   //     let id = req.params
-//   //     let description = req.body;
-//   //     ThongTinChungModel.add(id, description, function (err, description) {
-//   //       if (err) {
-//   //         console.log(err);
-//   //       } else {
-//   //         res.send("SUCCESS");
-//   //       }
-//   //     })
-//   //   }
-//   // })
-// })
 
 router.get("/get-data-2/:id", (req, res) => {
   if (
@@ -413,7 +370,6 @@ router.post("/get-data-3", (req, res) => {
     id: req.body.data.id,
     idCtdt: req.body.data.id_ctdt
   }
-  console.log(req.body);
   if (
     req.headers &&
     req.headers.authorization &&
@@ -537,7 +493,6 @@ router.post("/save-data-3", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           let body = req.body.data;
-          console.log(req.body)
           let data = {
             body: body,
             id: req.body.id,
@@ -589,32 +544,7 @@ router.post("/collect-data-4", function(req, res) {
 });
 
 router.get("/collect-cdrmdhd-4", function(req, res) {
-  // if (
-  //   req.headers &&
-  //   req.headers.authorization &&
-  //   req.headers.authorization.split(" ")[0] === "JWT"
-  // ) {
-  //   jwt.verify(
-  //     req.headers.authorization.split(" ")[1],
-  //     config.jwtSecret,
-  //     (err, authData) => {
-  //       if (err) {
-  //         //res.sendStatus(403);
-  //         res.send("Unauthorized user!");
-  //       } else {
-  //         Model4.collectcdrmdhd(function(err, data) {
-  //           if (err) {
-  //             console.log(err);
-  //           } else {
-  //             res.send(data);
-  //           }
-  //         });
-  //       }
-  //     }
-  //   );
-  // } else {
-  //   res.send("Invalid token!");
-  // }
+  
   Model4.collectcdrmdhd(function(err, data) {
               if (err) {
                 console.log(err);
@@ -643,7 +573,6 @@ router.post("/save-data-4", function(req, res) {
             if (err) {
               console.log(err);
             } else {
-              console.log("done");
               res.send(description);
             }
           });
@@ -703,7 +632,6 @@ router.post("/add-subject", function(req, res) {
             if (err) {
               console.log(err);
             } else {
-              //console.log("done");
               res.send({});
             }
           });
@@ -734,7 +662,6 @@ router.post("/delete-subject", function(req, res) {
             if (err) {
               console.log(err);
             }
-            console.log("done");
           });
         }
       }
@@ -763,7 +690,6 @@ router.post("/edit-subject", function(req, res) {
             if (err) {
               console.log(err);
             }
-            console.log("done");
           });
         }
       }
@@ -772,17 +698,6 @@ router.post("/edit-subject", function(req, res) {
     res.send("Invalid token!");
   }
 });
-
-// router.post('/collect-subjectid', function(req, res) {
-//   let data = req.body.data
-//   Model4.collectsubjectid(data, function(err, data) {
-//     if (err) {
-//       console.log(err);
-//     } else{
-//       res.send(data)
-//     }
-//   })
-// })
 
 router.post("/collect-mtmh", function(req, res) {
   if (
@@ -1024,36 +939,6 @@ router.get("/get-teacher-list", function(req, res) {
   }
 });
 
-// router.post("/get-teacher-list-review", function(req, res) {
-//   if (
-//     req.headers &&
-//     req.headers.authorization &&
-//     req.headers.authorization.split(" ")[0] === "JWT"
-//   ) {
-//     jwt.verify(
-//       req.headers.authorization.split(" ")[1],
-//       config.jwtSecret,
-//       (err, authData) => {
-//         if (err) {
-//           //res.sendStatus(403);
-//           res.send("Unauthorized user!");
-//         } else {
-//           let data = req.body;
-//           Model4.getTeacherListReview(data, function(err, data) {
-//             if (err) {
-//               console.log(err);
-//             } else {
-//               res.send(data);
-//             }
-//           });
-//         }
-//       }
-//     );
-//   } else {
-//     res.send("Invalid token!");
-//   }
-// });
-
 router.post("/delete-teacher-review", function(req, res) {
   if (
     req.headers &&
@@ -1254,7 +1139,6 @@ router.post("/collect-data-5", function(req, res) {
             if (err) {
               console.log(err);
             } else {
-              //console.log(data)
               res.send(data);
             }
           });
@@ -1374,7 +1258,6 @@ router.post("/add-data-6", function(req, res) {
             if (err) {
               res.end("0");
             }
-            console.log("done");
             res.end("1");
           });
         }
@@ -1403,7 +1286,6 @@ router.post("/add-teachingacts-6", function(req, res) {
             if (err) {
               res.end("-1");
             }
-            console.log("done");
             res.end(JSON.stringify(result));
           });
         }
@@ -1433,7 +1315,6 @@ router.get("/get-teachingacts-6", function(req, res) {
             if (err) {
               res.end("0");
             }
-            console.log("done");
             res.end(JSON.stringify(result));
           });
         }
@@ -2586,7 +2467,6 @@ router.post("/save-survey-qa", function(req, res) {
           res.send("Unauthorized user!");
         } else {
           SurveyQAModel.save(req.body.data, result => {
-            console.log(result);
             let response = { id: result };
             res.send(response);
           });
@@ -2625,7 +2505,6 @@ router.post("/get-survey-itu", function(req, res) {
 
 router.get("/set-status/:id", function(req, res) {
   let id = req.params.id;
-  console.log(id);
 
   ModelSurvey.setStatus(id, result => {
     res.send(result);
@@ -2722,7 +2601,6 @@ router.post("/authen-me", function(req, res) {
     } else {
       Users.authenMe(authData.username)
         .then(data => {
-          console.log(data.data);
           let response = {};
           response.status = 200;
           response.code = data.code;
@@ -2771,7 +2649,6 @@ router.post('/save-survey-qa', function (req, res) {
                 res.send("Unauthorized user!");
             } else {
                 SurveyQAModel.save(req.body.data, (result) => {
-                    console.log(result)
                     let response = { id: result };
                     res.send(response)
                 });
@@ -2888,7 +2765,6 @@ router.get("/get-all-data-survey", function(req, res) {
 
 router.post("/get-survey-id", function(req, res) {
   let id = req.body;
-  console.log(req.body);
   ModelSurvey.getDataSurvey1(id, result => {
     res.send(result);
   });
