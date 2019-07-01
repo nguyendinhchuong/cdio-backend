@@ -175,11 +175,12 @@ MatrixModel.insertStandardMatrix = (resultRes,idCtdt)=>{
                   console.log("err: ",err);
                   return reject(err);
                 }
+                if(i === res.length -1 && index === resultRes.length -1) resolve(1);
               })
             }
           })
 
-          if(index === resultRes.length -1) resolve(1);
+          
         }
         else{
           if(index === resultRes.length -1) resolve(0);        }
@@ -216,6 +217,17 @@ MatrixModel.updateStandardMatrix = (body,result)=>{
   })
 }
 
+MatrixModel.deleteEditMatrix = (body,result)=>{
+
+    sql.query(`delete from matrix where id > 0 && idCtdt = ${body.idCtdt}`,(err,res)=>{
+      if(err){
+        console.log("err: ",err);
+        return result(err,null);
+      }
+      return result(null,res);
+    })
+
+}
 
 
 MatrixModel.getBenchmarkMatrix = (listSubject,idCtdt)=>{

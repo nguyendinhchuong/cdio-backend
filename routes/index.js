@@ -2083,6 +2083,36 @@ router.post("/update-standard-matrix", function(req, res) {
   }
 });
 
+router.post("/delete-edit-matrix", function(req, res) {
+  if (
+    req.headers &&
+    req.headers.authorization &&
+    req.headers.authorization.split(" ")[0] === "JWT"
+  ) {
+    jwt.verify(
+      req.headers.authorization.split(" ")[1],
+      config.jwtSecret,
+      (err, authData) => {
+        if (err) {
+          //res.sendStatus(403);
+          res.send("Unauthorized user!");
+        } else {
+          const body = req.body;
+
+          MatrixModel.deleteEditMatrix(body, function(err, result) {
+            if (err) {
+              res.end("0");
+            }
+            res.send(result);
+          });
+        }
+      }
+    );
+  } else {
+    res.send("Invalid token!");
+  }
+});
+
 router.post("/get-benchmark-matrix", function(req, res) {
   if (
     req.headers &&
