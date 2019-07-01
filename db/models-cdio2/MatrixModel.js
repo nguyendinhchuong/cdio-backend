@@ -175,12 +175,12 @@ MatrixModel.insertStandardMatrix = (resultRes,idCtdt)=>{
                   console.log("err: ",err);
                   return reject(err);
                 }
-                if(i === res.length -1 && index === resultRes.length -1) resolve(1);
+                
               })
             }
           })
 
-          
+          if(index === resultRes.length -1) resolve(1);
         }
         else{
           if(index === resultRes.length -1) resolve(0);        }
