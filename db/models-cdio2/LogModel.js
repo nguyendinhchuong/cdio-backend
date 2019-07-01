@@ -9,21 +9,22 @@ var LogModel = (nguoi_gui, thoi_gian, noi_dung, muc_de_cuong, thong_tin_chung_id
 }
 
 LogModel.save = (data, result) => {
-  data.forEach(element => {
-    let temp = element.noi_dung.toString()
-    // if (element.noi_dung.length > 150) {
-    //   temp = temp.slice(0,150) + "..."
-    // }      
-    sql.query(`insert into log(nguoi_gui, thoi_gian, noi_dung, muc_de_cuong, thong_tin_chung_id, idCtdt) values ('${element.ten}', ${element.timestamp}, '${temp}', '${element.muc_de_cuong}', ${element.thong_tin_chung_id}, ${element.id_ctdt})`,
-      (err, res) => {
-        if (err) {
-          console.log("error:", err);
-          result(err)
-        } else {
-          result(res);
-        }
-      })
-  });
+  if(data){
+    data.forEach(element => {
+      let temp = element.noi_dung.toString() 
+      sql.query(`insert into log(nguoi_gui, thoi_gian, noi_dung, muc_de_cuong, thong_tin_chung_id, idCtdt) values ('${element.ten}', ${element.timestamp}, '${temp}', '${element.muc_de_cuong}', ${element.thong_tin_chung_id}, ${element.id_ctdt})`,
+        (err, res) => {
+          if (err) {
+            console.log("error:", err);
+            result(err)
+          } else {
+            result(res);
+          }
+        })
+    });
+  }
+  result([])
+ 
 }
 
 LogModel.get = (data, result) => {

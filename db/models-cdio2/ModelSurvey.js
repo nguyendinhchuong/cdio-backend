@@ -615,6 +615,7 @@ ModelSurvey.getlistSurvey = (id_ctdt, id_user, result) => {
 }
 
 ModelSurvey.updateStatusSurveyList = (currentDate, result) => {
+    
     sql.query(`select id from surveyList where end_date < ${currentDate} and status = 1`, (err, res) => {
         if (err) {
             console.log("err : ", err);
@@ -669,7 +670,6 @@ ModelSurvey.getTeacherName = (id, result) => {
 }
 
 ModelSurvey.closeSurvey = (id, result) => {
-    console.log(id)
     sql.query(`update surveyList set status = 0 where id = ${id}`, (err, res) => {
         if (err) {
             console.log("err", err);
@@ -677,5 +677,45 @@ ModelSurvey.closeSurvey = (id, result) => {
         }
     });
     result("done")
+}
+
+ModelSurvey.deleteSurvey = (id,result) =>{
+    sql.query(`select id from survey2 where idSurveyList = ${id}`,(err,res) => {
+        if(err){
+            console.log("err",err);
+            result("0");
+        }
+        if(res){
+            res.forEach(item => {
+                sql.query(`delete from survey_itu where id_survey = ${item.id}`,(err,res) => {
+                    if(err){
+                        console.log("err",err);
+                        result("0")
+                    }
+
+                sql.query(`delete from survey_qa where id_survey = ${item.id}`,(err,res) => {
+                    if(err){
+                        console.log("err",err);
+                        result("0");
+                    }
+                    sql.query(`delete from survey2 where idSurveyList = ${id}`,(err,res) => {
+                        if(err){
+                            console.log("err",err);
+                            result("0")
+                        }
+                    })
+                })
+                })
+            })
+            sql.query(`delete from surveyList where id = ${id}`,(err,res) => {
+                if(err){
+                    console.log("err",err);
+                    result("0");
+                }
+            })
+            
+        }
+    });
+    result("1");
 }
 module.exports = ModelSurvey;

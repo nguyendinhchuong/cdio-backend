@@ -2129,7 +2129,7 @@ router.post("/save-log", function(req, res) {
         } else {
           const body = req.body.data;
           LogModel.save(body, result => {
-            res.end("done");
+            res.end(JSON.stringify(result));
           });
         }
       }
@@ -2783,10 +2783,11 @@ router.post("/get-survey-itu", function(req, res) {
     res.send(result);
   });
 });
+
+
 router.post("/add-survey-list", function(req, res) {
   let data = req.body;
   ModelSurvey.addSurveyList(data, result => {
-    console.log(result)
     res.end(JSON.stringify(result));
   });
 });
@@ -2886,6 +2887,13 @@ router.post('/close-survey',function(req,res){
     }else{
       res.send("0")
     }
+  })
+})
+
+router.post('/delete-survey',function(req,res){
+  let id = req.body.id;
+  ModelSurvey.deleteSurvey(id,result => {
+    res.send(result);
   })
 })
 
