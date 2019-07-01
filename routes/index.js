@@ -909,7 +909,7 @@ router.post("/delete-cdrmdhd", function(req, res) {
   }
 });
 
-router.post("/get-teacher-list", function(req, res) {
+router.get("/get-teacher-list", function(req, res) {
   if (
     req.headers &&
     req.headers.authorization &&
@@ -923,8 +923,8 @@ router.post("/get-teacher-list", function(req, res) {
           //res.sendStatus(403);
           res.send("Unauthorized user!");
         } else {
-          let data = req.body;
-          Model4.getTeacherList(data, function(err, data) {
+          
+          Model4.getTeacherList(function(err, data) {
             if (err) {
               console.log(err);
             } else {
@@ -2074,6 +2074,36 @@ router.post("/update-standard-matrix", function(req, res) {
               res.end("0");
             }
             res.end("1");
+          });
+        }
+      }
+    );
+  } else {
+    res.send("Invalid token!");
+  }
+});
+
+router.post("/delete-edit-matrix", function(req, res) {
+  if (
+    req.headers &&
+    req.headers.authorization &&
+    req.headers.authorization.split(" ")[0] === "JWT"
+  ) {
+    jwt.verify(
+      req.headers.authorization.split(" ")[1],
+      config.jwtSecret,
+      (err, authData) => {
+        if (err) {
+          //res.sendStatus(403);
+          res.send("Unauthorized user!");
+        } else {
+          const body = req.body;
+
+          MatrixModel.deleteEditMatrix(body, function(err, result) {
+            if (err) {
+              res.end("0");
+            }
+            res.send(result);
           });
         }
       }

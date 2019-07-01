@@ -277,15 +277,11 @@ Model4.deletecdrmdhd = (data, result) => {
         })
 }
 
-Model4.getTeacherList = (data, result) => {
+Model4.getTeacherList = (result) => {
     let date = new Date();
     let dateString = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
     sql.query(`select user.id , user.name from cdio_db.user
-    where user.id != ${data.idCurrentUser}
-     && user.id not in (select user_has_role.idUser from cdio_db.user_has_role
-        JOIN cdio_db.role ON user_has_role.idRole = role.id
-        where role.role = "ADMIN")
-     && user.id in (select user_has_role.idUser from cdio_db.user_has_role
+    where user.id in (select user_has_role.idUser from cdio_db.user_has_role
         JOIN cdio_db.role ON user_has_role.idRole = role.id
         where role.role = "TEACHER")`,
         (err, res) => {
