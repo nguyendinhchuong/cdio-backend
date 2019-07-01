@@ -383,7 +383,11 @@ router.post("/get-data-3", (req, res) => {
           //res.sendStatus(403);
           res.send("Unauthorized user!");
         } else {
+          console.log("data3", data);
+          
           MucTieuModel.get(data, resData => {
+            console.log(resData);
+            
             res.send(resData);
           });
         }
