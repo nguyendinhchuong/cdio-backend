@@ -567,7 +567,6 @@ ModelSurvey.getSubjectWithId = (listId, result) => {
 
 
 ModelSurvey.getlistSurvey = (id_ctdt, id_user, result) => {
-
     sql.query(`select * from surveyList where id_ctdt = ${id_ctdt} and status = 1`, (err, res) => {
         if (res != null && res.length > 0) {
             let listIdSurveyList = [];
@@ -595,27 +594,25 @@ ModelSurvey.getlistSurvey = (id_ctdt, id_user, result) => {
                                 "surveyList": item,
                                 "survey": obj,
                             }
-
                             result(data)
 
                         })
                     })
                 } else {
-                    return []
+                    result ([])
                 }
 
 
             })
 
         } else {
-            return [];
+            result ([]);
         }
     })
 
 }
 
 ModelSurvey.updateStatusSurveyList = (currentDate, result) => {
-    
     sql.query(`select id from surveyList where end_date < ${currentDate} and status = 1`, (err, res) => {
         if (err) {
             console.log("err : ", err);
@@ -637,7 +634,7 @@ ModelSurvey.updateStatusSurveyList = (currentDate, result) => {
         }
     })
 
-    sql.query(`select id from surveyList where start_date = ${currentDate} and status = -1`, (err, res) => {
+    sql.query(`select id from surveyList where start_date <= ${currentDate} and end_date > ${currentDate} and status = -1`, (err, res) => {
         if (err) {
             console.log("err", err);
             result(err);
