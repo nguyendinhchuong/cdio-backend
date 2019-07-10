@@ -4,7 +4,7 @@ const user = require('../../service/User/userService');
 const senderEmail = 'cdio.fit.hcmus@gmail.com';
 const pass = 'a!123456789';
 const service = 'gmail';
-const host = 'http://localhost:3000';
+const host = 'https://services.fit.hcmus.edu.vn:253/';
 
 exports.sendMail = async (data) => {
     // create reusable transporter object using the default SMTP transport
@@ -18,11 +18,11 @@ exports.sendMail = async (data) => {
     // send mail with defined transport object
     let info = await transporter.sendMail({
         from: senderEmail, // sender address
-        to: data.email, // list of receivers
+        to: data.Email, // list of receivers
         subject: "Đăng ký thành công tài khoản hệ thống quản lý CDIO", // Subject line
-        text: `Admin đã đăng ký thành công tài khoản cho ${data.name} với:
-        username: ${data.username}
-        password: ${data.password}
+        text: `Admin đã đăng ký thành công tài khoản cho ${data.Name} với:
+        username: ${data.Username}
+        password: ${data.Password}
 Login tại ${host} để sử dụng hệ thống.` // plain text body
         // html: "<b>Hello world?</b>" // html body
     });

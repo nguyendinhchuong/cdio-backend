@@ -1,7 +1,6 @@
 const user = require('../../service/User/userService');
 const generator = require('generate-password');
 const sendmail = require('../User/sendMailController');
-
 exports.register = (req, res) => {
     let body = JSON.parse(req.body.data);
     let request = {};
@@ -13,12 +12,11 @@ exports.register = (req, res) => {
         length: 8,
         numbers: true
     });
-    console.log(request);
     user.register(request)
         .then(data => {
             let response = {};
             if (data.code === 1) {
-                sendmail.sendMail(data.data).catch(err => { throw err });
+                sendmail.sendMail(request).catch(err => { throw err });
                 response.code = 1;
                 response.message = "add success";
                 res.send(JSON.stringify(response));
