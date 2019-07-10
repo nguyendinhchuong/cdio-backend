@@ -1,8 +1,7 @@
 const db = require('../../models/index');
-const bscrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const config = require('../../config/config');
-
+const sha256 = require('crypto-js/sha256')
 
 exports.getList = () => {
     return new Promise((resolve, reject) => {
@@ -76,7 +75,7 @@ exports.register = (request) => {
                         } else {
                             let user = {};
                             user.username = request.Username;
-                            user.password = request.Password;
+                            user.password = sha256(request.Password).toString();
                             user.name = request.Name;
                             user.email = request.Email;
                             db.user.create(user)
