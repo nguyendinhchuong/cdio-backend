@@ -20,8 +20,23 @@ function handleDisconnect() {
 
   connection.on('error',function(err) {
     console.log('db error: ',err);
+    connection = mysql.createConnection(db_config);
+      connection.connect(function(err) {
+        if (err) {
+          console.log('error when connection to db: ', err);
+          //setTimeout(handleDisconnect,2000);
+        }
+      });
     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-      handleDisconnect();
+      console.log('> Re-connecting lost main MySQL connection: ' + err.stack);
+
+      connection = mysql.createConnection(db_config);
+      connection.connect(function(err) {
+        if (err) {
+          console.log('error when connection to db: ', err);
+          //setTimeout(handleDisconnect,2000);
+        }
+      });
     } else {
       throw err;
     }
